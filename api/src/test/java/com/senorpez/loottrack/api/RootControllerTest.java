@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.hypermedia.LinksSnippet;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -42,9 +43,15 @@ public class RootControllerTest {
     private final RestDocumentationResultHandler createLinksSnippets = document("links",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
-            links(halLinks(),
+            relaxedLinks(halLinks(),
                     linkWithRel("self").description("This resource."),
-                    linkWithRel("index").description("API index.")));
+                    linkWithRel("index").description("API index."),
+                    linkWithRel("curies").description("Compact URI resolver.")));
+
+    static final LinksSnippet commonLinks = links(halLinks(),
+            linkWithRel("self").ignored(),
+            linkWithRel("index").ignored(),
+            linkWithRel("curies").ignored());
 
     @Before
     public void setUp() {
@@ -65,14 +72,17 @@ public class RootControllerTest {
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.loottable-api:campaigns", hasEntry("href", "http://localhost:8080/campaigns")))
-                .andDo(createLinksSnippets)
                 .andDo(document("index",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
                                 headerWithName("Accept")
                                         .description("Accept header.")
-                                        .attributes(key("acceptvalue").value(HAL_JSON_VALUE)))));
+                                        .attributes(key("acceptvalue").value(HAL_JSON_VALUE))),
+                        commonLinks.and(
+                                linkWithRel("loottable-api:campaigns").description("List of campaign resources."))))
+                .andDo(createLinksSnippets);
+
     }
 
     @Test

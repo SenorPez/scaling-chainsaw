@@ -7,19 +7,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RequestMapping(
         value = "/",
-        method = GET
+        method = GET,
+        produces = {HAL_JSON_VALUE}
 )
 @RestController
 public class RootController {
-    @RequestMapping(produces = {HAL_JSON_VALUE})
+    @RequestMapping
     ResponseEntity<RepresentationModel<?>> root() {
         final RepresentationModel<?> root = new RepresentationModel<>();
         root.add(linkTo(RootController.class).withSelfRel());
         root.add(linkTo(RootController.class).withRel("index"));
+        root.add(linkTo(methodOn(CampaignController.class).campaigns()).withRel("campaigns"));
         return ResponseEntity.ok(root);
     }
 }

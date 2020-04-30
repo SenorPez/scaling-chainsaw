@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loottable API Root Schema",
-  "description": "Schema for the root of Loottable API",
+  "title": "Loottable API Campaign Collection Schema",
+  "description": "Schema for collections of campaigns in Loottable API",
   "definitions": {
     "standardLink": {
       "type": "object",
-      "properties" : {
+      "properties": {
         "href": {
           "type": "string",
           "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)?$"
@@ -41,6 +41,46 @@
   },
   "type": "object",
   "properties": {
+    "_embedded": {
+      "type": "object",
+      "properties": {
+        "loottable-api:campaign": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "self": {
+                    "$ref": "#/definitions/standardLink"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "self"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "_links"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "loottable-api:campaign"
+      ]
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -52,22 +92,19 @@
         },
         "curies": {
           "$ref": "#/definitions/curies"
-        },
-        "loottable-api:campaigns": {
-          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
       "required": [
         "self",
         "index",
-        "curies",
-        "loottable-api:campaigns"
+        "curies"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
+    "_embedded",
     "_links"
   ]
 }

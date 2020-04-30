@@ -16,7 +16,7 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 @RestControllerAdvice
 public class APIExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    ResponseEntity<ErrorResponse> handle405MethodNotAllow() {
+    ResponseEntity<ErrorResponse> handle405MethodNotAllowed() {
         return ResponseEntity
                 .status(METHOD_NOT_ALLOWED)
                 .contentType(APPLICATION_PROBLEM_JSON)

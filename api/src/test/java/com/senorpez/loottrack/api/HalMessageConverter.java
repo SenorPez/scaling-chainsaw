@@ -2,9 +2,7 @@ package com.senorpez.loottrack.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.hateoas.LinkRelation;
-import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.mediatype.MessageResolver;
-import org.springframework.hateoas.mediatype.hal.DefaultCurieProvider;
 import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 import org.springframework.hateoas.server.LinkRelationProvider;
 import org.springframework.hateoas.server.core.DefaultLinkRelationProvider;
@@ -16,15 +14,16 @@ import org.springframework.lang.NonNull;
 
 import java.util.List;
 
+import static com.senorpez.loottrack.api.Application.CURIE_PROVIDER;
+
 class HalMessageConverter {
     static HttpMessageConverter<Object> getConverter(final List<MediaType> mediaTypes) {
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jackson2HalModule());
 
-        final DefaultCurieProvider curieProvider = new DefaultCurieProvider("loottable-api", UriTemplate.of("/docs/reference.html#resources-trident-{rel}"));
         final RelProvider relProvider = new RelProvider();
 
-        objectMapper.setHandlerInstantiator(new Jackson2HalModule.HalHandlerInstantiator(relProvider, curieProvider, MessageResolver.DEFAULTS_ONLY));
+        objectMapper.setHandlerInstantiator(new Jackson2HalModule.HalHandlerInstantiator(relProvider, CURIE_PROVIDER, MessageResolver.DEFAULTS_ONLY));
 
         final MappingJackson2HttpMessageConverter halConverter = new MappingJackson2HttpMessageConverter(objectMapper);
         halConverter.setObjectMapper(objectMapper);
