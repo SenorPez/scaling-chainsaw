@@ -23,17 +23,17 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class RootControllerTest {
+public class CampaignControllerTest {
     private MockMvc mockMvc;
     private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "vnd.senorpez.loottrack.vx+json", UTF_8);
 
-    private static final String OBJECT_SCHEMA = "root.schema.json";
+    private static final String OBJECT_SCHEMA = "campaign.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
     @Rule
@@ -49,22 +49,20 @@ public class RootControllerTest {
     @Before
     public void setUp() {
         this.mockMvc = MockMvcBuilders
-                .standaloneSetup(new RootController())
+                .standaloneSetup(new CampaignController())
                 .setMessageConverters(HalMessageConverter.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
-
     }
 
     @Test
-    public void getRoot_ValidAcceptHeader() throws Exception {
+    public void getCampaigns_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get("/").accept(HAL_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080")))
-                .andExpect(jsonPath("$._links.loottable-api:campaigns", hasEntry("href", "http://localhost:8080/campaigns")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/campaigns")))
                 .andDo(createLinksSnippets)
                 .andDo(document("index",
                         preprocessRequest(prettyPrint()),
@@ -76,18 +74,17 @@ public class RootControllerTest {
     }
 
     @Test
-    public void getRoot_InvalidMethod() throws Exception {
-        mockMvc.perform(put("/").accept(HAL_JSON))
+    public void getCampaigns_InvalidMethod() throws Exception {
+        mockMvc.perform(put("/campaigns").accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
     }
 
     @Test
-    public void getRoot_InvalidAcceptHeader() throws Exception {
-        mockMvc.perform(get("/").accept(INVALID_MEDIA_TYPE))
+    public void getCampaigns_InvalidAcceptHeader() throws Exception {
+        mockMvc.perform(get("/campaigns").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
-                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON));
     }
 }
