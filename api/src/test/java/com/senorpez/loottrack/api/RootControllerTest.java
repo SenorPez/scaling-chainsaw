@@ -9,11 +9,15 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static com.senorpez.loottrack.api.SupportedMediaTypes.*;
+import java.util.Collections;
+
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.hateoas.MediaTypes.HAL_JSON;
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
+import static org.springframework.http.MediaType.ALL;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
@@ -38,27 +42,28 @@ public class RootControllerTest {
     private final RestDocumentationResultHandler createLinksSnippets = document("links",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
-            relaxedLinks(halLinks(),
+            links(halLinks(),
                     linkWithRel("self").description("This resource."),
-                    linkWithRel("index").description("API index."),
-                    linkWithRel("curies").description("Compact URI resolver.")));
+                    linkWithRel("index").description("API index.")));
 
     @Before
     public void setUp() {
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new RootController())
-//                .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
+                .setMessageConverters(HalMessageConverter.getConverter(Collections.singletonList(ALL)))
+                .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
+
     }
 
     @Test
     public void getRoot_ValidAcceptHeader() throws Exception {
-        mockMvc.perform(get("/").accept(LOOTTABLE_API))
+        mockMvc.perform(get("/").accept(HAL_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(LOOTTABLE_API))
+                .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080")))
                 .andDo(createLinksSnippets)
                 .andDo(document("index",
                         preprocessRequest(prettyPrint()),
@@ -66,31 +71,22 @@ public class RootControllerTest {
                         requestHeaders(
                                 headerWithName("Accept")
                                         .description("Accept header.")
-                                        .attributes(key("acceptvalue").value(LOOTTABLE_API_VALUE)))));
+                                        .attributes(key("acceptvalue").value(HAL_JSON_VALUE)))));
     }
 
     @Test
-    public void getRoot_FallbackAcceptHeader() throws Exception {
-        mockMvc.perform(get("/").accept(FALLBACK))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(FALLBACK))
-                .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/")));
+    public void getRoot_InvalidMethod() throws Exception {
+        mockMvc.perform(put("/").accept(HAL_JSON))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
     }
 
     @Test
     public void getRoot_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get("/").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
-    }
-
-    @Test
-    public void getRoot_InvalidMethod() throws Exception {
-        mockMvc.perform(put("/").accept(LOOTTABLE_API))
-                .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
     }
 }

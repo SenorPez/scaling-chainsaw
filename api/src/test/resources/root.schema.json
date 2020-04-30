@@ -8,7 +8,7 @@
       "properties" : {
         "href": {
           "type": "string",
-          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)?$"
         }
       },
       "additionalProperties": false,
@@ -49,23 +49,12 @@
         },
         "index": {
           "$ref": "#/definitions/standardLink"
-        },
-        "curies": {
-          "$ref": "#/definitions/curies"
-        },
-        "trident-api:systems": {
-          "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:constants": {
-          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
       "required": [
         "self",
-        "index",
-        "curies",
-        "trident-api:systems"
+        "index"
       ]
     }
   },
