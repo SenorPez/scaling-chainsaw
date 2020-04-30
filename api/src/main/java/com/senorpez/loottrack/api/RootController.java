@@ -1,14 +1,10 @@
 package com.senorpez.loottrack.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
