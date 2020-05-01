@@ -177,11 +177,15 @@ public class CampaignControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("id").description("ID number."),
-                                fieldWithPath("name").description("Campaign name.")
+                                fieldWithPath("name").description("Campaign name."),
+                                subsectionWithPath("_links").ignored()
                         ),
                         links(
                                 halLinks(),
-                                linkWithRel("loottable-api:campaigns").description("List of campaign resources.")
+                                linkWithRel("self").description("This resource."),
+                                linkWithRel("loottable-api:campaigns").description("List of campaign resources."),
+                                linkWithRel("index").description("Index resource."),
+                                linkWithRel("curies").description("Curies.")
                         )
                 ));
     }
@@ -211,7 +215,7 @@ public class CampaignControllerTest {
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+                .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
         verifyNoInteractions(campaignRepository);
     }
@@ -267,7 +271,7 @@ public class CampaignControllerTest {
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+                .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
         verifyNoInteractions(campaignRepository);
     }
@@ -282,7 +286,5 @@ public class CampaignControllerTest {
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(INTERNAL_SERVER_ERROR.value())))
                 .andExpect(jsonPath("$.message", is(INTERNAL_SERVER_ERROR.getReasonPhrase())));
-
-        verifyNoInteractions(campaignRepository);
     }
 }

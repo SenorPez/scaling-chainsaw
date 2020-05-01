@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,9 +25,10 @@ public class CampaignController {
     @Autowired
     private CampaignRepository campaignRepository;
 
+    private CampaignModelAssembler assembler = new CampaignModelAssembler(CampaignController.class, CampaignModel.class);
+
     @GetMapping
     ResponseEntity<CollectionModel<CampaignModel>> campaigns() {
-        CampaignModelAssembler assembler = new CampaignModelAssembler(CampaignController.class, CampaignModel.class);
         CollectionModel<CampaignModel> campaignModels = new CollectionModel<>(
                 StreamSupport
                         .stream(campaignRepository.findAll().spliterator(), false)
@@ -36,5 +38,15 @@ public class CampaignController {
         campaignModels.add(linkTo(RootController.class).withRel("index"));
 
         return ResponseEntity.ok(campaignModels);
+    }
+
+    @GetMapping("/{campaignId}")
+    ResponseEntity<CampaignModel> campaigns(@PathVariable final int campaignId) {
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        CampaignModel campaignModel = assembler.toModel(campaign);
+        campaignModel.add(linkTo(CampaignController.class).withRel("campaigns"));
+        campaignModel.add(linkTo(RootController.class).withRel("index"));
+
+        return ResponseEntity.ok(campaignModel);
     }
 }

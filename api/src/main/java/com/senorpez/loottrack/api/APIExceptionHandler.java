@@ -9,6 +9,10 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 
@@ -37,6 +41,20 @@ public class APIExceptionHandler {
                 .contentType(APPLICATION_PROBLEM_JSON)
                 .body(new ErrorResponse(NOT_ACCEPTABLE,
                         String.format("Accept header must be \"%s\"", MediaTypes.HAL_JSON.toString())));
+    }
+
+    @ExceptionHandler(Exception.class)
+    ResponseEntity<ErrorResponse> handle500ServerError(Exception ex, HttpServletRequest request) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        ex.printStackTrace(printWriter);
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR)
+                .contentType(APPLICATION_PROBLEM_JSON)
+                .body(new ErrorResponse(INTERNAL_SERVER_ERROR,
+                        String.format(">>>>>Internal server error occurred.<<<<<\r\n " +
+                                ">>>>>Please report to https://github.com/SenorPez/scaling-chainsaw/issues<<<< \r\n " +
+                                "%s \r\n %s", stringWriter.toString(), request.getRequestURI())));
     }
 
     private static class ErrorResponse {
