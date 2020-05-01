@@ -11,11 +11,21 @@ class Campaign {
 
     private String name;
 
-    Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    String getName() {
+    public Campaign setId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getName() {
         return name;
+    }
+
+    public Campaign setName(String name) {
+        this.name = name;
+        return this;
     }
 }

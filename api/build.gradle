@@ -20,6 +20,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     runtimeOnly 'mysql:mysql-connector-java'
     compile group: 'com.github.ulisesbocchio', name: 'jasypt-spring-boot-starter', version: '2.1.2'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.2.6.RELEASE'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'io.rest-assured', name: 'rest-assured', version: '4.3.0'
     testCompile group: 'io.rest-assured', name: 'json-schema-validator', version: '4.3.0'
