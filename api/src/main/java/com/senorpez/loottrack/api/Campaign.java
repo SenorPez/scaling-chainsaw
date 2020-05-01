@@ -1,15 +1,17 @@
 package com.senorpez.loottrack.api;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "campaigns")
 class Campaign {
-    private final int id;
-    private final String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
-    Campaign(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+    private String name;
 
-    int getId() {
+    Integer getId() {
         return id;
     }
 
