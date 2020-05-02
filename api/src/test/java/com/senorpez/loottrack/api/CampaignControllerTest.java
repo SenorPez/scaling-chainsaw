@@ -1,8 +1,10 @@
 package com.senorpez.loottrack.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -36,6 +38,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -132,18 +135,18 @@ public class CampaignControllerTest {
     }
 
     @Test
+    public void getAllCampaigns_InvalidAcceptHeader() throws Exception {
+        mockMvc.perform(get("/campaigns").accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON));
+    }
+
+    @Test
     public void getAllCampaigns_InvalidMethod() throws Exception {
         mockMvc.perform(put("/campaigns").accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
-    }
-
-    @Test
-    public void getAllCampaigns_InvalidAcceptHeader() throws Exception {
-        mockMvc.perform(get("/campaigns").accept(INVALID_MEDIA_TYPE))
-                .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON));
     }
 
     @Test
@@ -286,5 +289,97 @@ public class CampaignControllerTest {
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(INTERNAL_SERVER_ERROR.value())))
                 .andExpect(jsonPath("$.message", is(INTERNAL_SERVER_ERROR.getReasonPhrase())));
+    }
+
+    @Test
+    public void PostCampaign() throws Exception {
+        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(
+                post("/campaigns")
+                        .contentType(HAL_JSON)
+                        .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
+        )
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(HAL_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(FIRST_CAMPAIGN.getId())))
+                .andExpect(jsonPath("$.name", is(FIRST_CAMPAIGN.getName())))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d", FIRST_CAMPAIGN.getId()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference/html#resources-loottable-{rel}"),
+                                hasEntry("name", (Object) "loottable-api"),
+                                hasEntry("templated", (Object) true)
+                        )
+                )))
+                .andExpect(jsonPath("$._links.loottable-api:campaigns", hasEntry("href", "http://localhost:8080/campaigns")))
+                .andDo(document(
+                        "campaign",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Content-Type")
+                                        .description("Content Type header.")
+                                        .attributes(key("contenttype").value(HAL_JSON_VALUE))
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("ID number."),
+                                fieldWithPath("name").description("Campaign name."),
+                                subsectionWithPath("_links").ignored()
+                        ),
+                        links(
+                                halLinks(),
+                                linkWithRel("self").description("This resource."),
+                                linkWithRel("loottable-api:campaigns").description("List of campaign resources."),
+                                linkWithRel("index").description("Index resource."),
+                                linkWithRel("curies").description("Curies.")
+                        )
+                ));
+    }
+
+    @Test
+    public void PostCampaign_InvalidContentType() throws Exception {
+        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(
+                post("/campaigns")
+                        .contentType(INVALID_MEDIA_TYPE)
+                        .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
+                .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Content Type should be application/hal+json")));
+
+        verifyNoInteractions(campaignRepository);
+    }
+
+    @Test
+    public void PostCampaign_InvalidSyntax() throws Exception {
+        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
+
+        String invalidJson = "{\"name\": \"}";
+
+        mockMvc.perform(
+                post("/campaigns")
+                        .contentType(HAL_JSON)
+                        .content(invalidJson)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
+                .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Bad JSON")));
+
+        verifyNoInteractions(campaignRepository);
     }
 }
