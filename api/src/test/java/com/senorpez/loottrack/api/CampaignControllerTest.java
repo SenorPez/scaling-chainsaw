@@ -311,7 +311,7 @@ public class CampaignControllerTest {
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d", FIRST_CAMPAIGN.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/reference/html#resources-loottable-{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
                                 hasEntry("name", (Object) "loottable-api"),
                                 hasEntry("templated", (Object) true)
                         )
@@ -352,12 +352,15 @@ public class CampaignControllerTest {
                         .contentType(INVALID_MEDIA_TYPE)
                         .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
         )
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
-                .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Content Type should be application/hal+json")));
+                .andExpect(jsonPath("$.code", is(UNSUPPORTED_MEDIA_TYPE.value())))
+                .andExpect(jsonPath("$.message", is(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase())))
+                .andExpect(jsonPath(
+                        "$.detail",
+                        is(String.format("Content type '%s' not supported", INVALID_MEDIA_TYPE.toString()))
+                ));
 
         verifyNoInteractions(campaignRepository);
     }
@@ -377,8 +380,7 @@ public class CampaignControllerTest {
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Bad JSON")));
+                .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
 
         verifyNoInteractions(campaignRepository);
     }

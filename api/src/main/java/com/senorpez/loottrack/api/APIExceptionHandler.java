@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,6 +28,14 @@ public class APIExceptionHandler {
                 .body(new ErrorResponse(NOT_FOUND, e.getMessage()));
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<ErrorResponse> handle400BadRequest(final Exception e) {
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .contentType(APPLICATION_PROBLEM_JSON)
+                .body(new ErrorResponse(BAD_REQUEST, e.getMessage()));
+    }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     ResponseEntity<ErrorResponse> handle405MethodNotAllowed() {
         return ResponseEntity
@@ -41,6 +51,14 @@ public class APIExceptionHandler {
                 .contentType(APPLICATION_PROBLEM_JSON)
                 .body(new ErrorResponse(NOT_ACCEPTABLE,
                         String.format("Accept header must be \"%s\"", MediaTypes.HAL_JSON.toString())));
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    ResponseEntity<ErrorResponse> handle415UnsupportedMediaType(final Exception e) {
+        return ResponseEntity
+                .status(UNSUPPORTED_MEDIA_TYPE)
+                .contentType(APPLICATION_PROBLEM_JSON)
+                .body(new ErrorResponse(UNSUPPORTED_MEDIA_TYPE, e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
