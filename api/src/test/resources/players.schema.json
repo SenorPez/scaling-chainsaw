@@ -93,7 +93,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "loottable-campaign": {
+        "loottable-api:campaign": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -102,7 +102,7 @@
         "self",
         "index",
         "curies",
-        "loottable-campaign"
+        "loottable-api:campaign"
       ]
     }
   },

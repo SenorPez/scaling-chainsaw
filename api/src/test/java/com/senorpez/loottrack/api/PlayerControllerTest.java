@@ -14,11 +14,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import static com.senorpez.loottrack.api.RootControllerTest.commonLinks;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -27,6 +29,7 @@ import static org.springframework.http.MediaType.ALL;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -49,13 +52,18 @@ public class PlayerControllerTest {
 
     private static final Player FIRST_PLAYER = new Player()
             .setId(1)
-            .setName("First Player");
+            .setName("First Player")
+            .setCampaign(FIRST_CAMPAIGN);
     private static final Player SECOND_PLAYER = new Player()
             .setId(2)
-            .setName("Second Player");
+            .setName("Second Player")
+            .setCampaign(FIRST_CAMPAIGN);
 
     @InjectMocks
     PlayerController playerController;
+
+    @Mock
+    CampaignRepository campaignRepository;
 
     @Mock
     PlayerRepository playerRepository;
@@ -76,7 +84,8 @@ public class PlayerControllerTest {
 
     @Test
     public void getAllPlayers_ValidCampaign_ValidAcceptHeader() throws Exception {
-        when(playerRepository.findByCampaignid(anyInt())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
+        when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
+        when(playerRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
 
         mockMvc.perform(get(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
                 .andExpect(status().isOk())
@@ -105,7 +114,7 @@ public class PlayerControllerTest {
                         )
                 )))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/players")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players", FIRST_CAMPAIGN.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
@@ -126,18 +135,24 @@ public class PlayerControllerTest {
                                 fieldWithPath("_embedded.loottable-api:player[].id").description("Player ID number."),
                                 fieldWithPath("_embedded.loottable-api:player[].name").description("Player name."),
                                 subsectionWithPath("_links").ignored(),
-                                subsectionWithPath("_embedded.loottable-api:campaign[]._links").ignored()
+                                subsectionWithPath("_embedded.loottable-api:player[]._links").ignored()
                         ),
-                        commonLinks
+                        commonLinks.and(
+                                linkWithRel("loottable-api:campaign").description("Campaign resource.")
+                        )
                 ));
 
-        verify(playerRepository, times(1)).findByCampaignid(anyInt());
+        verify(campaignRepository, times(1)).findById(anyInt());
+        verifyNoMoreInteractions(campaignRepository);
+
+        verify(playerRepository, times(1)).findByCampaign(any());
         verifyNoMoreInteractions(playerRepository);
     }
 
     @Test
     public void getAllPlayers_ValidCampaign_InvalidAcceptHeader() throws Exception {
-        when(playerRepository.findByCampaignid(anyInt())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
+        when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
+        when(playerRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
 
         mockMvc.perform(get(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
@@ -147,12 +162,14 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is(String.format("Accept header must be \"%s\"", MediaTypes.HAL_JSON.toString()))));
 
+        verifyNoInteractions(campaignRepository);
         verifyNoInteractions(playerRepository);
     }
 
     @Test
     public void getAllPlayers_ValidCampaign_InvalidMethod() throws Exception {
-        when(playerRepository.findByCampaignid(anyInt())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
+        when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
+        when(playerRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
 
         mockMvc.perform(put(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
@@ -162,14 +179,16 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
+        verifyNoInteractions(campaignRepository);
         verifyNoInteractions(playerRepository);
     }
 
     @Test
     public void getAllPlayer_InvalidCampaign_ValidAcceptHeader() throws Exception {
-        when(playerRepository.findByCampaignid(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
+        when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
+        when(playerRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
-        mockMvc.perform(get("/campaigns/8675309").accept(HAL_JSON))
+        mockMvc.perform(get("/campaigns/8675309/players").accept(HAL_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -177,15 +196,18 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is(String.format("Campaign with ID of %d not found", 8675309))));
 
-        verify(playerRepository, times(1)).findByCampaignid(anyInt());
-        verifyNoMoreInteractions(playerRepository);
+        verify(campaignRepository, times(1)).findById(anyInt());
+        verifyNoMoreInteractions(campaignRepository);
+
+        verifyNoInteractions(playerRepository);
     }
 
     @Test
     public void getAllPlayers_InvalidCampaign_InvalidAcceptHeader() throws Exception {
-        when(playerRepository.findByCampaignid(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
+        when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
+        when(playerRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
-        mockMvc.perform(get("/campaigns/8675309/players/").accept(INVALID_MEDIA_TYPE))
+        mockMvc.perform(get("/campaigns/8675309/players").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -193,12 +215,14 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is(String.format("Accept header must be \"%s\"", MediaTypes.HAL_JSON.toString()))));
 
+        verifyNoInteractions(campaignRepository);
         verifyNoInteractions(playerRepository);
     }
 
     @Test
     public void getAllPlayer_InvalidCampaign_InvalidMethod() throws Exception {
-        when(playerRepository.findByCampaignid(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
+        when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
+        when(playerRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
         mockMvc.perform(put("/campaigns/8675309/players").accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
@@ -208,6 +232,7 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
+        verifyNoInteractions(campaignRepository);
         verifyNoInteractions(playerRepository);
     }
 }
