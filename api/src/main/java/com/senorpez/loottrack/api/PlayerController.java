@@ -43,4 +43,16 @@ public class PlayerController {
 
         return ResponseEntity.ok(playerModels);
     }
+
+    @GetMapping("/{playerId}")
+    ResponseEntity<PlayerModel> players(@PathVariable final int campaignId, @PathVariable final int playerId) {
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        Player player = playerRepository.findByCampaignAndId(campaign, playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
+
+        PlayerModel playerModel = assembler.toModel(player);
+        playerModel.add(linkTo(PlayerController.class, campaignId).withRel("players"));
+        playerModel.add(linkTo(RootController.class).withRel("index"));
+
+        return ResponseEntity.ok(playerModel);
+    }
 }
