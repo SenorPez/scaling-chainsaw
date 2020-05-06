@@ -1,8 +1,10 @@
 package com.senorpez.loottrack.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,7 +22,7 @@ import static com.senorpez.loottrack.api.RootControllerTest.commonLinks;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -33,6 +35,7 @@ import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
@@ -418,5 +421,102 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
         verifyNoInteractions(campaignRepository, playerRepository);
+    }
+
+    @Test
+    public void postPlayer_ValidCampaign_ValidContentType() throws Exception {
+        when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(
+                post(String.format("/campaigns/%d/players", FIRST_PLAYER.getCampaignId()))
+                        .contentType(HAL_JSON)
+                        .content(objectMapper.writeValueAsString(FIRST_PLAYER))
+        )
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(HAL_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(FIRST_PLAYER.getId())))
+                .andExpect(jsonPath("$.name", is(FIRST_PLAYER.getName())))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
+                                hasEntry("name", (Object) "loottable-api"),
+                                hasEntry("templated", (Object) true)
+                        )
+                )))
+                .andExpect(jsonPath("$._links.loottable-api:players", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players", FIRST_CAMPAIGN.getId()))))
+                .andDo(document(
+                        "player",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Content-Type")
+                                        .description("Content Type header.")
+                                        .attributes(key("contenttype").value(HAL_JSON_VALUE))
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("ID number."),
+                                fieldWithPath("name").description("Player name."),
+                                subsectionWithPath("_links").ignored()
+                        ),
+                        links(
+                                halLinks(),
+                                linkWithRel("self").description("This resource."),
+                                linkWithRel("loottable-api:players").description("List of player resources."),
+                                linkWithRel("index").description("Index resource."),
+                                linkWithRel("curies").description("Curies.")
+                        )
+                ));
+
+        verify(playerRepository, times(1)).save(any(Player.class));
+    }
+
+    @Test
+    public void postPlayer_ValidCampaign_InvalidCombatType() throws Exception {
+        when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc
+                .perform(
+                        post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
+                                .contentType(INVALID_MEDIA_TYPE)
+                                .content(objectMapper.writeValueAsString(FIRST_PLAYER))
+                )
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(UNSUPPORTED_MEDIA_TYPE.value())))
+                .andExpect(jsonPath("$.message", is(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase())))
+                .andExpect(jsonPath(
+                        "$.detail",
+                        is(String.format("Content type '%s' not supported", INVALID_MEDIA_TYPE.toString()))
+                ));
+
+        verifyNoInteractions(playerRepository);
+    }
+
+    @Test
+    public void postPlayer_ValidCampaign_InvalidSyntax() throws Exception {
+        when(playerRepository.save(ArgumentMatchers.any(Player.class))).thenReturn(FIRST_PLAYER);
+        String invalidJson = "{\"name\": \"}";
+
+        mockMvc
+                .perform(
+                        post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
+                                .contentType(HAL_JSON)
+                                .content(invalidJson)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
+                .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
+
+        verifyNoInteractions(playerRepository);
     }
 }
