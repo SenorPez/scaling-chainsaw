@@ -6,9 +6,10 @@ import javax.persistence.*;
 @Table(name = "campaigns")
 class Campaign {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private String name;
 
     public Integer getId() {

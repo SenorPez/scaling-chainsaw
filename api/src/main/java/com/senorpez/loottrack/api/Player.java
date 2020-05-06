@@ -3,16 +3,18 @@ package com.senorpez.loottrack.api;
 import javax.persistence.*;
 
 @Entity
+@IdClass(PlayerId.class)
 @Table(name = "players")
 class Player {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @Id
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private Campaign campaign;
 
+    @Column(nullable = false)
     private String name;
 
     int getId() {
