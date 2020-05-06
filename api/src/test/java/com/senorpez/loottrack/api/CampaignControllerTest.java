@@ -297,11 +297,12 @@ public class CampaignControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        mockMvc.perform(
-                post("/campaigns")
+        mockMvc
+                .perform(
+                        post("/campaigns")
                         .contentType(HAL_JSON)
                         .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
-        )
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))

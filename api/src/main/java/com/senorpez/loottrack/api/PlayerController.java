@@ -3,10 +3,7 @@ package com.senorpez.loottrack.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
@@ -54,5 +51,16 @@ public class PlayerController {
         playerModel.add(linkTo(RootController.class).withRel("index"));
 
         return ResponseEntity.ok(playerModel);
+    }
+
+    @PostMapping(consumes = {HAL_JSON_VALUE})
+    ResponseEntity<PlayerModel> addPlayer(@RequestBody Player newPlayer, @PathVariable final int campaignId) {
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        Player player = playerRepository.save(newPlayer.setCampaign(campaign));
+        PlayerModel playerModel = assembler.toModel(player);
+        playerModel.add(linkTo(PlayerController.class, campaignId).withRel("players"));
+        playerModel.add(linkTo(RootController.class).withRel("index"));
+
+        return ResponseEntity.created(playerModel.getRequiredLink("self").toUri()).body(playerModel);
     }
 }

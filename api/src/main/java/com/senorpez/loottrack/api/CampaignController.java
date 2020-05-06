@@ -55,5 +55,5 @@ public class CampaignController {
         campaignModel.add(linkTo(RootController.class).withRel("index"));
 
         return ResponseEntity.created(campaignModel.getRequiredLink("self").toUri()).body(campaignModel);
-        }
+    }
 }

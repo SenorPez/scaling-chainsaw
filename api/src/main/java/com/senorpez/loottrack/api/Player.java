@@ -17,7 +17,7 @@ class Player {
     @Column(nullable = false)
     private String name;
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
@@ -26,7 +26,7 @@ class Player {
         return this;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 

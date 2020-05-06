@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -425,12 +424,13 @@ public class PlayerControllerTest {
 
     @Test
     public void postPlayer_ValidCampaign_ValidContentType() throws Exception {
+        when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(
-                post(String.format("/campaigns/%d/players", FIRST_PLAYER.getCampaignId()))
+                post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
                         .contentType(HAL_JSON)
                         .content(objectMapper.writeValueAsString(FIRST_PLAYER))
         )
@@ -472,11 +472,14 @@ public class PlayerControllerTest {
                         )
                 ));
 
+        verify(campaignRepository, times(1)).findById(anyInt());
         verify(playerRepository, times(1)).save(any(Player.class));
+        verifyNoMoreInteractions(campaignRepository, playerRepository);
     }
 
     @Test
     public void postPlayer_ValidCampaign_InvalidCombatType() throws Exception {
+        when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -497,12 +500,13 @@ public class PlayerControllerTest {
                         is(String.format("Content type '%s' not supported", INVALID_MEDIA_TYPE.toString()))
                 ));
 
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(campaignRepository, playerRepository);
     }
 
     @Test
     public void postPlayer_ValidCampaign_InvalidSyntax() throws Exception {
-        when(playerRepository.save(ArgumentMatchers.any(Player.class))).thenReturn(FIRST_PLAYER);
+        when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
+        when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
         String invalidJson = "{\"name\": \"}";
 
         mockMvc
@@ -517,6 +521,6 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
                 .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
 
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(campaignRepository, playerRepository);
     }
 }
