@@ -12,20 +12,20 @@ class Campaign {
     @Column(nullable = false)
     private String name;
 
-    public Integer getId() {
+    Integer getId() {
         return id;
     }
 
-    public Campaign setId(Integer id) {
+    Campaign setId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public Campaign setName(String name) {
+    Campaign setName(String name) {
         this.name = name;
         return this;
     }

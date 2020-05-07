@@ -4,14 +4,13 @@ import java.io.Serializable;
 
 public class PlayerId implements Serializable {
     private int id;
-    private Campaign campaign;
+    private int campaign;
 
     public PlayerId() {
     }
 
     public PlayerId(int player, Campaign campaign) {
         this.id = player;
-        this.campaign = campaign;
-
+        this.campaign = campaign.getId();
     }
 }

@@ -1,5 +1,7 @@
 package com.senorpez.loottrack.api;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,6 +9,11 @@ import javax.persistence.*;
 @Table(name = "players")
 class Player {
     @Id
+    @GeneratedValue(generator = "playerid-gen")
+    @GenericGenerator(
+            name = "playerid-gen",
+            strategy = "com.senorpez.loottrack.api.PlayerIdGenerator"
+    )
     private int id;
 
     @Id
