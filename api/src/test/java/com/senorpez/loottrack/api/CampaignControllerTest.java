@@ -150,7 +150,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void GetSingleCampaign_ValidCampaignId_ValidAcceptHeader() throws Exception {
+    public void getSingleCampaign_ValidCampaignId_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
 
         mockMvc.perform(get(String.format("/campaigns/%d", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
@@ -194,7 +194,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void GetSingleCampaign_ValidCampaignId_InvalidAcceptHeader() throws Exception {
+    public void getSingleCampaign_ValidCampaignId_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
 
         mockMvc.perform(get(String.format("/campaigns/%d", FIRST_CAMPAIGN.getId())).accept(INVALID_MEDIA_TYPE))
@@ -209,7 +209,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void GetSingleCampaign_ValidCampaignId_InvalidMethod() throws Exception {
+    public void getSingleCampaign_ValidCampaignId_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
 
         mockMvc.perform(put(String.format("/campaigns/%d", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
@@ -224,7 +224,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void GetSingleCampaign_InvalidCampaignId_ValidAcceptHeader() throws Exception {
+    public void getSingleCampaign_InvalidCampaignId_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
 
         mockMvc.perform(get("/campaigns/8675309").accept(HAL_JSON))
@@ -250,7 +250,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void GetSingleCampaign_InvalidCampaignId_InvalidAcceptHeader() throws Exception {
+    public void getSingleCampaign_InvalidCampaignId_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
 
         mockMvc.perform(get("/campaigns/8675309").accept(INVALID_MEDIA_TYPE))
@@ -265,7 +265,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void GetSingleCampaign_InvalidCampaignId_InvalidMethod() throws Exception {
+    public void getSingleCampaign_InvalidCampaignId_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
 
         mockMvc.perform(put("/campaigns/8675309").accept(HAL_JSON))
@@ -280,7 +280,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void TestServerError() throws Exception {
+    public void testServerError() throws Exception {
         when(campaignRepository.findAll()).thenThrow(new HttpServerErrorException(INTERNAL_SERVER_ERROR));
 
         mockMvc.perform(get("/campaigns").accept(HAL_JSON))
@@ -292,7 +292,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void PostCampaign() throws Exception {
+    public void postCampaign() throws Exception {
         when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -343,7 +343,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void PostCampaign_InvalidContentType() throws Exception {
+    public void postCampaign_InvalidContentType() throws Exception {
         when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -367,7 +367,7 @@ public class CampaignControllerTest {
     }
 
     @Test
-    public void PostCampaign_InvalidSyntax() throws Exception {
+    public void postCampaign_InvalidSyntax() throws Exception {
         when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
 
         String invalidJson = "{\"name\": \"}";

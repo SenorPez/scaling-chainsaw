@@ -11,10 +11,10 @@ public class PlayerIdGenerator implements IdentifierGenerator {
     @Override
     public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
         int campaignId = ((Player) object).getCampaignId();
-        String query = String.format("SELECT id FROM Player WHERE campaign_id = %d", campaignId);
+        String query = String.format("SELECT id FROM players WHERE campaign_id = %d", campaignId);
 
         Stream<?> stream = session
-                .createQuery(query)
+                .createNativeQuery(query)
                 .stream();
 
         int max = stream
