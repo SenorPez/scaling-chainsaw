@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
-import static com.senorpez.loottrack.api.RootControllerTest.commonLinks;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
@@ -82,7 +81,7 @@ public class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(COLLECTION_SCHEMA)))
-                .andExpect(jsonPath("$._embedded.loottable-api:item", hasItem(
+                .andExpect(jsonPath("$._embedded.item", hasItem(
                         allOf(
                                 hasEntry("id", (Object) FIRST_ITEM.getId()),
                                 hasEntry("name", (Object) FIRST_ITEM.getName()),
@@ -93,26 +92,26 @@ public class ItemControllerTest {
                                 )
                         )
                 )))
-                .andExpect(jsonPath("$._embedded.loottable-api:item", hasItem(
+                .andExpect(jsonPath("$._embedded.item", hasItem(
                         allOf(
                                 hasEntry("id", (Object) SECOND_ITEM.getId()),
                                 hasEntry("name", (Object) SECOND_ITEM.getName()),
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
-                                                hasEntry("href", String.format("http://localhost:8080/campaigns/%d", SECOND_ITEM.getId()))
+                                                hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))
                                         )
                                 )
                         )
                 )))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/items")))
-                .andExpect(jsonPath("$._links.cures", everyItem(
-                        allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
-                                hasEntry("name", (Object) "loottable-api"),
-                                hasEntry("templated", (Object) true)
-                        )
-                )))
+//                .andExpect(jsonPath("$._links.curies", everyItem(
+//                        allOf(
+//                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
+//                                hasEntry("name", (Object) "loottable-api"),
+//                                hasEntry("templated", (Object) true)
+//                        )
+//                )))
                 .andDo(document("items",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -122,14 +121,16 @@ public class ItemControllerTest {
                                         .attributes(key("acceptvalue").value(HAL_JSON_VALUE))
                         ),
                         responseFields(
-                                fieldWithPath("_embedded.loottable-api:item").description("Item resource."),
-                                fieldWithPath("_embedded.loottable-api:item[].id").description("Item ID number."),
-                                fieldWithPath("_embedded.loottable-api:item[].name").description("Item name."),
+                                fieldWithPath("_embedded.item").description("Item resource."),
+                                fieldWithPath("_embedded.item[].id").description("Item ID number."),
+                                fieldWithPath("_embedded.item[].name").description("Item name."),
                                 subsectionWithPath("_links").ignored(),
-                                subsectionWithPath("_embedded.loottable-api:campaign[]._links").ignored()
+                                subsectionWithPath("_embedded.item[]._links").ignored()
 
                         ),
-                        commonLinks
+                        links(halLinks(),
+                                linkWithRel("self").ignored(),
+                                linkWithRel("index").ignored())
                 ));
 
         verify(itemRepository, times(1)).findAll();
@@ -221,7 +222,7 @@ public class ItemControllerTest {
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
-                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/hal+json\"")));
 
         verifyNoInteractions(itemRepository);
@@ -268,7 +269,7 @@ public class ItemControllerTest {
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.deatil", is("Accept header must be \"application/hal+json\"")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/hal+json\"")));
 
         verifyNoInteractions(itemRepository);
     }
@@ -326,6 +327,7 @@ public class ItemControllerTest {
                         links(
                                 halLinks(),
                                 linkWithRel("self").description("This resource."),
+                                linkWithRel("loottable-api:items").description("List of item resources."),
                                 linkWithRel("index").description("Index resource."),
                                 linkWithRel("curies").description("Curies")
                         )
@@ -365,41 +367,5 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
 
         verifyNoInteractions(itemRepository);
-    }
-
-
-    private static class Item {
-        Item setId(int i) {return this;}
-        Item setName(String s) {return this;}
-
-        public Integer getId() {
-            return 1;
-        }
-
-        public String getName() {
-            return String.valueOf((Object) 1);
-        }
-    }
-
-    private class ItemController {
-    }
-
-    private class ItemRepository {
-        public Object findAll() {
-            return null;
-        }
-
-        public Object findById(int anyInt) {
-            return null;
-        }
-
-        public Item save(Item any) {
-            return null;
-        }
-    }
-
-    private class ItemNotFoundException extends Throwable {
-        public ItemNotFoundException(int i) {
-        }
     }
 }

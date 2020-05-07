@@ -22,6 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 public class APIExceptionHandler {
     @ExceptionHandler({
             CampaignNotFoundException.class,
+            ItemNotFoundException.class,
             PlayerNotFoundException.class
     })
     ResponseEntity<ErrorResponse> handleAPIObjectNotFound(final Exception e) {
