@@ -186,7 +186,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void getAllPlayer_InvalidCampaign_ValidAcceptHeader() throws Exception {
+    public void getAllPlayers_InvalidCampaign_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
         when(playerRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
@@ -478,7 +478,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void postPlayer_ValidCampaign_InvalidCombatType() throws Exception {
+    public void postPlayer_ValidCampaign_InvalidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
 
