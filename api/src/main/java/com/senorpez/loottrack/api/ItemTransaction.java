@@ -18,16 +18,12 @@ class ItemTransaction {
 
     @Id
     @ManyToOne
-    @JoinColumn
-    private Campaign campaign;
-
-    @Id
-    @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "player_id")
+    @JoinColumn(name = "campaign_id")
     private Player player;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(nullable = false)
     private Item item;
 
     @Column(nullable = false)
@@ -39,15 +35,6 @@ class ItemTransaction {
 
     public ItemTransaction setId(int id) {
         this.id = id;
-        return this;
-    }
-
-    public Campaign getCampaign() {
-        return campaign;
-    }
-
-    public ItemTransaction setCampaign(Campaign campaign) {
-        this.campaign = campaign;
         return this;
     }
 
@@ -76,17 +63,5 @@ class ItemTransaction {
     public ItemTransaction setQuantity(int quantity) {
         this.quantity = quantity;
         return this;
-    }
-
-    int getCampaignId() {
-        return campaign.getId();
-    }
-
-    int getPlayerId() {
-        return player.getId();
-    }
-
-    String getItemName() {
-        return item.getName();
     }
 }

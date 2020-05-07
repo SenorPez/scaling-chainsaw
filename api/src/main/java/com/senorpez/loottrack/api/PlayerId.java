@@ -13,4 +13,22 @@ public class PlayerId implements Serializable {
         this.id = player;
         this.campaign = campaign.getId();
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public PlayerId setId(int id) {
+        this.id = id;
+        return this;
+    }
+
+    public int getCampaign() {
+        return campaign;
+    }
+
+    public PlayerId setCampaign(int campaign) {
+        this.campaign = campaign;
+        return this;
+    }
 }

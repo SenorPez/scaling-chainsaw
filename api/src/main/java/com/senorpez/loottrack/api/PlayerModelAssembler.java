@@ -9,7 +9,7 @@ public class PlayerModelAssembler extends RepresentationModelAssemblerSupport<Pl
 
     @Override
     public PlayerModel toModel(Player entity) {
-        return createModelWithId(entity.getId(), entity, entity.getCampaignId())
+        return createModelWithId(entity.getId(), entity, entity.getCampaign().getId())
                 .setId(entity.getId())
                 .setName(entity.getName());
     }

@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 public class PlayerIdGenerator implements IdentifierGenerator {
     @Override
     public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
-        int campaignId = ((Player) object).getCampaignId();
+        int campaignId = ((Player) object).getCampaign().getId();
         String query = String.format("SELECT id FROM players WHERE campaign_id = %d", campaignId);
 
         Stream<?> stream = session

@@ -29,7 +29,7 @@ public class ItemTransactionController {
     ResponseEntity<PlayerModel> addItemTransaction(@RequestBody ItemTransaction newItemTransaction, @PathVariable final int campaignId, @PathVariable final int playerId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Player player = playerRepository.findByCampaignAndId(campaign, playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
-        ItemTransaction itemTransaction = itemTransactionRepository.save(newItemTransaction.setCampaign(campaign).setPlayer(player));
+        ItemTransaction itemTransaction = itemTransactionRepository.save(newItemTransaction.setPlayer(player.setCampaign(campaign)));
 
         PlayerModel playerModel = playerModelAssembler.toModel(player);
         playerModel.add(linkTo(PlayerController.class, campaignId).withRel("players"));

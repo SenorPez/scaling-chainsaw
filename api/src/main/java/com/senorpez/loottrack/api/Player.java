@@ -28,8 +28,17 @@ class Player {
         return id;
     }
 
-    Player setId(int id) {
+    public Player setId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public Campaign getCampaign() {
+        return campaign;
+    }
+
+    public Player setCampaign(Campaign campaign) {
+        this.campaign = campaign;
         return this;
     }
 
@@ -37,17 +46,8 @@ class Player {
         return name;
     }
 
-    Player setName(String name) {
+    public Player setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    int getCampaignId() {
-        return campaign.getId();
-    }
-
-    Player setCampaign(Campaign campaign) {
-        this.campaign = campaign;
         return this;
     }
 }

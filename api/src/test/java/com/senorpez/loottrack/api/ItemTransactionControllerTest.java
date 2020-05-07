@@ -49,7 +49,6 @@ public class ItemTransactionControllerTest {
             .setName("Gold");
 
     private static final ItemTransaction FIRST_TRANSACTION = new ItemTransaction()
-            .setCampaign(FIRST_CAMPAIGN)
             .setPlayer(FIRST_PLAYER)
             .setItem(FIRST_ITEM)
             .setQuantity(5);
