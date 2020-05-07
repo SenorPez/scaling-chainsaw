@@ -44,7 +44,7 @@
     "_embedded": {
       "type": "object",
       "properties": {
-        "item": {
+        "loottable-api:lootitem": {
           "type": "array",
           "items": {
             "properties": {
@@ -78,7 +78,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "item"
+        "loottable-api:lootitem"
       ]
     },
     "_links": {
@@ -97,7 +97,8 @@
       "additionalProperties": false,
       "required": [
         "self",
-        "index"
+        "index",
+        "curies"
       ]
     }
   },

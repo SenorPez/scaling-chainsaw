@@ -39,7 +39,7 @@ public class ItemController {
     ResponseEntity<ItemModel> items(@PathVariable final int itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
         ItemModel itemModel = assembler.toModel(item);
-        itemModel.add(linkTo(ItemController.class).withRel("items"));
+        itemModel.add(linkTo(ItemController.class).withRel("lootitems"));
         itemModel.add(linkTo(RootController.class).withRel("index"));
 
         return ResponseEntity.ok(itemModel);
@@ -49,7 +49,7 @@ public class ItemController {
     ResponseEntity<ItemModel> addItem(@RequestBody Item newItem) {
         Item item = itemRepository.save(newItem);
         ItemModel itemModel = assembler.toModel(item);
-        itemModel.add(linkTo(ItemController.class).withRel("items"));
+        itemModel.add(linkTo(ItemController.class).withRel("lootitems"));
         itemModel.add(linkTo(RootController.class).withRel("index"));
 
         return ResponseEntity.created(itemModel.getRequiredLink("self").toUri()).body(itemModel);

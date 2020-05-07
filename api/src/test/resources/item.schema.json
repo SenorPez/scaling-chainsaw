@@ -59,7 +59,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "loottable-api:items": {
+        "loottable-api:lootitems": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -68,7 +68,7 @@
         "self",
         "index",
         "curies",
-        "loottable-api:items"
+        "loottable-api:lootitems"
       ]
     }
   },

@@ -81,7 +81,7 @@ public class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(COLLECTION_SCHEMA)))
-                .andExpect(jsonPath("$._embedded.item", hasItem(
+                .andExpect(jsonPath("$._embedded.loottable-api:lootitem", hasItem(
                         allOf(
                                 hasEntry("id", (Object) FIRST_ITEM.getId()),
                                 hasEntry("name", (Object) FIRST_ITEM.getName()),
@@ -92,7 +92,7 @@ public class ItemControllerTest {
                                 )
                         )
                 )))
-                .andExpect(jsonPath("$._embedded.item", hasItem(
+                .andExpect(jsonPath("$._embedded.loottable-api:lootitem", hasItem(
                         allOf(
                                 hasEntry("id", (Object) SECOND_ITEM.getId()),
                                 hasEntry("name", (Object) SECOND_ITEM.getName()),
@@ -105,14 +105,14 @@ public class ItemControllerTest {
                 )))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/items")))
-//                .andExpect(jsonPath("$._links.curies", everyItem(
-//                        allOf(
-//                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
-//                                hasEntry("name", (Object) "loottable-api"),
-//                                hasEntry("templated", (Object) true)
-//                        )
-//                )))
-                .andDo(document("items",
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
+                                hasEntry("name", (Object) "loottable-api"),
+                                hasEntry("templated", (Object) true)
+                        )
+                )))
+                .andDo(document("lootitems",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -121,16 +121,18 @@ public class ItemControllerTest {
                                         .attributes(key("acceptvalue").value(HAL_JSON_VALUE))
                         ),
                         responseFields(
-                                fieldWithPath("_embedded.item").description("Item resource."),
-                                fieldWithPath("_embedded.item[].id").description("Item ID number."),
-                                fieldWithPath("_embedded.item[].name").description("Item name."),
+                                fieldWithPath("_embedded.loottable-api:lootitem").description("Item resource."),
+                                fieldWithPath("_embedded.loottable-api:lootitem[].id").description("Item ID number."),
+                                fieldWithPath("_embedded.loottable-api:lootitem[].name").description("Item name."),
                                 subsectionWithPath("_links").ignored(),
-                                subsectionWithPath("_embedded.item[]._links").ignored()
+                                subsectionWithPath("_embedded.loottable-api:lootitem[]._links").ignored()
 
                         ),
-                        links(halLinks(),
-                                linkWithRel("self").ignored(),
-                                linkWithRel("index").ignored())
+                        links(
+                                halLinks(),
+                                linkWithRel("self").description("This resource."),
+                                linkWithRel("index").description("Index resource."),
+                                linkWithRel("curies").description("Curies."))
                 ));
 
         verify(itemRepository, times(1)).findAll();
@@ -187,7 +189,7 @@ public class ItemControllerTest {
                         )
                 )))
                 .andDo(document(
-                        "item",
+                        "lootitem",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -203,7 +205,7 @@ public class ItemControllerTest {
                         links(
                                 halLinks(),
                                 linkWithRel("self").description("This resource."),
-                                linkWithRel("loottable-api:items").description("List of item resources."),
+                                linkWithRel("loottable-api:lootitems").description("List of item resources."),
                                 linkWithRel("index").description("Index resource."),
                                 linkWithRel("curies").description("Curies.")
                         )
@@ -311,7 +313,7 @@ public class ItemControllerTest {
                         )
                 )))
                 .andDo(document(
-                        "item",
+                        "lootitem",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -327,7 +329,7 @@ public class ItemControllerTest {
                         links(
                                 halLinks(),
                                 linkWithRel("self").description("This resource."),
-                                linkWithRel("loottable-api:items").description("List of item resources."),
+                                linkWithRel("loottable-api:lootitems").description("List of item resources."),
                                 linkWithRel("index").description("Index resource."),
                                 linkWithRel("curies").description("Curies")
                         )

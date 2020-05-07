@@ -5,8 +5,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "items")
 class Item {
-    //TODO: Figure out how to force a curie on "item" rel.
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

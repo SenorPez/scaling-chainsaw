@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-@Relation(value = "item", collectionRelation = "item")
+@Relation(value = "lootitem", collectionRelation = "lootitem")
 class ItemModel extends RepresentationModel<ItemModel> {
     @JsonProperty
     int id;
