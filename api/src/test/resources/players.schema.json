@@ -54,6 +54,24 @@
               "name": {
                 "type": "string"
               },
+              "inventory": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "quantity"
+                ]
+              },
               "_links": {
                 "type": "object",
                 "properties": {
@@ -71,6 +89,7 @@
             "required": [
               "id",
               "name",
+              "inventory",
               "_links"
             ]
           }

@@ -11,6 +11,7 @@ public class PlayerModelAssembler extends RepresentationModelAssemblerSupport<Pl
     public PlayerModel toModel(Player entity) {
         return createModelWithId(entity.getId(), entity, entity.getCampaign().getId())
                 .setId(entity.getId())
-                .setName(entity.getName());
+                .setName(entity.getName())
+                .setInventory(entity.getInventory());
     }
 }

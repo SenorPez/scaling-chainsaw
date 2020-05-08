@@ -23,6 +23,9 @@ public class PlayerController {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
+    private ItemTransactionRepository itemTransactionRepository;
+
     private final PlayerModelAssembler assembler = new PlayerModelAssembler(PlayerController.class, PlayerModel.class);
 
     @GetMapping
@@ -46,7 +49,9 @@ public class PlayerController {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Player player = playerRepository.findByCampaignAndId(campaign, playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
 
-        PlayerModel playerModel = assembler.toModel(player);
+        PlayerModel playerModel = assembler.toModel(
+                player.setInventory(itemTransactionRepository.getInventory(playerId, campaignId))
+        );
         playerModel.add(linkTo(PlayerController.class, campaignId).withRel("players"));
         playerModel.add(linkTo(RootController.class).withRel("index"));
 

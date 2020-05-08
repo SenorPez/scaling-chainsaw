@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.senorpez.loottrack.api.RootControllerTest.commonLinks;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
@@ -52,14 +53,20 @@ public class PlayerControllerTest {
             .setId(1)
             .setName("First Campaign");
 
+    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{"Gold", 329};
+    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{"Likes", 69};
+
     private static final Player FIRST_PLAYER = new Player()
             .setId(1)
             .setName("First Player")
-            .setCampaign(FIRST_CAMPAIGN);
+            .setCampaign(FIRST_CAMPAIGN)
+            .setInventory(Stream.of(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
+
     private static final Player SECOND_PLAYER = new Player()
             .setId(2)
             .setName("Second Player")
-            .setCampaign(FIRST_CAMPAIGN);
+            .setCampaign(FIRST_CAMPAIGN)
+            .setInventory(Stream.of(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
 
     @InjectMocks
     PlayerController playerController;
@@ -69,6 +76,9 @@ public class PlayerControllerTest {
 
     @Mock
     PlayerRepository playerRepository;
+
+    @Mock
+    ItemTransactionRepository itemTransactionRepository;
 
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
@@ -136,8 +146,10 @@ public class PlayerControllerTest {
                                 fieldWithPath("_embedded.loottable-api:player").description("Player resource."),
                                 fieldWithPath("_embedded.loottable-api:player[].id").description("Player ID number."),
                                 fieldWithPath("_embedded.loottable-api:player[].name").description("Player name."),
+                                fieldWithPath("_embedded.loottable-api:player[].inventory").description("Inventory."),
                                 subsectionWithPath("_links").ignored(),
-                                subsectionWithPath("_embedded.loottable-api:player[]._links").ignored()
+                                subsectionWithPath("_embedded.loottable-api:player[]._links").ignored(),
+                                subsectionWithPath("_embedded.loottable-api:player[].inventory[]").ignored()
                         ),
                         commonLinks.and(
                                 linkWithRel("loottable-api:campaign").description("Campaign resource.")
@@ -242,6 +254,7 @@ public class PlayerControllerTest {
     public void getSinglePlayer_ValidCampaign_ValidPlayer_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
+        when(itemTransactionRepository.getInventory(anyInt(), anyInt())).thenReturn(Stream.of(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
 
         mockMvc.perform(get(String.format("/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId())).accept(HAL_JSON))
                 .andExpect(status().isOk())
@@ -271,6 +284,7 @@ public class PlayerControllerTest {
                         responseFields(
                                 fieldWithPath("id").description("ID number."),
                                 fieldWithPath("name").description("Campaign name."),
+                                subsectionWithPath("inventory").ignored(),
                                 subsectionWithPath("_links").ignored()
                         ),
                         links(
@@ -306,7 +320,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void getSingleCampaign_ValidCampaign_ValidPlayer_InvalidMethod() throws Exception {
+    public void getSinglePlayer_ValidCampaign_ValidPlayer_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
 
@@ -428,7 +442,7 @@ public class PlayerControllerTest {
         when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
 
         ObjectMapper objectMapper = new ObjectMapper();
-
+Integer i = 4;
         mockMvc.perform(
                 post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
                         .contentType(HAL_JSON)
@@ -461,6 +475,7 @@ public class PlayerControllerTest {
                         responseFields(
                                 fieldWithPath("id").description("ID number."),
                                 fieldWithPath("name").description("Player name."),
+                                subsectionWithPath("inventory").ignored(),
                                 subsectionWithPath("_links").ignored()
                         ),
                         links(
@@ -522,5 +537,28 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
 
         verifyNoInteractions(campaignRepository, playerRepository);
+    }
+
+    private static class Inventory {
+        private String name;
+        private Integer quantity;
+
+        public String getName() {
+            return name;
+        }
+
+        public Inventory setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+        public Inventory setQuantity(Integer quantity) {
+            this.quantity = quantity;
+            return this;
+        }
     }
 }
