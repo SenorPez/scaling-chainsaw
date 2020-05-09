@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Entity
 @IdClass(PlayerId.class)
@@ -30,6 +30,7 @@ class Player {
     @Column(nullable = false)
     private String name;
 
+    @Transient
     private List<InventoryItem> inventory = Collections.emptyList();
 
     public int getId() {
@@ -64,9 +65,10 @@ class Player {
     }
 
     @JsonIgnore
-    public Player setInventory(Stream<Object[]> inventory) {
+    public Player setInventory(List<Object[]> inventory) {
         this.inventory = inventory
-                .map(objects -> new InventoryItem((String) objects[0], (Integer) objects[1]))
+                .stream()
+                .map(objects -> new InventoryItem((String) objects[0], ((BigDecimal) objects[1]).intValue()))
                 .collect(Collectors.toList());
         return this;
     }
