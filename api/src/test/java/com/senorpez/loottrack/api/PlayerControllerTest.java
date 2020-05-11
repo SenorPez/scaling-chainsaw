@@ -13,10 +13,10 @@ import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static com.senorpez.loottrack.api.RootControllerTest.commonLinks;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
@@ -53,20 +53,20 @@ public class PlayerControllerTest {
             .setId(1)
             .setName("First Campaign");
 
-    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{"Gold", 329};
-    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{"Likes", 69};
+    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{"Gold", new BigDecimal(329)};
+    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{"Likes", new BigDecimal(69)};
 
     private static final Player FIRST_PLAYER = new Player()
             .setId(1)
             .setName("First Player")
             .setCampaign(FIRST_CAMPAIGN)
-            .setInventory(Stream.of(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
+            .setInventory(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
 
     private static final Player SECOND_PLAYER = new Player()
             .setId(2)
             .setName("Second Player")
             .setCampaign(FIRST_CAMPAIGN)
-            .setInventory(Stream.of(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
+            .setInventory(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
 
     @InjectMocks
     PlayerController playerController;
@@ -254,7 +254,7 @@ public class PlayerControllerTest {
     public void getSinglePlayer_ValidCampaign_ValidPlayer_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
-        when(itemTransactionRepository.getInventory(anyInt(), anyInt())).thenReturn(Stream.of(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
+        when(itemTransactionRepository.getInventory(anyInt(), anyInt())).thenReturn(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
 
         mockMvc.perform(get(String.format("/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId())).accept(HAL_JSON))
                 .andExpect(status().isOk())

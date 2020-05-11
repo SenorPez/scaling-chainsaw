@@ -39,28 +39,52 @@ public class ItemTransactionController {
         Item item = itemRepository.findById(incomingValue.getItem()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem()));
         newItemTransaction.setItem(item);
 
-        newItemTransaction.setQuantity(incomingValue.getQuantity());
+        newItemTransaction
+                .setQuantity(incomingValue.getQuantity())
+                .setRemark(incomingValue.getRemark());
 
         itemTransactionRepository.save(newItemTransaction);
 
         Player updatedPlayer = playerRepository.findByCampaignAndId(campaign, playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
-        PlayerModel playerModel = playerModelAssembler.toModel(updatedPlayer);
+        PlayerModel playerModel = playerModelAssembler.toModel(
+                updatedPlayer.setInventory(itemTransactionRepository.getInventory(playerId, campaignId))
+        );
         playerModel.add(linkTo(PlayerController.class, campaignId).withRel("players"));
         playerModel.add(linkTo(RootController.class).withRel("index"));
 
         return ResponseEntity.created(playerModel.getRequiredLink("self").toUri()).body(playerModel);
     }
 
-    private static class ItemTransactionInsert {
+    static class ItemTransactionInsert {
         private int item;
         private int quantity;
+        private String remark;
 
         public int getItem() {
             return item;
         }
 
+        public ItemTransactionInsert setItem(int item) {
+            this.item = item;
+            return this;
+        }
+
         public int getQuantity() {
             return quantity;
+        }
+
+        public ItemTransactionInsert setQuantity(int quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public String getRemark() {
+            return remark;
+        }
+
+        public ItemTransactionInsert setRemark(String remark) {
+            this.remark = remark;
+            return this;
         }
     }
 }

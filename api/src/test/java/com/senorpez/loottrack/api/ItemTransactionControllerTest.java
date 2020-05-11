@@ -1,6 +1,7 @@
 package com.senorpez.loottrack.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.senorpez.loottrack.api.ItemTransactionController.ItemTransactionInsert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,6 +64,9 @@ public class ItemTransactionControllerTest {
     PlayerRepository playerRepository;
 
     @Mock
+    ItemRepository itemRepository;
+
+    @Mock
     ItemTransactionRepository itemTransactionRepository;
 
     @Rule
@@ -84,6 +88,7 @@ public class ItemTransactionControllerTest {
     public void postItemTransaction_ValidCampaign_ValidPlayer_ValidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
         when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -92,7 +97,8 @@ public class ItemTransactionControllerTest {
                 .perform(
                         post(String.format("/campaigns/%d/players/%d/itemtransactions", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
+                                .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
+                                        .setItem(FIRST_TRANSACTION.getItem().getId())))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
@@ -111,6 +117,7 @@ public class ItemTransactionControllerTest {
                 .andExpect(jsonPath("$._links.loottable-api:players", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players", FIRST_CAMPAIGN.getId()))));
 
         verify(itemTransactionRepository, times(1)).save(any(ItemTransaction.class));
+        verify(itemTransactionRepository, times(1)).getInventory(anyInt(), anyInt());
         verifyNoMoreInteractions(itemTransactionRepository);
     }
 
@@ -171,7 +178,8 @@ public class ItemTransactionControllerTest {
                 .perform(
                         post(String.format("/campaigns/%d/players/8675309/itemtransactions", FIRST_CAMPAIGN.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
+                                .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
+                                        .setItem(FIRST_TRANSACTION.getItem().getId())))
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -246,7 +254,8 @@ public class ItemTransactionControllerTest {
                 .perform(
                         post(String.format("/campaigns/8675309/players/%d/itemtransactions", FIRST_PLAYER.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
+                                .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
+                                        .setItem(FIRST_TRANSACTION.getItem().getId())))
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))

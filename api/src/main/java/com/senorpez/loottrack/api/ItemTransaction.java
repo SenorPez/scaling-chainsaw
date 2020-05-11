@@ -3,6 +3,7 @@ package com.senorpez.loottrack.api;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @IdClass(ItemTransactionId.class)
@@ -28,6 +29,13 @@ class ItemTransaction {
 
     @Column(nullable = false)
     private int quantity;
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    Date datetime = new Date();
+
+    @Column
+    private String remark;
 
     public int getId() {
         return id;
@@ -62,6 +70,15 @@ class ItemTransaction {
 
     public ItemTransaction setQuantity(int quantity) {
         this.quantity = quantity;
+        return this;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public ItemTransaction setRemark(String remark) {
+        this.remark = remark;
         return this;
     }
 }
