@@ -1,26 +1,18 @@
 package com.senorpez.loottrack.api;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@IdClass(ItemTransactionId.class)
 @Table(name = "itemtransactions")
 class ItemTransaction {
     @Id
-    @GeneratedValue(generator = "itemtransactionid-gen")
-    @GenericGenerator(
-            name = "itemtransactionid-gen",
-            strategy = "com.senorpez.loottrack.api.ItemTransactionIdGenerator"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "player_id")
-    @JoinColumn(name = "campaign_id")
+    @JoinColumn(name = "campaign_id", nullable = false)
+    @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 
     @ManyToOne
