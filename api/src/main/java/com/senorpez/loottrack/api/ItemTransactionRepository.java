@@ -10,6 +10,9 @@ interface ItemTransactionRepository extends CrudRepository<ItemTransaction, Inte
             "FROM itemtransactions " +
             "LEFT JOIN items ON itemtransactions.item_id = items.id " +
             "WHERE player_id = ?1 AND campaign_id = ?2 " +
-            "GROUP BY item_id", nativeQuery = true)
+            "GROUP BY item_id " +
+            "ORDER BY FIELD(name, \"Gold Piece\", \"Silver Piece\", \"Copper Piece\"), name", nativeQuery = true)
     List<Object[]> getInventory(int playerId, int campaignId);
+
+
 }
