@@ -3,6 +3,9 @@ const Discord = require("discord.js")
 const fetch = require("node-fetch")
 const client = new Discord.Client()
 
+var campaignId = null
+var playerId = null
+
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}`)
 })
@@ -32,6 +35,15 @@ function processCommand(receivedMessage) {
   if (command == "!drop") {
     dropItem(receivedMessage, quantity, item, args)
   }
+  if (command == "!cid") {
+    // Number goes into the item capture group
+    campaignId = item
+    receivedMessage.channel.send(`Campaign ID set to ${campaignId}`)
+  }
+  if (command == "!pid") {
+    playerId = item
+    receivedMessage.channel.send(`Player Id set to ${playerId}`)
+  }
 }
 
 function dropItem(receivedMessage, quantity, item, args) {
@@ -53,6 +65,13 @@ function addItem(receivedMessage, quantity, item, args) {
 }
 
 function jsonAddItem(receivedMessage, quantity, item, args) {
+  if (campaignId === null || playerId === null) {
+    receivedMessage.channel.send("Campaign or player ID not set. Set with !cid and !pid.")
+    return
+  }
+
+  console.log(playerId)
+
   fetch("http://senorpez.com:9090/items")
     .then(response => {
       return response.json()
@@ -79,7 +98,7 @@ function jsonAddItem(receivedMessage, quantity, item, args) {
 
         let addItem = {item: itemId, quantity: quantity, remark: remark}
 
-        fetch("http://senorpez.com:9090/campaigns/1/players/2/itemtransactions",
+        fetch(`http://senorpez.com:9090/campaigns/${campaignId}/players/${playerId}/itemtransactions`,
           {method: "post", body: JSON.stringify(addItem), headers: {
             "Content-Type": "application/hal+json"
           }})
@@ -101,7 +120,7 @@ function jsonAddItem(receivedMessage, quantity, item, args) {
         }
         let addItem = {item: itemId, quantity: quantity, remark: remark}
 
-        fetch("http://senorpez.com:9090/campaigns/1/players/2/itemtransactions",
+        fetch(`http://senorpez.com:9090/campaigns/${campaignId}/players/${playerId}/itemtransactions`,
           {method: "post", body: JSON.stringify(addItem), headers: {
             "Content-Type": "application/hal+json"
           }})
