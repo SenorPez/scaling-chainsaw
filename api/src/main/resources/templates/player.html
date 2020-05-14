@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Player</title>
+</head>
+<body>
+
+<h1 th:text="${player.name}">Player Name</h1>
+Inventory:
+
+<table>
+    <thead>
+    <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${player.inventory}">
+        <td th:text="${item.name}">Item Name</td>
+        <td th:text="${item.quantity}">Item Quantity</td>
+    </tr>
+    </tbody>
+</table>
+
+<!--Debugging Information:-->
+<!--<table>-->
+<!--    <tr th:each="var : ${#vars.getVariableNames()}">-->
+<!--        <td th:text="${var}"></td>-->
+<!--        <td th:text="${#vars.getVariable(var)}"></td>-->
+<!--    </tr>-->
+<!--</table>-->
+</body>
+</html>
