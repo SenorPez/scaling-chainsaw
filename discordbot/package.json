@@ -1,6 +1,6 @@
 {
   "name": "pezventorybot",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "This is a tribute to the greatest bot in the world.",
   "main": "index.js",
   "scripts": {
