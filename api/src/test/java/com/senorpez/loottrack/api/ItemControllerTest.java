@@ -126,6 +126,7 @@ public class ItemControllerTest {
                                 fieldWithPath("_embedded.loottable-api:lootitem").description("Item resource."),
                                 fieldWithPath("_embedded.loottable-api:lootitem[].id").description("Item ID number."),
                                 fieldWithPath("_embedded.loottable-api:lootitem[].name").description("Item name."),
+                                fieldWithPath("_embedded.loottable-api:lootitem[].charges").description("Charges."),
                                 subsectionWithPath("_links").ignored(),
                                 subsectionWithPath("_embedded.loottable-api:lootitem[]._links").ignored()
 
@@ -202,6 +203,7 @@ public class ItemControllerTest {
                         responseFields(
                                 fieldWithPath("id").description("ID number."),
                                 fieldWithPath("name").description("Item name."),
+                                fieldWithPath("charges").description("Charges"),
                                 subsectionWithPath("_links").ignored()
                         ),
                         links(
@@ -326,6 +328,7 @@ public class ItemControllerTest {
                         responseFields(
                                 fieldWithPath("id").description("ID number."),
                                 fieldWithPath("name").description("Player name."),
+                                fieldWithPath("charges").description("Charges"),
                                 subsectionWithPath("_links").ignored()
                         ),
                         links(

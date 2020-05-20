@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +68,7 @@ class Player {
     public Player setInventory(List<Object[]> inventory) {
         this.inventory = inventory
                 .stream()
-                .map(objects -> new InventoryItem((String) objects[0], ((BigDecimal) objects[1]).intValue()))
+                .map(objects -> new InventoryItem((String) objects[0], ((BigInteger) objects[1]).intValue(), (Integer) objects[2]))
                 .collect(Collectors.toList());
         return this;
     }
@@ -78,10 +78,13 @@ class Player {
         private final String name;
         @JsonProperty
         private final Integer quantity;
+        @JsonProperty
+        private final Integer charges;
 
-        public InventoryItem(String name, Integer quantity) {
+        public InventoryItem(String name, Integer quantity, Integer charges) {
             this.name = name;
             this.quantity = quantity;
+            this.charges = charges;
         }
 
         public String getName() {
@@ -90,6 +93,10 @@ class Player {
 
         public Integer getQuantity() {
             return quantity;
+        }
+
+        public Integer getCharges() {
+            return charges;
         }
     }
 }

@@ -10,6 +10,8 @@ class ItemModel extends RepresentationModel<ItemModel> {
     int id;
     @JsonProperty
     String name;
+    @JsonProperty
+    Integer charges;
 
     public ItemModel() {
     }
@@ -21,6 +23,11 @@ class ItemModel extends RepresentationModel<ItemModel> {
 
     ItemModel setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public ItemModel setCharges(Integer charges) {
+        this.charges = charges;
         return this;
     }
 }

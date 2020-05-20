@@ -47,6 +47,9 @@
     "name": {
       "type": "string"
     },
+    "charges": {
+      "type": "number"
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -76,6 +79,7 @@
   "required": [
     "id",
     "name",
+    "charges",
     "_links"
   ]
 }

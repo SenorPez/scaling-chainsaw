@@ -19,9 +19,8 @@ Inventory:
     <tbody>
     <tr th:each="item : ${player.inventory}">
         <td><span th:text="${item.name}">Item Name</span> <span th:if="${item.charges} != null">
-            <span th:text="'(' + ${item.charges + ') Charges'">(# Charges)</span>
+            <span th:text="'(' + ${item.charges} + ' Charges)'">(# Charges)</span>
         </span></td>
-        <td th:text="${item.name}">Item Name </td>
         <td th:text="${item.quantity}">Item Quantity</td>
     </tr>
     </tbody>

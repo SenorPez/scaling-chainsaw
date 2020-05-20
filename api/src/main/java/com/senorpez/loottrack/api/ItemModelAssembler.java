@@ -17,6 +17,7 @@ public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item
     public ItemModel toModel(Item entity) {
         return createModelWithId(entity.getId(), entity)
                 .setId(entity.getId())
-                .setName(entity.getName());
+                .setName(entity.getName())
+                .setCharges(entity.getCharges());
     }
 }
