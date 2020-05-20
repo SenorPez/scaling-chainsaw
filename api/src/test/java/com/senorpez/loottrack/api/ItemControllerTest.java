@@ -35,8 +35,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ItemControllerTest {
@@ -238,7 +237,7 @@ public class ItemControllerTest {
     public void getSingleItem_ValidItem_InvalidMethod() throws Exception {
         when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
 
-        mockMvc.perform(put(String.format("/items/%d", FIRST_ITEM.getId())).accept(HAL_JSON))
+        mockMvc.perform(patch(String.format("/items/%d", FIRST_ITEM.getId())).accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -284,7 +283,7 @@ public class ItemControllerTest {
     public void getSingleItem_InvalidItem_InvalidMethod() throws Exception {
         when(itemRepository.findById(anyInt())).thenThrow(new ItemNotFoundException(8675309));
 
-        mockMvc.perform(put("/items/8675309").accept(HAL_JSON))
+        mockMvc.perform(patch("/items/8675309").accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
