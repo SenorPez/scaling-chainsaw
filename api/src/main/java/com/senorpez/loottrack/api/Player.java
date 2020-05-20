@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +67,7 @@ class Player {
     public Player setInventory(List<Object[]> inventory) {
         this.inventory = inventory
                 .stream()
-                .map(objects -> new InventoryItem((String) objects[0], ((BigInteger) objects[1]).intValue(), (Integer) objects[2]))
+                .map(objects -> new InventoryItem((String) objects[0], ((Number) objects[1]).intValue(), (Integer) objects[2]))
                 .collect(Collectors.toList());
         return this;
     }
