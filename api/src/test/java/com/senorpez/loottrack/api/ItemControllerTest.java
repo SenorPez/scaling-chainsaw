@@ -48,10 +48,12 @@ public class ItemControllerTest {
 
     private static final Item FIRST_ITEM = new Item()
             .setId(1)
-            .setName("First Item");
+            .setName("First Item")
+            .setCharges(1);
     private static final Item SECOND_ITEM = new Item()
             .setId(2)
-            .setName("Second Item");
+            .setName("Second Item")
+            .setCharges(2);
 
     @InjectMocks
     ItemController itemController;

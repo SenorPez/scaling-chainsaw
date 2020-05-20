@@ -19,6 +19,9 @@ class Item {
     @Column
     private String details;
 
+    @Column
+    private Integer charges;
+
     Integer getId() {
         return id;
     }
@@ -52,6 +55,15 @@ class Item {
 
     public Item setDetails(String details) {
         this.details = details;
+        return this;
+    }
+
+    public Integer getCharges() {
+        return charges;
+    }
+
+    public Item setCharges(Integer charges) {
+        this.charges = charges;
         return this;
     }
 }
