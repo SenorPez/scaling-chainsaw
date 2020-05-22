@@ -5,8 +5,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -20,15 +19,14 @@ public class ItemController {
     @Autowired
     private ItemRepository itemRepository;
 
-    private ItemModelAssembler assembler = new ItemModelAssembler(ItemController.class, ItemModel.class);
+    private final EmbeddedItemModelAssembler collectionAssembler = new EmbeddedItemModelAssembler(ItemController.class, EmbeddedItemModel.class);
+    private final ItemModelAssembler assembler = new ItemModelAssembler(ItemController.class, ItemModel.class);
 
     @GetMapping
-    ResponseEntity<CollectionModel<ItemModel>> items() {
-        CollectionModel<ItemModel> itemModels = new CollectionModel<>(
-                StreamSupport
-                        .stream(itemRepository.findAll().spliterator(), false)
-                        .map(assembler::toModel)
-                        .collect(Collectors.toList()));
+    ResponseEntity<CollectionModel<EmbeddedItemModel>> items() {
+        CollectionModel<EmbeddedItemModel> itemModels = new CollectionModel<>(
+                collectionAssembler.toCollectionModel(itemRepository.findAll())
+        );
         itemModels.add(linkTo(ItemController.class).withSelfRel());
         itemModels.add(linkTo(RootController.class).withRel("index"));
 
@@ -46,9 +44,26 @@ public class ItemController {
     }
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
-    ResponseEntity<ItemModel> addItem(@RequestBody Item newItem) {
+    ResponseEntity<ItemModel> addItem(@RequestBody final Item newItem) {
         Item item = itemRepository.save(newItem);
         ItemModel itemModel = assembler.toModel(item);
+        itemModel.add(linkTo(ItemController.class).withRel("lootitems"));
+        itemModel.add(linkTo(RootController.class).withRel("index"));
+
+        return ResponseEntity.created(itemModel.getRequiredLink("self").toUri()).body(itemModel);
+    }
+
+    @PutMapping(value = "/{itemId}", consumes = {HAL_JSON_VALUE})
+    ResponseEntity<ItemModel> updateItem(@PathVariable final int itemId, @RequestBody final Item incomingItem) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
+        Item updatedItem = item
+                .setName(Optional.ofNullable(incomingItem.getName()).orElseGet(item::getName))
+                .setWeight(Optional.ofNullable(incomingItem.getWeight()).orElseGet(item::getWeight))
+                .setDetails(Optional.ofNullable(incomingItem.getDetails()).orElseGet(item::getDetails))
+                .setCharges(Optional.ofNullable(incomingItem.getCharges()).orElseGet(item::getCharges));
+        itemRepository.save(updatedItem);
+
+        ItemModel itemModel = assembler.toModel(updatedItem);
         itemModel.add(linkTo(ItemController.class).withRel("lootitems"));
         itemModel.add(linkTo(RootController.class).withRel("index"));
 

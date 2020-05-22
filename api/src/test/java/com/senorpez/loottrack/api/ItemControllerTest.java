@@ -1,5 +1,7 @@
 package com.senorpez.loottrack.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,6 +14,7 @@ import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -22,21 +25,17 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
-import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.ALL;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ItemControllerTest {
@@ -48,7 +47,11 @@ public class ItemControllerTest {
 
     private static final Item FIRST_ITEM = new Item()
             .setId(1)
-            .setName("First Item");
+            .setName("First Item")
+            .setWeight(BigDecimal.valueOf(3.5))
+            .setDetails("An item to test with")
+            .setCharges(1);
+
     private static final Item SECOND_ITEM = new Item()
             .setId(2)
             .setName("Second Item");
@@ -87,9 +90,7 @@ public class ItemControllerTest {
                                 hasEntry("name", (Object) FIRST_ITEM.getName()),
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
-                                                hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))
-                                        )
-                                )
+                                                hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))))
                         )
                 )))
                 .andExpect(jsonPath("$._embedded.loottable-api:lootitem", hasItem(
@@ -98,13 +99,11 @@ public class ItemControllerTest {
                                 hasEntry("name", (Object) SECOND_ITEM.getName()),
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
-                                                hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))
-                                        )
-                                )
+                                                hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))))
                         )
                 )))
-                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/items")))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
@@ -116,23 +115,26 @@ public class ItemControllerTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName("Accept")
-                                        .description("Accept header.")
-                                        .attributes(key("acceptvalue").value(HAL_JSON_VALUE))
+                                headerWithName("Accept").description("Required Accept header")
+                        ),
+                        responseHeaders(
+                                headerWithName("Content-Type").description("Content type of response"),
+                                headerWithName("Content-Length").description("Length of response")
                         ),
                         responseFields(
-                                fieldWithPath("_embedded.loottable-api:lootitem").description("Item resource."),
-                                fieldWithPath("_embedded.loottable-api:lootitem[].id").description("Item ID number."),
-                                fieldWithPath("_embedded.loottable-api:lootitem[].name").description("Item name."),
-                                subsectionWithPath("_links").ignored(),
-                                subsectionWithPath("_embedded.loottable-api:lootitem[]._links").ignored()
-
+                                fieldWithPath("_embedded.loottable-api:lootitem").description("Array of item resources"),
+                                fieldWithPath("_embedded.loottable-api:lootitem[].id").description("Item ID"),
+                                fieldWithPath("_embedded.loottable-api:lootitem[].name").description("Item name"),
+                                fieldWithPath("_embedded.loottable-api:lootitem[]._links.self").description("Link to item resource"),
+                                fieldWithPath("_embedded.loottable-api:lootitem[]._links.self.href").ignored(),
+                                subsectionWithPath("_links").description("Links to other resources")
                         ),
                         links(
                                 halLinks(),
-                                linkWithRel("self").description("This resource."),
-                                linkWithRel("index").description("Index resource."),
-                                linkWithRel("curies").description("Curies."))
+                                linkWithRel("self").description("This resource"),
+                                linkWithRel("index").description("Index resource"),
+                                linkWithRel("curies").description("Compact URI resolvers")
+                        )
                 ));
 
         verify(itemRepository, times(1)).findAll();
@@ -179,8 +181,11 @@ public class ItemControllerTest {
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_ITEM.getName())))
-                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
+                .andExpect(jsonPath("$.weight", is(FIRST_ITEM.getWeight().doubleValue())))
+                .andExpect(jsonPath("$.details", is(FIRST_ITEM.getDetails())))
+                .andExpect(jsonPath("$.charges", is(FIRST_ITEM.getCharges())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
@@ -189,27 +194,59 @@ public class ItemControllerTest {
                         )
                 )))
                 .andDo(document(
-                        "lootitem",
+                        "lootitem-get",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName("Accept")
-                                        .description("Accept header.")
-                                        .attributes(key("acceptvalue").value(HAL_JSON_VALUE))
+                                headerWithName("Accept").description("Accept header.")
+                        ),
+                        responseHeaders(
+                                headerWithName("Content-Type").description("Content type of response"),
+                                headerWithName("Content-Length").description("Length of response")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("ID number."),
-                                fieldWithPath("name").description("Item name."),
-                                subsectionWithPath("_links").ignored()
+                                fieldWithPath("id").description("Item ID"),
+                                fieldWithPath("name").description("Item name"),
+                                fieldWithPath("weight").description("Item weight (lbs.); may be null"),
+                                fieldWithPath("details").description("Item details; may be null"),
+                                fieldWithPath("charges").description("Item charges; may be null"),
+                                subsectionWithPath("_links").description("Links to other resources")
                         ),
                         links(
                                 halLinks(),
-                                linkWithRel("self").description("This resource."),
-                                linkWithRel("loottable-api:lootitems").description("List of item resources."),
-                                linkWithRel("index").description("Index resource."),
-                                linkWithRel("curies").description("Curies.")
+                                linkWithRel("self").description("This resource"),
+                                linkWithRel("index").description("Index resource"),
+                                linkWithRel("curies").description("Curies."),
+                                linkWithRel("loottable-api:lootitems").description("Array of item resources")
                         )
                 ));
+
+        verify(itemRepository, times(1)).findById(anyInt());
+        verifyNoMoreInteractions(itemRepository);
+    }
+
+    @Test
+    public void getMinimalItem_ValidItem_ValidAcceptHeader() throws Exception {
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(SECOND_ITEM));
+
+        mockMvc.perform(get(String.format("/items/%d", SECOND_ITEM.getId())).accept(HAL_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(SECOND_ITEM.getId())))
+                .andExpect(jsonPath("$.name", is(SECOND_ITEM.getName())))
+                .andExpect(jsonPath("$.weight", is(nullValue())))
+                .andExpect(jsonPath("$.details", is(nullValue())))
+                .andExpect(jsonPath("$.charges", is(nullValue())))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
+                                hasEntry("name", (Object) "loottable-api"),
+                                hasEntry("templated", (Object) true)
+                        )
+                )));
 
         verify(itemRepository, times(1)).findById(anyInt());
         verifyNoMoreInteractions(itemRepository);
@@ -234,7 +271,7 @@ public class ItemControllerTest {
     public void getSingleItem_ValidItem_InvalidMethod() throws Exception {
         when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
 
-        mockMvc.perform(put(String.format("/items/%d", FIRST_ITEM.getId())).accept(HAL_JSON))
+        mockMvc.perform(patch(String.format("/items/%d", FIRST_ITEM.getId())).accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -280,7 +317,7 @@ public class ItemControllerTest {
     public void getSingleItem_InvalidItem_InvalidMethod() throws Exception {
         when(itemRepository.findById(anyInt())).thenThrow(new ItemNotFoundException(8675309));
 
-        mockMvc.perform(put("/items/8675309").accept(HAL_JSON))
+        mockMvc.perform(patch("/items/8675309").accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -294,17 +331,19 @@ public class ItemControllerTest {
     @Test
     public void postItem_ValidContentType() throws Exception {
         when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        TestItem testItem = new TestItem(FIRST_ITEM);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        mockMvc.perform(post("/items").contentType(HAL_JSON).content(objectMapper.writeValueAsString(FIRST_ITEM)))
+        mockMvc.perform(post("/items").contentType(HAL_JSON).content(testItem.asJson()))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_ITEM.getName())))
-                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
+                .andExpect(jsonPath("$.weight", is(FIRST_ITEM.getWeight().doubleValue())))
+                .andExpect(jsonPath("$.details", is(FIRST_ITEM.getDetails())))
+                .andExpect(jsonPath("$.charges", is(FIRST_ITEM.getCharges())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
@@ -313,25 +352,37 @@ public class ItemControllerTest {
                         )
                 )))
                 .andDo(document(
-                        "lootitem",
+                        "lootitems-post",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName("Content-Type")
-                                        .description("Content Type header.")
-                                        .attributes(key("contenttype").value(HAL_JSON_VALUE))
+                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json")
+                        ),
+                        requestFields(
+                                fieldWithPath("id").ignored(),
+                                fieldWithPath("name").description("Item name"),
+                                fieldWithPath("weight").description("Item weight (lbs.); may be null").optional(),
+                                fieldWithPath("details").description("Item details; may be null").optional(),
+                                fieldWithPath("charges").description("Item charges; may be null").optional()
+                        ),
+                        responseHeaders(
+                                headerWithName("Content-Type").description("Content type of response"),
+                                headerWithName("Content-Length").description("Length of response")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("ID number."),
-                                fieldWithPath("name").description("Player name."),
-                                subsectionWithPath("_links").ignored()
+                                fieldWithPath("id").description("Item ID"),
+                                fieldWithPath("name").description("Item name"),
+                                fieldWithPath("weight").description("Item weight (lbs.); may be null"),
+                                fieldWithPath("details").description("Item details; may be null"),
+                                fieldWithPath("charges").description("Item charges; may be null"),
+                                subsectionWithPath("_links").description("Links to other resources")
                         ),
                         links(
                                 halLinks(),
-                                linkWithRel("self").description("This resource."),
-                                linkWithRel("loottable-api:lootitems").description("List of item resources."),
-                                linkWithRel("index").description("Index resource."),
-                                linkWithRel("curies").description("Curies")
+                                linkWithRel("self").description("This resource"),
+                                linkWithRel("index").description("Index resource"),
+                                linkWithRel("curies").description("Curies."),
+                                linkWithRel("loottable-api:lootitems").description("Array of item resources")
                         )
                 ));
 
@@ -340,12 +391,39 @@ public class ItemControllerTest {
     }
 
     @Test
+    public void postMinimalItem_ValidContentType() throws Exception {
+        when(itemRepository.save(any(Item.class))).thenReturn(SECOND_ITEM);
+        TestItem testItem = new TestItem(SECOND_ITEM);
+
+        mockMvc.perform(post("/items").contentType(HAL_JSON).content(testItem.asJson()))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(HAL_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(SECOND_ITEM.getId())))
+                .andExpect(jsonPath("$.name", is(SECOND_ITEM.getName())))
+                .andExpect(jsonPath("$.weight", is(nullValue())))
+                .andExpect(jsonPath("$.details", is(nullValue())))
+                .andExpect(jsonPath("$.charges", is(nullValue())))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
+                                hasEntry("name", (Object) "loottable-api"),
+                                hasEntry("templated", (Object) true)
+                        )
+                )));
+
+        verify(itemRepository, times(1)).save(any(Item.class));
+        verifyNoMoreInteractions(itemRepository);
+    }
+
+    @Test
     public void postItem_InvalidContentType() throws Exception {
         when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        TestItem testItem = new TestItem(FIRST_ITEM);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        mockMvc.perform(post("/items").contentType(INVALID_MEDIA_TYPE).content(objectMapper.writeValueAsString(FIRST_ITEM)))
+        mockMvc.perform(post("/items").contentType(INVALID_MEDIA_TYPE).content(testItem.asJson()))
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -369,5 +447,205 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
 
         verifyNoInteractions(itemRepository);
+    }
+
+    @Test
+    public void putItem_ValidItem_ValidContentType() throws Exception {
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
+        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        TestItem testItem = new TestItem(FIRST_ITEM);
+
+        mockMvc.perform(put(String.format("/items/%d", FIRST_ITEM.getId())).contentType(HAL_JSON).content(testItem.asJson()))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(HAL_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(FIRST_ITEM.getId())))
+                .andExpect(jsonPath("$.name", is(FIRST_ITEM.getName())))
+                .andExpect(jsonPath("$.weight", is(FIRST_ITEM.getWeight().doubleValue())))
+                .andExpect(jsonPath("$.details", is(FIRST_ITEM.getDetails())))
+                .andExpect(jsonPath("$.charges", is(FIRST_ITEM.getCharges())))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
+                                hasEntry("name", (Object) "loottable-api"),
+                                hasEntry("templated", (Object) true)
+                        )
+                )))
+                .andDo(document(
+                        "lootitem-put",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json")
+                        ),
+                        requestFields(
+                                fieldWithPath("id").ignored(),
+                                fieldWithPath("name").description("Item name; may be null to leave value unchanged"),
+                                fieldWithPath("weight").description("Item weight (lbs.); may be null to leave value unchanged").optional(),
+                                fieldWithPath("details").description("Item details; may be null to leave value unchanged").optional(),
+                                fieldWithPath("charges").description("Item charges; may be null to leave value unchanged").optional()
+                        ),
+                        responseHeaders(
+                                headerWithName("Content-Type").description("Content type of response"),
+                                headerWithName("Content-Length").description("Length of response")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("Item ID"),
+                                fieldWithPath("name").description("Item name"),
+                                fieldWithPath("weight").description("Item weight (lbs.); may be null"),
+                                fieldWithPath("details").description("Item details; may be null"),
+                                fieldWithPath("charges").description("Item charges; may be null"),
+                                subsectionWithPath("_links").description("Links to other resources")
+                        ),
+                        links(
+                                halLinks(),
+                                linkWithRel("self").description("This resource"),
+                                linkWithRel("index").description("Index resource"),
+                                linkWithRel("curies").description("Curies."),
+                                linkWithRel("loottable-api:lootitems").description("Array of item resources")
+                        )
+                ));
+
+        verify(itemRepository, times(1)).findById(anyInt());
+        verify(itemRepository, times(1)).save(any(Item.class));
+        verifyNoMoreInteractions(itemRepository);
+    }
+    @Test
+    public void putMinimalItem_ValidItem_ValidContentType() throws Exception {
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(SECOND_ITEM));
+        when(itemRepository.save(any(Item.class))).thenReturn(SECOND_ITEM);
+        TestItem testItem = new TestItem(SECOND_ITEM);
+
+        mockMvc.perform(put(String.format("/items/%d", SECOND_ITEM.getId())).contentType(HAL_JSON).content(testItem.asJson()))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(HAL_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(SECOND_ITEM.getId())))
+                .andExpect(jsonPath("$.name", is(SECOND_ITEM.getName())))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
+                                hasEntry("name", (Object) "loottable-api"),
+                                hasEntry("templated", (Object) true)
+                        )
+                )));
+
+        verify(itemRepository, times(1)).findById(anyInt());
+        verify(itemRepository, times(1)).save(any(Item.class));
+        verifyNoMoreInteractions(itemRepository);
+    }
+
+    @Test
+    public void putItem_ValidItem_InvalidContentType() throws Exception {
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
+        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        TestItem testItem = new TestItem(FIRST_ITEM);
+
+        mockMvc.perform(put(String.format("/items/%d", FIRST_ITEM.getId())).contentType(INVALID_MEDIA_TYPE).content(testItem.asJson()))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(UNSUPPORTED_MEDIA_TYPE.value())))
+                .andExpect(jsonPath("$.message", is(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Content type '%s' not supported", INVALID_MEDIA_TYPE.toString()))));
+
+        verifyNoInteractions(itemRepository);
+    }
+
+    @Test
+    public void putItem_ValidItem_InvalidSyntax() throws Exception {
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
+        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        String invalidJson = "{\"name\": \"}";
+
+        mockMvc.perform(put(String.format("/items/%d", FIRST_ITEM.getId())).contentType(HAL_JSON).content(invalidJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
+                .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
+
+        verifyNoInteractions(itemRepository);
+    }
+
+    @Test
+    public void putItem_InvalidItem_ValidContentType() throws Exception {
+        when(itemRepository.findById(anyInt())).thenThrow(new ItemNotFoundException(8675309));
+        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        TestItem testItem = new TestItem(FIRST_ITEM);
+
+        mockMvc.perform(put("/items/8675309").contentType(HAL_JSON).content(testItem.asJson()))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Item with ID of %d not found", 8675309))));
+
+        verify(itemRepository, times(1)).findById(anyInt());
+        verifyNoMoreInteractions(itemRepository);
+    }
+
+    @Test
+    public void putItem_InvalidItem_InvalidContentType() throws Exception {
+        when(itemRepository.findById(anyInt())).thenThrow(new ItemNotFoundException(8675309));
+        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        TestItem testItem = new TestItem(FIRST_ITEM);
+
+        mockMvc.perform(put("/items/8675309").contentType(INVALID_MEDIA_TYPE).content(testItem.asJson()))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(UNSUPPORTED_MEDIA_TYPE.value())))
+                .andExpect(jsonPath("$.message", is(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Content type '%s' not supported", INVALID_MEDIA_TYPE.toString()))));
+
+        verifyNoInteractions(itemRepository);
+    }
+
+    @Test
+    public void putItem_InvalidItem_InvalidSyntax() throws Exception {
+        when(itemRepository.findById(anyInt())).thenThrow(new ItemNotFoundException(8675309));
+        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        String invalidJson = "{\"name\": \"}";
+
+        mockMvc.perform(put("/items/8675309").contentType(HAL_JSON).content(invalidJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
+                .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
+
+        verifyNoInteractions(itemRepository);
+    }
+
+    private static class TestItem {
+        @JsonProperty
+        private final Integer id;
+        @JsonProperty
+        private final String name;
+        @JsonProperty
+        private final BigDecimal weight;
+        @JsonProperty
+        private final String details;
+        @JsonProperty
+        private final Integer charges;
+
+        TestItem(Item item) {
+            this.id = item.getId();
+            this.name = item.getName();
+            this.weight = item.getWeight();
+            this.details = item.getDetails();
+            this.charges = item.getCharges();
+        }
+
+        String asJson() throws JsonProcessingException {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        }
     }
 }

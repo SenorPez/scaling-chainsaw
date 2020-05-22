@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'com.senorpez.loottrack'
-version '1.0.0'
+version '1.1.0'
 
 repositories {
     mavenCentral()
@@ -24,6 +24,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'mysql:mysql-connector-java'
+    runtime 'com.h2database:h2'
     compile group: 'com.github.ulisesbocchio', name: 'jasypt-spring-boot-starter', version: '2.1.2'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.2.6.RELEASE'
     testCompile group: 'junit', name: 'junit', version: '4.12'
