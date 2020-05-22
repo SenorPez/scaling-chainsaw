@@ -13,7 +13,7 @@ import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -53,8 +53,8 @@ public class PlayerControllerTest {
             .setId(1)
             .setName("First Campaign");
 
-    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{"Gold", new BigDecimal(329)};
-    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{"Likes", new BigDecimal(69)};
+    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{"Gold", new BigInteger(String.valueOf(329)), 1};
+    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{"Likes", new BigInteger(String.valueOf(69)), 2};
 
     private static final Player FIRST_PLAYER = new Player()
             .setId(1)

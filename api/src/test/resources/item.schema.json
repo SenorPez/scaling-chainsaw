@@ -47,6 +47,15 @@
     "name": {
       "type": "string"
     },
+    "weight": {
+      "type": ["null", "number"]
+    },
+    "details": {
+      "type": ["string", "null"]
+    },
+    "charges": {
+      "type": ["null", "number"]
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -76,6 +85,7 @@
   "required": [
     "id",
     "name",
+    "charges",
     "_links"
   ]
 }
