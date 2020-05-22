@@ -26,7 +26,7 @@ class Item {
         return id;
     }
 
-    Item setId(Integer id) {
+    Item setId(final Integer id) {
         this.id = id;
         return this;
     }
@@ -35,34 +35,34 @@ class Item {
         return name;
     }
 
-    Item setName(String name) {
+    Item setName(final String name) {
         this.name = name;
         return this;
     }
 
-    public BigDecimal getWeight() {
+    BigDecimal getWeight() {
         return weight;
     }
 
-    public Item setWeight(BigDecimal weight) {
+    Item setWeight(final BigDecimal weight) {
         this.weight = weight;
         return this;
     }
 
-    public String getDetails() {
+    String getDetails() {
         return details;
     }
 
-    public Item setDetails(String details) {
+    Item setDetails(final String details) {
         this.details = details;
         return this;
     }
 
-    public Integer getCharges() {
+    Integer getCharges() {
         return charges;
     }
 
-    public Item setCharges(Integer charges) {
+    Item setCharges(final Integer charges) {
         this.charges = charges;
         return this;
     }

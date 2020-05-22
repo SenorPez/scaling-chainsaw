@@ -47,8 +47,14 @@
     "name": {
       "type": "string"
     },
+    "weight": {
+      "type": ["null", "number"]
+    },
+    "details": {
+      "type": ["string", "null"]
+    },
     "charges": {
-      "type": "number"
+      "type": ["null", "number"]
     },
     "_links": {
       "type": "object",

@@ -1,0 +1,228 @@
+:apiname: Loot API
+
+= {apiname} Reference
+SenorPez;
+:doctype: book
+:icons: font
+:source-highlighter: highlight.js
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[overview]]
+== Overview
+
+[[overview-versions]]
+=== Versions
+
+There is only a single version of {apiname}.
+
+.{apiname} Versions
+|===
+| API Versions | Accept Header
+
+| Version 1.0
+| `application/hal+json`
+|===
+
+[[overview-http-methods]]
+=== HTTP Methods
+The following HTTP methods are compatible with {apiname}.
+
+.Supported HTTP Methods
+|===
+| Method | Usage
+
+| `GET`
+| Used to retrieve a resource.
+
+| `POST`
+| Used to create a new resource.
+
+| `PUT`
+| Used to update an existing resource.
+|===
+
+[[overview-http-status-codes]]
+=== HTTP Status Codes
+
+The following HTTP status codes are returned by requests to {apiname}. Any other status codes returned may indicate general connection or server failure and are not returned by the API itself.
+
+.HTTP Status Codes
+|===
+| Status Code | Usage
+
+| `200 OK`
+| The GET request succeeded. The requested resource is returned in the response.
+
+| `201 Created`
+| The POST request succeeded. The created resource is returned in the response.
+
+| `400 Bad Request`
+| The request can not processed, possibly due to malformed syntax or another error. Individual endpoints describe the syntax of requests. An error message is sent in the response.
+
+| `402 Payment Required`
+| This code is reserved for when I need extra money.
+
+| `404 Not Found`
+| The requested resource could not be found. An error message is sent in the response.
+
+| `405 Method Not Allowed`
+| The requested method is not allowed. See <<overview-http-methods, HTTP Methods>> and individual endpoint documentation for a list of supported methods. An error message is sent in the response.
+
+| `406 Not Acceptable`
+| The `Accept` header of the request is not supported. Individual endpoints describe supported `Accept` headers. An error message is sent in the response.
+
+| `415 Unsupported Media Type`
+| The `Content-Type` header of the request is not supported. Individual endpoints describe supported `Content-Type` headers. An error message is sent in the response.
+|===
+
+[[overview-errors]]
+=== Errors
+
+If {apiname} returns and error, the response contains a JSON object describing the error.
+
+.Error Fields
+
+TODO: ERROR
+
+[[overview-hypermedia]]
+=== Hypermedia
+
+{apiname} conforms to the http://stateless.co/hal_specification.html[Hypertext Application Language (HAL)] standard.
+
+* Resources are represented by key-value pairs.
+* Collections of resources are contained in an `_embedded` field. Fields of embedded resources may be transformed or omitted.
+** Embedded resources contain a `_links` field with a `self` link to access that resource. Other `_links` fields may be transformed or omitted.
+* Links to other resources are contained in a `_links` field.
+** Users should not create URIs but use the `_links` fields and values to navigate the API.
+** Some resources may be represented by multiple `_links` values depending on the position in the API hierarchy. With the exception of the `_links` field, these resources are identical regardless of the link used to reach them.
+
+The following fields are present in the `_links` value of every non-embedded resource:
+
+.Common Links
+
+TODO: Common Links
+
+== Loot Resources
+
+[[resources-loot-lootitems]]
+=== Items
+
+The items endpoint supports the following methods:
+|===
+| Method | Description
+
+| <<resources-loot-lootitems-get, GET>>
+| Provides a list of item resources.
+
+|<<resources-loot-lootitems-post, POST>>
+| Creates a new item resource.
+|===
+
+[[resources-loot-lootitems-get]]
+==== GET
+
+Provides a list of item resources.
+
+.Request Headers
+
+include::{snippets}/lootitems/request-headers.adoc[]
+
+.Response Headers
+
+include::{snippets}/lootitems/response-headers.adoc[]
+
+.Response Fields
+
+include::{snippets}/lootitems/response-fields.adoc[]
+
+.Response Links
+
+include::{snippets}/lootitems/links.adoc[]
+
+[[resources-loot-lootitems-post]]
+==== POST
+
+Creates a new item resource. If successful, returns the newly created item resource.
+
+.Request Headers
+
+include::{snippets}/lootitems-post/request-headers.adoc[]
+
+.Request Fields
+
+include::{snippets}/lootitems-post/request-fields.adoc[]
+
+.Response Headers
+
+include::{snippets}/lootitems-post/response-headers.adoc[]
+
+.Response Fields
+
+include::{snippets}/lootitems-post/response-fields.adoc[]
+
+.Response Links
+
+include::{snippets}/lootitems-post/links.adoc[]
+
+[[resources-loot-lootitem]]
+=== Item
+
+The item endpoint supports the following methods:
+
+|===
+| Method | Description
+
+| <<resources-loot-lootitem-get, GET>>
+| Provides a single item resource.
+
+|<<resources-loot-lootitem-put, POST>>
+| Updates a single item resource.
+|===
+
+[[resources-loot-lootitem-get]]
+==== GET
+
+Provides a single item resource.
+
+.Request Headers
+
+include::{snippets}/lootitem-get/request-headers.adoc[]
+
+.Response Headers
+
+include::{snippets}/lootitem-get/response-headers.adoc[]
+
+.Fields
+
+include::{snippets}/lootitem-get/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/lootitem-get/links.adoc[]
+
+[[resources-loot-lootitem-put]]
+==== PUT
+
+Updates a single item resource.
+
+.Request Headers
+
+include::{snippets}/lootitem-put/request-headers.adoc[]
+
+.Request Fields
+
+include::{snippets}/lootitem-put/request-fields.adoc[]
+
+.Response Headers
+
+include::{snippets}/lootitem-put/response-headers.adoc[]
+
+.Response Fields
+
+include::{snippets}/lootitem-put/response-fields.adoc[]
+
+.Response Links
+
+include::{snippets}/lootitem-put/links.adoc[]
