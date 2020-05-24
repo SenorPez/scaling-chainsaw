@@ -1,6 +1,7 @@
 package com.senorpez.loottrack.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -442,12 +443,13 @@ public class PlayerControllerTest {
         when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
 
         ObjectMapper objectMapper = new ObjectMapper();
-Integer i = 4;
-        mockMvc.perform(
-                post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
-                        .contentType(HAL_JSON)
-                        .content(objectMapper.writeValueAsString(FIRST_PLAYER))
-        )
+        mockMvc
+                .perform(
+                        post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
+                                .contentType(HAL_JSON)
+                                .content(objectMapper.writeValueAsString(FIRST_PLAYER))
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
@@ -529,6 +531,7 @@ Integer i = 4;
                         post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
                                 .contentType(HAL_JSON)
                                 .content(invalidJson)
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))

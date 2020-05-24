@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,6 @@ public class PlayerController {
     private final PlayerModelAssembler assembler = new PlayerModelAssembler(PlayerController.class, PlayerModel.class);
 
     @GetMapping
-    @ResponseBody
     ResponseEntity<CollectionModel<PlayerModel>> players(@PathVariable final int campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         CollectionModel<PlayerModel> playerModels = new CollectionModel<>(
@@ -50,7 +50,6 @@ public class PlayerController {
     }
 
     @GetMapping(value = "/{playerId}", produces = {HAL_JSON_VALUE})
-    @ResponseBody
     ResponseEntity<PlayerModel> players(@PathVariable final int campaignId, @PathVariable final int playerId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Player player = playerRepository.findByCampaignAndId(campaign, playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
@@ -76,8 +75,8 @@ public class PlayerController {
     }
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
-    @ResponseBody
-    ResponseEntity<PlayerModel> addPlayer(@RequestBody Player newPlayer, @PathVariable final int campaignId) {
+    @RolesAllowed("user")
+    ResponseEntity<PlayerModel> addPlayer(@RequestHeader String Authorization, @RequestBody Player newPlayer, @PathVariable final int campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Player player = playerRepository.save(newPlayer.setCampaign(campaign));
         PlayerModel playerModel = assembler.toModel(player);

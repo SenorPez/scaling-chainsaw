@@ -5,6 +5,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -22,7 +23,7 @@ public class CampaignController {
     @Autowired
     private CampaignRepository campaignRepository;
 
-    private CampaignModelAssembler assembler = new CampaignModelAssembler(CampaignController.class, CampaignModel.class);
+    private final CampaignModelAssembler assembler = new CampaignModelAssembler(CampaignController.class, CampaignModel.class);
 
     @GetMapping
     ResponseEntity<CollectionModel<CampaignModel>> campaigns() {
@@ -48,7 +49,8 @@ public class CampaignController {
     }
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
-    ResponseEntity<CampaignModel> addCampaign(@RequestBody Campaign newCampaign) {
+    @RolesAllowed("user")
+    ResponseEntity<CampaignModel> addCampaign(@RequestHeader String Authorization, @RequestBody Campaign newCampaign) {
         Campaign campaign = campaignRepository.save(newCampaign);
         CampaignModel campaignModel = assembler.toModel(campaign);
         campaignModel.add(linkTo(CampaignController.class).withRel("campaigns"));

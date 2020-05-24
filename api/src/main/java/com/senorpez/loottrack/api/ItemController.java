@@ -5,6 +5,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.Optional;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -44,7 +45,8 @@ public class ItemController {
     }
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
-    ResponseEntity<ItemModel> addItem(@RequestBody final Item newItem) {
+    @RolesAllowed("user")
+    ResponseEntity<ItemModel> addItem(@RequestHeader String Authorization, @RequestBody final Item newItem) {
         Item item = itemRepository.save(newItem);
         ItemModel itemModel = assembler.toModel(item);
         itemModel.add(linkTo(ItemController.class).withRel("lootitems"));
@@ -54,7 +56,8 @@ public class ItemController {
     }
 
     @PutMapping(value = "/{itemId}", consumes = {HAL_JSON_VALUE})
-    ResponseEntity<ItemModel> updateItem(@PathVariable final int itemId, @RequestBody final Item incomingItem) {
+    @RolesAllowed("user")
+    ResponseEntity<ItemModel> updateItem(@RequestHeader String Authorization, @PathVariable final int itemId, @RequestBody final Item incomingItem) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
         Item updatedItem = item
                 .setName(Optional.ofNullable(incomingItem.getName()).orElseGet(item::getName))
