@@ -363,7 +363,8 @@ public class ItemControllerTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json")
+                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json"),
+                                headerWithName("Authorization").description("Authorization token")
                         ),
                         requestFields(
                                 fieldWithPath("id").ignored(),
@@ -503,7 +504,8 @@ public class ItemControllerTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json")
+                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json"),
+                                headerWithName("Authorization").description("Authorization token")
                         ),
                         requestFields(
                                 fieldWithPath("id").ignored(),
