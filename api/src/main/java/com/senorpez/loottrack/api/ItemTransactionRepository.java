@@ -11,6 +11,7 @@ interface ItemTransactionRepository extends CrudRepository<ItemTransaction, Inte
             "LEFT JOIN items ON items.id = itemtransactions.item_id " +
             "WHERE player_id = ?1 AND campaign_id = ?2 " +
             "GROUP BY item_id " +
+	    "HAVING quantity <> 0 " +
             "ORDER BY FIELD(name, \"Gold Piece\", \"Silver Piece\", \"Copper Piece\"), name", nativeQuery = true)
 //    @Query(value = "SELECT name AS name, SUM(quantity) AS quantity, charges " +
 //            "FROM itemtransactions " +
