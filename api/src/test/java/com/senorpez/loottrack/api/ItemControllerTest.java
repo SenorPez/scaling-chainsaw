@@ -3,6 +3,7 @@ package com.senorpez.loottrack.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -333,7 +334,13 @@ public class ItemControllerTest {
         when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
         TestItem testItem = new TestItem(FIRST_ITEM);
 
-        mockMvc.perform(post("/items").contentType(HAL_JSON).content(testItem.asJson()))
+        mockMvc
+                .perform(
+                        post("/items")
+                                .contentType(HAL_JSON)
+                                .content(testItem.asJson())
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
@@ -356,7 +363,8 @@ public class ItemControllerTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json")
+                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json"),
+                                headerWithName("Authorization").description("Authorization token")
                         ),
                         requestFields(
                                 fieldWithPath("id").ignored(),
@@ -395,7 +403,13 @@ public class ItemControllerTest {
         when(itemRepository.save(any(Item.class))).thenReturn(SECOND_ITEM);
         TestItem testItem = new TestItem(SECOND_ITEM);
 
-        mockMvc.perform(post("/items").contentType(HAL_JSON).content(testItem.asJson()))
+        mockMvc
+                .perform(
+                        post("/items")
+                                .contentType(HAL_JSON)
+                                .content(testItem.asJson())
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
@@ -439,7 +453,13 @@ public class ItemControllerTest {
         when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
         String invalidJson = "{\"name\": \"}";
 
-        mockMvc.perform(post("/items").contentType(HAL_JSON).content(invalidJson))
+        mockMvc
+                .perform(
+                        post("/items")
+                                .contentType(HAL_JSON)
+                                .content(invalidJson)
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -455,7 +475,13 @@ public class ItemControllerTest {
         when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
         TestItem testItem = new TestItem(FIRST_ITEM);
 
-        mockMvc.perform(put(String.format("/items/%d", FIRST_ITEM.getId())).contentType(HAL_JSON).content(testItem.asJson()))
+        mockMvc
+                .perform(
+                        put(String.format("/items/%d", FIRST_ITEM.getId()))
+                                .contentType(HAL_JSON)
+                                .content(testItem.asJson())
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
@@ -478,7 +504,8 @@ public class ItemControllerTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
-                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json")
+                                headerWithName("Content-Type").description("Content type of request; must be application/hal+json"),
+                                headerWithName("Authorization").description("Authorization token")
                         ),
                         requestFields(
                                 fieldWithPath("id").ignored(),
@@ -518,7 +545,13 @@ public class ItemControllerTest {
         when(itemRepository.save(any(Item.class))).thenReturn(SECOND_ITEM);
         TestItem testItem = new TestItem(SECOND_ITEM);
 
-        mockMvc.perform(put(String.format("/items/%d", SECOND_ITEM.getId())).contentType(HAL_JSON).content(testItem.asJson()))
+        mockMvc
+                .perform(
+                        put(String.format("/items/%d", SECOND_ITEM.getId()))
+                                .contentType(HAL_JSON)
+                                .content(testItem.asJson())
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
@@ -562,7 +595,13 @@ public class ItemControllerTest {
         when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
         String invalidJson = "{\"name\": \"}";
 
-        mockMvc.perform(put(String.format("/items/%d", FIRST_ITEM.getId())).contentType(HAL_JSON).content(invalidJson))
+        mockMvc
+                .perform(
+                        put(String.format("/items/%d", FIRST_ITEM.getId()))
+                                .contentType(HAL_JSON)
+                                .content(invalidJson)
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -578,7 +617,13 @@ public class ItemControllerTest {
         when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
         TestItem testItem = new TestItem(FIRST_ITEM);
 
-        mockMvc.perform(put("/items/8675309").contentType(HAL_JSON).content(testItem.asJson()))
+        mockMvc
+                .perform(
+                        put("/items/8675309")
+                                .contentType(HAL_JSON)
+                                .content(testItem.asJson())
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -613,7 +658,13 @@ public class ItemControllerTest {
         when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
         String invalidJson = "{\"name\": \"}";
 
-        mockMvc.perform(put("/items/8675309").contentType(HAL_JSON).content(invalidJson))
+        mockMvc
+                .perform(
+                        put("/items/8675309")
+                                .contentType(HAL_JSON)
+                                .content(invalidJson)
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))

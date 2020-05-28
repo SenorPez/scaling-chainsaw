@@ -2,6 +2,7 @@ package com.senorpez.loottrack.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senorpez.loottrack.api.ItemTransactionController.ItemTransactionInsert;
+import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -99,6 +100,7 @@ public class ItemTransactionControllerTest {
                                 .contentType(HAL_JSON)
                                 .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
                                         .setItem(FIRST_TRANSACTION.getItem().getId())))
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
@@ -156,6 +158,7 @@ public class ItemTransactionControllerTest {
                         post(String.format("/campaigns/%d/players/%d/itemtransactions", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId()))
                                 .contentType(HAL_JSON)
                                 .content(invalidJson)
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -180,6 +183,7 @@ public class ItemTransactionControllerTest {
                                 .contentType(HAL_JSON)
                                 .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
                                         .setItem(FIRST_TRANSACTION.getItem().getId())))
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -232,6 +236,7 @@ public class ItemTransactionControllerTest {
                         post(String.format("/campaigns/%d/players/8675309/itemtransactions", FIRST_CAMPAIGN.getId()))
                                 .contentType(HAL_JSON)
                                 .content(invalidJson)
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -256,6 +261,7 @@ public class ItemTransactionControllerTest {
                                 .contentType(HAL_JSON)
                                 .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
                                         .setItem(FIRST_TRANSACTION.getItem().getId())))
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -309,6 +315,7 @@ public class ItemTransactionControllerTest {
                         post(String.format("/campaigns/8675309/players/%d/itemtransactions", FIRST_PLAYER.getId()))
                                 .contentType(HAL_JSON)
                                 .content(invalidJson)
+                                .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))

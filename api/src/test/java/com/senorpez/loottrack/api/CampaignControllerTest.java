@@ -1,6 +1,7 @@
 package com.senorpez.loottrack.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.HttpServerErrorException;
@@ -292,6 +294,7 @@ public class CampaignControllerTest {
     }
 
     @Test
+    @WithMockUser(roles="user")
     public void postCampaign() throws Exception {
         when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
 
@@ -302,6 +305,7 @@ public class CampaignControllerTest {
                         post("/campaigns")
                         .contentType(HAL_JSON)
                         .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
+                        .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
@@ -348,11 +352,12 @@ public class CampaignControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        mockMvc.perform(
-                post("/campaigns")
-                        .contentType(INVALID_MEDIA_TYPE)
-                        .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
-        )
+        mockMvc
+                .perform(
+                        post("/campaigns")
+                                .contentType(INVALID_MEDIA_TYPE)
+                                .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
+                )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -376,6 +381,7 @@ public class CampaignControllerTest {
                 post("/campaigns")
                         .contentType(HAL_JSON)
                         .content(invalidJson)
+                        .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))

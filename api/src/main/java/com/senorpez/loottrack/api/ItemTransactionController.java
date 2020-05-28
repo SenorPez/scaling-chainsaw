@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
+
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -29,7 +31,8 @@ public class ItemTransactionController {
     private final ItemTransactionAssembler assembler = new ItemTransactionAssembler(ItemTransactionController.class, ItemTransactionModel.class);
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
-    ResponseEntity<PlayerModel> addItemTransaction(@RequestBody ItemTransactionInsert incomingValue, @PathVariable final int campaignId, @PathVariable final int playerId) {
+    @RolesAllowed("user")
+    ResponseEntity<PlayerModel> addItemTransaction(@RequestHeader String Authorization, @RequestBody ItemTransactionInsert incomingValue, @PathVariable final int campaignId, @PathVariable final int playerId) {
         ItemTransaction newItemTransaction = new ItemTransaction();
 
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
