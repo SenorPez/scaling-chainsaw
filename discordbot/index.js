@@ -110,7 +110,7 @@ function getItems(receivedMessage, item, args) {
 }
 
 function getItemId(receivedMessage, item, args, data) {
-  const itemArray = data._embedded['loottable-api:lootitem']
+  const itemArray = data._embedded['loot-api:lootitem']
   const filteredItemArray = itemArray.filter(singleItem => singleItem.name == item)
 
   const idRegEx = /(--[i]) ?(.+?(?=--|$))/g

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loottable API character Collection Schema",
-  "description": "Schema for collections of characters in Loottable API",
+  "title": "Loot API character Collection Schema",
+  "description": "Schema for collections of characters in Loot API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -44,7 +44,7 @@
     "_embedded": {
       "type": "object",
       "properties": {
-        "loottable-api:character": {
+        "loot-api:character": {
           "type": "array",
           "items": {
             "properties": {
@@ -97,7 +97,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "loottable-api:character"
+        "loot-api:character"
       ]
     },
     "_links": {
@@ -112,7 +112,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "loottable-api:campaign": {
+        "loot-api:campaign": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -121,7 +121,7 @@
         "self",
         "index",
         "curies",
-        "loottable-api:campaign"
+        "loot-api:campaign"
       ]
     }
   },
