@@ -3,7 +3,7 @@ plugins {
     id 'idea'
 }
 
-group 'com.senorpez.loottrack'
+group 'com.senorpez.loot'
 version '0.1-SNAPSHOT'
 
 sourceCompatibility = 1.8

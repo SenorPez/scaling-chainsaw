@@ -4,7 +4,7 @@ const fetch = require("node-fetch")
 const client = new Discord.Client()
 
 var campaignId = null
-var playerId = null
+var characterId = null
 
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}`)
@@ -50,8 +50,8 @@ function processCommand(receivedMessage) {
     const args = matches[0][4]
 
     if (command == "!add" || command == "!drop" || command == "!setCharges") {
-      if (campaignId === null || playerId === null) {
-          receivedMessage.channel.send("Campaign or player ID not set. Set with !cid and !pid.")
+      if (campaignId === null || characterId === null) {
+          receivedMessage.channel.send("Campaign or character ID not set. Set with !cid and !pid.")
           return
       }
     }
@@ -69,8 +69,8 @@ function processCommand(receivedMessage) {
     }
     if (command == "!pid") {
       // Number goes into the item capture group
-        playerId = item
-        receivedMessage.channel.send(`Player Id set to ${playerId}`)
+        characterId = item
+        receivedMessage.channel.send(`Character Id set to ${characterId}`)
     }
     if (command == "!setcharges") {
         setCharges(receivedMessage, quantity, item, args)
@@ -110,7 +110,7 @@ function getItems(receivedMessage, item, args) {
 }
 
 function getItemId(receivedMessage, item, args, data) {
-  const itemArray = data._embedded['loottable-api:lootitem']
+  const itemArray = data._embedded['loot-api:lootitem']
   const filteredItemArray = itemArray.filter(singleItem => singleItem.name == item)
 
   const idRegEx = /(--[i]) ?(.+?(?=--|$))/g
@@ -150,7 +150,7 @@ function addJsonItem(itemId, quantity, args, access_token, autoremark) {
 
   const authHeader = `bearer ${access_token}`
 
-  fetch(`https://www.loot.senorpez.com/campaigns/${campaignId}/players/${playerId}/itemtransactions`, {
+  fetch(`https://www.loot.senorpez.com/campaigns/${campaignId}/characters/${characterId}/itemtransactions`, {
     method: "post",
     body: JSON.stringify(addItem),
     headers: {

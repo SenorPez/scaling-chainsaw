@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Character</title>
+</head>
+<body>
+
+<h1 th:text="${character.name}">Character Name</h1>
+Inventory:
+
+<table>
+    <thead>
+    <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${character.inventory}">
+        <td><span th:text="${item.name}">Item Name</span> <span th:if="${item.charges} != null">
+            <span th:text="'(' + ${item.charges} + ' Charges)'">(# Charges)</span>
+        </span></td>
+        <td th:text="${item.quantity}">Item Quantity</td>
+    </tr>
+    </tbody>
+</table>
+
+<!--Debugging Information:-->
+<!--<table>-->
+<!--    <tr th:each="var : ${#vars.getVariableNames()}">-->
+<!--        <td th:text="${var}"></td>-->
+<!--        <td th:text="${#vars.getVariable(var)}"></td>-->
+<!--    </tr>-->
+<!--</table>-->
+</body>
+</html>

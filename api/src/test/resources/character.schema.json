@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loot API Item Collection Schema",
-  "description": "Schema for collections of items in Loot API",
+  "title": "Loot API Character Schema",
+  "description": "Schema for character objects in Loot API",
   "definitions": {
     "standardLink": {
       "type": "object",
-      "properties": {
+      "properties" : {
         "href": {
           "type": "string",
           "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)?$"
@@ -41,44 +41,28 @@
   },
   "type": "object",
   "properties": {
-    "_embedded": {
-      "type": "object",
-      "properties": {
-        "loot-api:lootitem": {
-          "type": "array",
-          "items": {
-            "properties": {
-              "id": {
-                "type": "number"
-              },
-              "name": {
-                "type": "string"
-              },
-              "_links": {
-                "type": "object",
-                "properties": {
-                  "self": {
-                    "$ref": "#/definitions/standardLink"
-                  }
-                },
-                "additionalProperties": false,
-                "required": [
-                  "self"
-                ]
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "id",
-              "name",
-              "_links"
-            ]
+    "id": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string"
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
           }
         }
       },
       "additionalProperties": false,
       "required": [
-        "loot-api:lootitem"
+        "name",
+        "quantity"
       ]
     },
     "_links": {
@@ -92,19 +76,25 @@
         },
         "curies": {
           "$ref": "#/definitions/curies"
+        },
+        "loot-api:characters": {
+          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
       "required": [
         "self",
         "index",
-        "curies"
+        "curies",
+        "loot-api:characters"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
-    "_embedded",
+    "id",
+    "name",
+    "inventory",
     "_links"
   ]
 }

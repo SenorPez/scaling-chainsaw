@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loottable API Root Schema",
-  "description": "Schema for the root of Loottable API",
+  "title": "Loot API Root Schema",
+  "description": "Schema for the root of Loot API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -53,7 +53,10 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "loottable-api:campaigns": {
+        "loot-api:campaigns": {
+          "$ref": "#/definitions/standardLink"
+        },
+        "loot-api:lootitems": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -62,7 +65,8 @@
         "self",
         "index",
         "curies",
-        "loottable-api:campaigns"
+        "loot-api:campaigns",
+        "loot-api:lootitems"
       ]
     }
   },

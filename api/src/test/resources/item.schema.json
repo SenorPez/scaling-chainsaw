@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loottable API Item Schema",
-  "description": "Schema for item objects in Loottable API",
+  "title": "Loot API Item Schema",
+  "description": "Schema for item objects in Loot API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -68,7 +68,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "loottable-api:lootitems": {
+        "loot-api:lootitems": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -77,7 +77,7 @@
         "self",
         "index",
         "curies",
-        "loottable-api:lootitems"
+        "loot-api:lootitems"
       ]
     }
   },
@@ -85,6 +85,8 @@
   "required": [
     "id",
     "name",
+    "weight",
+    "details",
     "charges",
     "_links"
   ]
