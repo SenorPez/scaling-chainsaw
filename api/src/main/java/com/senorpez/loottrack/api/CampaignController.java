@@ -43,6 +43,7 @@ public class CampaignController {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         CampaignModel campaignModel = assembler.toModel(campaign);
         campaignModel.add(linkTo(CampaignController.class).withRel("campaigns"));
+        campaignModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
         campaignModel.add(linkTo(RootController.class).withRel("index"));
 
         return ResponseEntity.ok(campaignModel);
@@ -54,6 +55,7 @@ public class CampaignController {
         Campaign campaign = campaignRepository.save(newCampaign);
         CampaignModel campaignModel = assembler.toModel(campaign);
         campaignModel.add(linkTo(CampaignController.class).withRel("campaigns"));
+        campaignModel.add(linkTo(CharacterController.class, campaign.getId()).withRel("characters"));
         campaignModel.add(linkTo(RootController.class).withRel("index"));
 
         return ResponseEntity.created(campaignModel.getRequiredLink("self").toUri()).body(campaignModel);

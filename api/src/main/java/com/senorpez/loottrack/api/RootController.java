@@ -23,6 +23,7 @@ public class RootController {
         root.add(linkTo(RootController.class).withSelfRel());
         root.add(linkTo(RootController.class).withRel("index"));
         root.add(linkTo(methodOn(CampaignController.class).campaigns()).withRel("campaigns"));
+        root.add(linkTo(ItemController.class).withRel("lootitems"));
         return ResponseEntity.ok(root);
     }
 }

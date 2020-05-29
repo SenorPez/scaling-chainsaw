@@ -55,6 +55,9 @@
         },
         "loottable-api:campaigns": {
           "$ref": "#/definitions/standardLink"
+        },
+        "loottable-api:lootitems": {
+          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
@@ -62,7 +65,8 @@
         "self",
         "index",
         "curies",
-        "loottable-api:campaigns"
+        "loottable-api:campaigns",
+        "loottable-api:lootitems"
       ]
     }
   },

@@ -85,6 +85,8 @@
   "required": [
     "id",
     "name",
+    "weight",
+    "details",
     "charges",
     "_links"
   ]

@@ -189,6 +189,7 @@ public class CampaignControllerTest {
                                 halLinks(),
                                 linkWithRel("self").description("This resource."),
                                 linkWithRel("loottable-api:campaigns").description("List of campaign resources."),
+                                linkWithRel("loottable-api:characters").description("List of character resources."),
                                 linkWithRel("index").description("Index resource."),
                                 linkWithRel("curies").description("Curies.")
                         )
