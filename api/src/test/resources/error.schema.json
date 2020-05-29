@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loottable API Error Schema",
-  "description": "Schema for errors in Loottable API",
+  "title": "Loot API Error Schema",
+  "description": "Schema for errors in Loot API",
   "type": "object",
   "properties": {
     "code": {

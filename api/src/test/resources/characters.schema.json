@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loot API Item Collection Schema",
-  "description": "Schema for collections of items in Loot API",
+  "title": "Loot API character Collection Schema",
+  "description": "Schema for collections of characters in Loot API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -44,7 +44,7 @@
     "_embedded": {
       "type": "object",
       "properties": {
-        "loot-api:lootitem": {
+        "loot-api:character": {
           "type": "array",
           "items": {
             "properties": {
@@ -53,6 +53,24 @@
               },
               "name": {
                 "type": "string"
+              },
+              "inventory": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "quantity"
+                ]
               },
               "_links": {
                 "type": "object",
@@ -71,6 +89,7 @@
             "required": [
               "id",
               "name",
+              "inventory",
               "_links"
             ]
           }
@@ -78,7 +97,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "loot-api:lootitem"
+        "loot-api:character"
       ]
     },
     "_links": {
@@ -92,13 +111,17 @@
         },
         "curies": {
           "$ref": "#/definitions/curies"
+        },
+        "loot-api:campaign": {
+          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
       "required": [
         "self",
         "index",
-        "curies"
+        "curies",
+        "loot-api:campaign"
       ]
     }
   },
