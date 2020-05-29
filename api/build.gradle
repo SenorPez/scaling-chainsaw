@@ -7,7 +7,7 @@ plugins {
     id "org.asciidoctor.convert" version "2.4.0"
 }
 
-group 'com.senorpez.loottrack'
+group 'com.senorpez.loot'
 version '2.0.0'
 
 repositories {

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loottable API Campaign Collection Schema",
-  "description": "Schema for collections of campaigns in Loottable API",
+  "title": "Loot API Campaign Collection Schema",
+  "description": "Schema for collections of campaigns in Loot API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -44,7 +44,7 @@
     "_embedded": {
       "type": "object",
       "properties": {
-        "loottable-api:campaign": {
+        "loot-api:campaign": {
           "type": "array",
           "items": {
             "properties": {
@@ -78,7 +78,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "loottable-api:campaign"
+        "loot-api:campaign"
       ]
     },
     "_links": {
