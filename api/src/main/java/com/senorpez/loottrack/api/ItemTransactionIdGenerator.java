@@ -18,9 +18,9 @@ public class ItemTransactionIdGenerator implements IdentifierGenerator {
      */
     @Override
     public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
-        int playerId = ((ItemTransaction) object).getPlayer().getId();
-        int campaignId = ((ItemTransaction) object).getPlayer().getCampaign().getId();
-        String query = String.format("SELECT id FROM itemtransactions WHERE campaign_id = %d AND player_id = %d", campaignId, playerId);
+        int characterId = ((ItemTransaction) object).getCharacter().getId();
+        int campaignId = ((ItemTransaction) object).getCharacter().getCampaign().getId();
+        String query = String.format("SELECT id FROM itemtransactions WHERE campaign_id = %d AND characterId = %d", campaignId, characterId);
 
         Stream<?> stream = session
                 .createNativeQuery(query)

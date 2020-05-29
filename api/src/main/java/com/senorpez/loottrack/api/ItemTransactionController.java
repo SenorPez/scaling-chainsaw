@@ -10,7 +10,7 @@ import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RequestMapping(
-        value = "/campaigns/{campaignId}/players/{playerId}/itemtransactions",
+        value = "/campaigns/{campaignId}/characters/{characterId}/itemtransactions",
         produces = {HAL_JSON_VALUE}
 )
 @RestController
@@ -19,7 +19,7 @@ public class ItemTransactionController {
     private CampaignRepository campaignRepository;
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private CharacterRepository characterRepository;
 
     @Autowired
     private ItemRepository itemRepository;
@@ -27,17 +27,17 @@ public class ItemTransactionController {
     @Autowired
     private ItemTransactionRepository itemTransactionRepository;
 
-    private final PlayerModelAssembler playerModelAssembler = new PlayerModelAssembler(PlayerController.class, PlayerModel.class);
+    private final CharacterModelAssembler characterModelAssembler = new CharacterModelAssembler(CharacterController.class, CharacterModel.class);
     private final ItemTransactionAssembler assembler = new ItemTransactionAssembler(ItemTransactionController.class, ItemTransactionModel.class);
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
-    ResponseEntity<PlayerModel> addItemTransaction(@RequestHeader String Authorization, @RequestBody ItemTransactionInsert incomingValue, @PathVariable final int campaignId, @PathVariable final int playerId) {
+    ResponseEntity<CharacterModel> addItemTransaction(@RequestHeader String Authorization, @RequestBody ItemTransactionInsert incomingValue, @PathVariable final int campaignId, @PathVariable final int characterId) {
         ItemTransaction newItemTransaction = new ItemTransaction();
 
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        Player player = playerRepository.findByCampaignAndId(campaign, playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
-        newItemTransaction.setPlayer(player);
+        Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        newItemTransaction.setCharacter(character);
 
         Item item = itemRepository.findById(incomingValue.getItem()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem()));
         newItemTransaction.setItem(item);
@@ -48,14 +48,14 @@ public class ItemTransactionController {
 
         itemTransactionRepository.save(newItemTransaction);
 
-        Player updatedPlayer = playerRepository.findByCampaignAndId(campaign, playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
-        PlayerModel playerModel = playerModelAssembler.toModel(
-                updatedPlayer.setInventory(itemTransactionRepository.getInventory(playerId, campaignId))
+        Character updatedCharacter = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        CharacterModel characterModel = characterModelAssembler.toModel(
+                updatedCharacter.setInventory(itemTransactionRepository.getInventory(characterId, campaignId))
         );
-        playerModel.add(linkTo(PlayerController.class, campaignId).withRel("players"));
-        playerModel.add(linkTo(RootController.class).withRel("index"));
+        characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
+        characterModel.add(linkTo(RootController.class).withRel("index"));
 
-        return ResponseEntity.created(playerModel.getRequiredLink("self").toUri()).body(playerModel);
+        return ResponseEntity.created(characterModel.getRequiredLink("self").toUri()).body(characterModel);
     }
 
     static class ItemTransactionInsert {

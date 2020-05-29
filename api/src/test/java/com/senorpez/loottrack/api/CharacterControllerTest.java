@@ -43,11 +43,11 @@ import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class PlayerControllerTest {
+public class CharacterControllerTest {
     private MockMvc mockMvc;
     private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "vnd.senorpez.loottrack.vx+json", UTF_8);
-    private static final String COLLECTION_SCHEMA = "players.schema.json";
-    private static final String OBJECT_SCHEMA = "player.schema.json";
+    private static final String COLLECTION_SCHEMA = "characters.schema.json";
+    private static final String OBJECT_SCHEMA = "character.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
     private static final Campaign FIRST_CAMPAIGN = new Campaign()
@@ -57,26 +57,26 @@ public class PlayerControllerTest {
     private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{"Gold", new BigInteger(String.valueOf(329)), 1};
     private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{"Likes", new BigInteger(String.valueOf(69)), 2};
 
-    private static final Player FIRST_PLAYER = new Player()
+    private static final Character FIRST_CHARACTER = new Character()
             .setId(1)
-            .setName("First Player")
+            .setName("First Character")
             .setCampaign(FIRST_CAMPAIGN)
             .setInventory(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
 
-    private static final Player SECOND_PLAYER = new Player()
+    private static final Character SECOND_CHARACTER = new Character()
             .setId(2)
-            .setName("Second Player")
+            .setName("Second Character")
             .setCampaign(FIRST_CAMPAIGN)
             .setInventory(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
 
     @InjectMocks
-    PlayerController playerController;
+    CharacterController characterController;
 
     @Mock
     CampaignRepository campaignRepository;
 
     @Mock
-    PlayerRepository playerRepository;
+    CharacterRepository characterRepository;
 
     @Mock
     ItemTransactionRepository itemTransactionRepository;
@@ -88,7 +88,7 @@ public class PlayerControllerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders
-                .standaloneSetup(playerController)
+                .standaloneSetup(characterController)
                 .setMessageConverters(HalMessageConverter.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
@@ -96,38 +96,38 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void getAllPlayers_ValidCampaign_ValidAcceptHeader() throws Exception {
+    public void getAllCharacters_ValidCampaign_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
+        when(characterRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_CHARACTER, SECOND_CHARACTER));
 
-        mockMvc.perform(get(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
+        mockMvc.perform(get(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(COLLECTION_SCHEMA)))
-                .andExpect(jsonPath("$._embedded.loottable-api:player", hasItem(
+                .andExpect(jsonPath("$._embedded.loottable-api:character", hasItem(
                         allOf(
-                                hasEntry("id", (Object) FIRST_PLAYER.getId()),
-                                hasEntry("name", (Object) FIRST_PLAYER.getName()),
+                                hasEntry("id", (Object) FIRST_CHARACTER.getId()),
+                                hasEntry("name", (Object) FIRST_CHARACTER.getName()),
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
-                                                hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId()))
+                                                hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId()))
                                         )
                                 )
                         )
                 )))
-                .andExpect(jsonPath("$._embedded.loottable-api:player", hasItem(
+                .andExpect(jsonPath("$._embedded.loottable-api:character", hasItem(
                         allOf(
-                                hasEntry("id", (Object) SECOND_PLAYER.getId()),
-                                hasEntry("name", (Object) SECOND_PLAYER.getName()),
+                                hasEntry("id", (Object) SECOND_CHARACTER.getId()),
+                                hasEntry("name", (Object) SECOND_CHARACTER.getName()),
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
-                                                hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), SECOND_PLAYER.getId()))
+                                                hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), SECOND_CHARACTER.getId()))
                                         )
                                 )
                         )
                 )))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players", FIRST_CAMPAIGN.getId()))))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
@@ -135,7 +135,7 @@ public class PlayerControllerTest {
                                 hasEntry("templated", (Object) true)
                         )
                 )))
-                .andDo(document("player",
+                .andDo(document("character",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -144,13 +144,13 @@ public class PlayerControllerTest {
                                         .attributes(key("acceptvalue").value(HAL_JSON_VALUE))
                         ),
                         responseFields(
-                                fieldWithPath("_embedded.loottable-api:player").description("Player resource."),
-                                fieldWithPath("_embedded.loottable-api:player[].id").description("Player ID number."),
-                                fieldWithPath("_embedded.loottable-api:player[].name").description("Player name."),
-                                fieldWithPath("_embedded.loottable-api:player[].inventory").description("Inventory."),
+                                fieldWithPath("_embedded.loottable-api:character").description("Character resource."),
+                                fieldWithPath("_embedded.loottable-api:character[].id").description("Character ID number."),
+                                fieldWithPath("_embedded.loottable-api:character[].name").description("Character name."),
+                                fieldWithPath("_embedded.loottable-api:character[].inventory").description("Inventory."),
                                 subsectionWithPath("_links").ignored(),
-                                subsectionWithPath("_embedded.loottable-api:player[]._links").ignored(),
-                                subsectionWithPath("_embedded.loottable-api:player[].inventory[]").ignored()
+                                subsectionWithPath("_embedded.loottable-api:character[]._links").ignored(),
+                                subsectionWithPath("_embedded.loottable-api:character[].inventory[]").ignored()
                         ),
                         commonLinks.and(
                                 linkWithRel("loottable-api:campaign").description("Campaign resource.")
@@ -160,16 +160,16 @@ public class PlayerControllerTest {
         verify(campaignRepository, times(1)).findById(anyInt());
         verifyNoMoreInteractions(campaignRepository);
 
-        verify(playerRepository, times(1)).findByCampaign(any());
-        verifyNoMoreInteractions(playerRepository);
+        verify(characterRepository, times(1)).findByCampaign(any());
+        verifyNoMoreInteractions(characterRepository);
     }
 
     @Test
-    public void getAllPlayers_ValidCampaign_InvalidAcceptHeader() throws Exception {
+    public void getAllCharacters_ValidCampaign_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
+        when(characterRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_CHARACTER, SECOND_CHARACTER));
 
-        mockMvc.perform(get(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId())).accept(INVALID_MEDIA_TYPE))
+        mockMvc.perform(get(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -178,15 +178,15 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.detail", is(String.format("Accept header must be \"%s\"", MediaTypes.HAL_JSON.toString()))));
 
         verifyNoInteractions(campaignRepository);
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
-    public void getAllPlayers_ValidCampaign_InvalidMethod() throws Exception {
+    public void getAllCharacters_ValidCampaign_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_PLAYER, SECOND_PLAYER));
+        when(characterRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_CHARACTER, SECOND_CHARACTER));
 
-        mockMvc.perform(put(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
+        mockMvc.perform(put(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -195,15 +195,15 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
         verifyNoInteractions(campaignRepository);
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
-    public void getAllPlayers_InvalidCampaign_ValidAcceptHeader() throws Exception {
+    public void getAllCharacters_InvalidCampaign_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(playerRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
+        when(characterRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
-        mockMvc.perform(get("/campaigns/8675309/players").accept(HAL_JSON))
+        mockMvc.perform(get("/campaigns/8675309/characters").accept(HAL_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -214,15 +214,15 @@ public class PlayerControllerTest {
         verify(campaignRepository, times(1)).findById(anyInt());
         verifyNoMoreInteractions(campaignRepository);
 
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
-    public void getAllPlayers_InvalidCampaign_InvalidAcceptHeader() throws Exception {
+    public void getAllCharacters_InvalidCampaign_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(playerRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
+        when(characterRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
-        mockMvc.perform(get("/campaigns/8675309/players").accept(INVALID_MEDIA_TYPE))
+        mockMvc.perform(get("/campaigns/8675309/characters").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -231,15 +231,15 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.detail", is(String.format("Accept header must be \"%s\"", MediaTypes.HAL_JSON.toString()))));
 
         verifyNoInteractions(campaignRepository);
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
-    public void getAllPlayers_InvalidCampaign_InvalidMethod() throws Exception {
+    public void getAllCharacters_InvalidCampaign_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(playerRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
+        when(characterRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
-        mockMvc.perform(put("/campaigns/8675309/players").accept(HAL_JSON))
+        mockMvc.perform(put("/campaigns/8675309/characters").accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -248,23 +248,23 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
         verifyNoInteractions(campaignRepository);
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_ValidCampaign_ValidPlayer_ValidAcceptHeader() throws Exception {
+    public void getSingleCharacter_ValidCampaign_ValidCharacter_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
         when(itemTransactionRepository.getInventory(anyInt(), anyInt())).thenReturn(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
 
-        mockMvc.perform(get(String.format("/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId())).accept(HAL_JSON))
+        mockMvc.perform(get(String.format("/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId())).accept(HAL_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$.id", is(FIRST_PLAYER.getId())))
-                .andExpect(jsonPath("$.name", is(FIRST_PLAYER.getName())))
+                .andExpect(jsonPath("$.id", is(FIRST_CHARACTER.getId())))
+                .andExpect(jsonPath("$.name", is(FIRST_CHARACTER.getName())))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId()))))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
@@ -272,9 +272,9 @@ public class PlayerControllerTest {
                                 hasEntry("templated", (Object) true)
                         )
                 )))
-                .andExpect(jsonPath("$._links.loottable-api:players", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players", FIRST_CAMPAIGN.getId()))))
+                .andExpect(jsonPath("$._links.loottable-api:characters", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))))
                 .andDo(document(
-                        "player",
+                        "character",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -291,7 +291,7 @@ public class PlayerControllerTest {
                         links(
                                 halLinks(),
                                 linkWithRel("self").description("This resource."),
-                                linkWithRel("loottable-api:players").description("List of player resources."),
+                                linkWithRel("loottable-api:characters").description("List of character resources."),
                                 linkWithRel("index").description("Index resource."),
                                 linkWithRel("curies").description("Curies.")
                         )
@@ -299,16 +299,16 @@ public class PlayerControllerTest {
 
         verify(campaignRepository, times(1)).findById(anyInt());
         verifyNoMoreInteractions(campaignRepository);
-        verify(playerRepository, times(1)).findByCampaignAndId(any(), anyInt());
-        verifyNoMoreInteractions(playerRepository);
+        verify(characterRepository, times(1)).findByCampaignAndId(any(), anyInt());
+        verifyNoMoreInteractions(characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_ValidCampaign_ValidPlayer_InvalidAcceptHeader() throws Exception {
+    public void getSingleCharacter_ValidCampaign_ValidCharacter_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
 
-        mockMvc.perform(get(String.format("/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId())).accept(INVALID_MEDIA_TYPE))
+        mockMvc.perform(get(String.format("/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -317,15 +317,15 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/hal+json\"")));
 
         verifyNoInteractions(campaignRepository);
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_ValidCampaign_ValidPlayer_InvalidMethod() throws Exception {
+    public void getSingleCharacter_ValidCampaign_ValidCharacter_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
 
-        mockMvc.perform(put(String.format("/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId())).accept(HAL_JSON))
+        mockMvc.perform(put(String.format("/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId())).accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -334,15 +334,15 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
         verifyNoInteractions(campaignRepository);
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_InvalidCampaign_ValidPlayer_ValidAcceptHeader() throws Exception {
+    public void getSingleCharacter_InvalidCampaign_ValidCharacter_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
 
-        mockMvc.perform(get(String.format("/campaigns/8675309/players/%d", FIRST_PLAYER.getId())).accept(HAL_JSON))
+        mockMvc.perform(get(String.format("/campaigns/8675309/characters/%d", FIRST_CHARACTER.getId())).accept(HAL_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -352,15 +352,15 @@ public class PlayerControllerTest {
 
         verify(campaignRepository, times(1)).findById(anyInt());
         verifyNoMoreInteractions(campaignRepository);
-        verifyNoInteractions(playerRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_InvalidCampaign_ValidPlayer_InvalidAcceptHeader() throws Exception {
+    public void getSingleCharacter_InvalidCampaign_ValidCharacter_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
 
-        mockMvc.perform(get(String.format("/campaigns/8675309/players/%d", FIRST_PLAYER.getId())).accept(INVALID_MEDIA_TYPE))
+        mockMvc.perform(get(String.format("/campaigns/8675309/characters/%d", FIRST_CHARACTER.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -368,15 +368,15 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/hal+json\"")));
 
-        verifyNoInteractions(campaignRepository, playerRepository);
+        verifyNoInteractions(campaignRepository, characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_InvalidCampaign_ValidPlayer_InvalidMethod() throws Exception {
+    public void getSingleCharacter_InvalidCampaign_ValidCharacter_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_PLAYER));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
 
-        mockMvc.perform(put(String.format("/campaigns/8675309/players/%d", FIRST_PLAYER.getId())).accept(HAL_JSON))
+        mockMvc.perform(put(String.format("/campaigns/8675309/characters/%d", FIRST_CHARACTER.getId())).accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -384,33 +384,33 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
-        verifyNoInteractions(campaignRepository, playerRepository);
+        verifyNoInteractions(campaignRepository, characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_ValidCampaign_InvalidPlayer_ValidAcceptHeader() throws Exception {
+    public void getSingleCharacter_ValidCampaign_InvalidCharacter_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenThrow(new PlayerNotFoundException(8675309));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenThrow(new CharacterNotFoundException(8675309));
 
-        mockMvc.perform(get(String.format("/campaigns/%d/players/8675309", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
+        mockMvc.perform(get(String.format("/campaigns/%d/characters/8675309", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Player with ID of %d not found", 8675309))));
+                .andExpect(jsonPath("$.detail", is(String.format("Character with ID of %d not found", 8675309))));
 
         verify(campaignRepository, times(1)).findById(anyInt());
-        verify(playerRepository, times(1)).findByCampaignAndId(any(), anyInt());
-        verifyNoMoreInteractions(campaignRepository, playerRepository);
+        verify(characterRepository, times(1)).findByCampaignAndId(any(), anyInt());
+        verifyNoMoreInteractions(campaignRepository, characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_ValidCampaign_InvalidPlayer_InvalidAcceptHeader() throws Exception {
+    public void getSingleCharacter_ValidCampaign_InvalidCharacter_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenThrow(new PlayerNotFoundException(8675309));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenThrow(new CharacterNotFoundException(8675309));
 
-        mockMvc.perform(get(String.format("/campaigns/%d/players/8675309", FIRST_CAMPAIGN.getId())).accept(INVALID_MEDIA_TYPE))
+        mockMvc.perform(get(String.format("/campaigns/%d/characters/8675309", FIRST_CAMPAIGN.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -418,15 +418,15 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/hal+json\"")));
 
-        verifyNoInteractions(campaignRepository, playerRepository);
+        verifyNoInteractions(campaignRepository, characterRepository);
     }
 
     @Test
-    public void getSinglePlayer_ValidCampaign_InvalidPlayer_InvalidMethod() throws Exception {
+    public void getSingleCharacter_ValidCampaign_InvalidCharacter_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.findByCampaignAndId(any(), anyInt())).thenThrow(new PlayerNotFoundException(8675309));
+        when(characterRepository.findByCampaignAndId(any(), anyInt())).thenThrow(new CharacterNotFoundException(8675309));
 
-        mockMvc.perform(put(String.format("/campaigns/%d/players/8675309", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
+        mockMvc.perform(put(String.format("/campaigns/%d/characters/8675309", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -434,29 +434,29 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Method not allowed.")));
 
-        verifyNoInteractions(campaignRepository, playerRepository);
+        verifyNoInteractions(campaignRepository, characterRepository);
     }
 
     @Test
-    public void postPlayer_ValidCampaign_ValidContentType() throws Exception {
+    public void postCharacter_ValidCampaign_ValidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
+        when(characterRepository.save(any(Character.class))).thenReturn(FIRST_CHARACTER);
 
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc
                 .perform(
-                        post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
+                        post(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_PLAYER))
+                                .content(objectMapper.writeValueAsString(FIRST_CHARACTER))
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$.id", is(FIRST_PLAYER.getId())))
-                .andExpect(jsonPath("$.name", is(FIRST_PLAYER.getName())))
+                .andExpect(jsonPath("$.id", is(FIRST_CHARACTER.getId())))
+                .andExpect(jsonPath("$.name", is(FIRST_CHARACTER.getName())))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players/%d", FIRST_CAMPAIGN.getId(), FIRST_PLAYER.getId()))))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loottable-{rel}"),
@@ -464,9 +464,9 @@ public class PlayerControllerTest {
                                 hasEntry("templated", (Object) true)
                         )
                 )))
-                .andExpect(jsonPath("$._links.loottable-api:players", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/players", FIRST_CAMPAIGN.getId()))))
+                .andExpect(jsonPath("$._links.loottable-api:characters", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))))
                 .andDo(document(
-                        "player",
+                        "character",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -476,36 +476,36 @@ public class PlayerControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("id").description("ID number."),
-                                fieldWithPath("name").description("Player name."),
+                                fieldWithPath("name").description("Character name."),
                                 subsectionWithPath("inventory").ignored(),
                                 subsectionWithPath("_links").ignored()
                         ),
                         links(
                                 halLinks(),
                                 linkWithRel("self").description("This resource."),
-                                linkWithRel("loottable-api:players").description("List of player resources."),
+                                linkWithRel("loottable-api:characters").description("List of character resources."),
                                 linkWithRel("index").description("Index resource."),
                                 linkWithRel("curies").description("Curies.")
                         )
                 ));
 
         verify(campaignRepository, times(1)).findById(anyInt());
-        verify(playerRepository, times(1)).save(any(Player.class));
-        verifyNoMoreInteractions(campaignRepository, playerRepository);
+        verify(characterRepository, times(1)).save(any(Character.class));
+        verifyNoMoreInteractions(campaignRepository, characterRepository);
     }
 
     @Test
-    public void postPlayer_ValidCampaign_InvalidContentType() throws Exception {
+    public void postCharacter_ValidCampaign_InvalidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
+        when(characterRepository.save(any(Character.class))).thenReturn(FIRST_CHARACTER);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc
                 .perform(
-                        post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
+                        post(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_PLAYER))
+                                .content(objectMapper.writeValueAsString(FIRST_CHARACTER))
                 )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -517,18 +517,18 @@ public class PlayerControllerTest {
                         is(String.format("Content type '%s' not supported", INVALID_MEDIA_TYPE.toString()))
                 ));
 
-        verifyNoInteractions(campaignRepository, playerRepository);
+        verifyNoInteractions(campaignRepository, characterRepository);
     }
 
     @Test
-    public void postPlayer_ValidCampaign_InvalidSyntax() throws Exception {
+    public void postCharacter_ValidCampaign_InvalidSyntax() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(playerRepository.save(any(Player.class))).thenReturn(FIRST_PLAYER);
+        when(characterRepository.save(any(Character.class))).thenReturn(FIRST_CHARACTER);
         String invalidJson = "{\"name\": \"}";
 
         mockMvc
                 .perform(
-                        post(String.format("/campaigns/%d/players", FIRST_CAMPAIGN.getId()))
+                        post(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))
                                 .contentType(HAL_JSON)
                                 .content(invalidJson)
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
@@ -539,7 +539,7 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.code", is(BAD_REQUEST.value())))
                 .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
 
-        verifyNoInteractions(campaignRepository, playerRepository);
+        verifyNoInteractions(campaignRepository, characterRepository);
     }
 
     private static class Inventory {

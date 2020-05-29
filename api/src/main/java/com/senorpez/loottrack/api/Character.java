@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@IdClass(PlayerId.class)
-@Table(name = "players")
-class Player {
+@IdClass(CharacterId.class)
+@Table(name = "characters")
+class Character {
     @Id
-    @GeneratedValue(generator = "playerid-gen")
+    @GeneratedValue(generator = "characterid-gen")
     @GenericGenerator(
-            name = "playerid-gen",
-            strategy = "com.senorpez.loottrack.api.PlayerIdGenerator"
+            name = "characterid-gen",
+            strategy = "com.senorpez.loottrack.api.CharacterIdGenerator"
     )
     private int id;
 
@@ -36,7 +36,7 @@ class Player {
         return id;
     }
 
-    public Player setId(int id) {
+    public Character setId(int id) {
         this.id = id;
         return this;
     }
@@ -45,7 +45,7 @@ class Player {
         return campaign;
     }
 
-    public Player setCampaign(Campaign campaign) {
+    public Character setCampaign(Campaign campaign) {
         this.campaign = campaign;
         return this;
     }
@@ -54,7 +54,7 @@ class Player {
         return name;
     }
 
-    public Player setName(String name) {
+    public Character setName(String name) {
         this.name = name;
         return this;
     }
@@ -64,7 +64,7 @@ class Player {
     }
 
     @JsonIgnore
-    public Player setInventory(List<Object[]> inventory) {
+    public Character setInventory(List<Object[]> inventory) {
         this.inventory = inventory
                 .stream()
                 .map(objects -> new InventoryItem((String) objects[0], ((Number) objects[1]).intValue(), (Integer) objects[2]))

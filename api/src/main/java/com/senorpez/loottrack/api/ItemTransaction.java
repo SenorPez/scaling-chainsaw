@@ -12,8 +12,8 @@ class ItemTransaction {
 
     @ManyToOne
     @JoinColumn(name = "campaign_id", nullable = false)
-    @JoinColumn(name = "player_id", nullable = false)
-    private Player player;
+    @JoinColumn(name = "character_id", nullable = false)
+    private Character character;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -38,12 +38,12 @@ class ItemTransaction {
         return this;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Character getCharacter() {
+        return character;
     }
 
-    public ItemTransaction setPlayer(Player player) {
-        this.player = player;
+    public ItemTransaction setCharacter(Character character) {
+        this.character = character;
         return this;
     }
 

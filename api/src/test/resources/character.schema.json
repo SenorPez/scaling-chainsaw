@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loottable API Player Schema",
-  "description": "Schema for player objects in Loottable API",
+  "title": "Loottable API Character Schema",
+  "description": "Schema for character objects in Loottable API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -77,7 +77,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "loottable-api:players": {
+        "loottable-api:characters": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -86,7 +86,7 @@
         "self",
         "index",
         "curies",
-        "loottable-api:players"
+        "loottable-api:characters"
       ]
     }
   },

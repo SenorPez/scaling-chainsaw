@@ -2,15 +2,15 @@ package com.senorpez.loottrack.api;
 
 import java.io.Serializable;
 
-public class PlayerId implements Serializable {
+public class CharacterId implements Serializable {
     private int id;
     private int campaign;
 
-    public PlayerId() {
+    public CharacterId() {
     }
 
-    public PlayerId(int player, Campaign campaign) {
-        this.id = player;
+    public CharacterId(int character, Campaign campaign) {
+        this.id = character;
         this.campaign = campaign.getId();
     }
 
@@ -18,7 +18,7 @@ public class PlayerId implements Serializable {
         return id;
     }
 
-    public PlayerId setId(int id) {
+    public CharacterId setId(int id) {
         this.id = id;
         return this;
     }
@@ -27,7 +27,7 @@ public class PlayerId implements Serializable {
         return campaign;
     }
 
-    public PlayerId setCampaign(int campaign) {
+    public CharacterId setCampaign(int campaign) {
         this.campaign = campaign;
         return this;
     }

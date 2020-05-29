@@ -9,7 +9,7 @@ public class ItemTransactionAssembler extends RepresentationModelAssemblerSuppor
 
     @Override
     public ItemTransactionModel toModel(ItemTransaction entity) {
-        return createModelWithId(entity.getId(), entity, entity.getPlayer().getCampaign().getId(), entity.getPlayer().getId())
+        return createModelWithId(entity.getId(), entity, entity.getCharacter().getCampaign().getId(), entity.getCharacter().getId())
                 .setId(entity.getId())
                 .setItemName(entity.getItem().getName());
     }

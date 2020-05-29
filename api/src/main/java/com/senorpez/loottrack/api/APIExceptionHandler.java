@@ -23,7 +23,7 @@ public class APIExceptionHandler {
     @ExceptionHandler({
             CampaignNotFoundException.class,
             ItemNotFoundException.class,
-            PlayerNotFoundException.class
+            CharacterNotFoundException.class
     })
     ResponseEntity<ErrorResponse> handleAPIObjectNotFound(final Exception e) {
         return ResponseEntity

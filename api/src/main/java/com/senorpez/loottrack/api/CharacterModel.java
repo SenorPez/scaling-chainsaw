@@ -6,29 +6,29 @@ import org.springframework.hateoas.server.core.Relation;
 
 import java.util.List;
 
-@Relation(value = "player", collectionRelation = "player")
-class PlayerModel extends RepresentationModel<PlayerModel> {
+@Relation(value = "character", collectionRelation = "character")
+class CharacterModel extends RepresentationModel<CharacterModel> {
     @JsonProperty
     int id;
     @JsonProperty
     String name;
     @JsonProperty
-    List<Player.InventoryItem> inventory;
+    List<Character.InventoryItem> inventory;
 
-    PlayerModel() {
+    CharacterModel() {
     }
 
-    PlayerModel setId(int id) {
+    CharacterModel setId(int id) {
         this.id = id;
         return this;
     }
 
-    PlayerModel setName(String name) {
+    CharacterModel setName(String name) {
         this.name = name;
         return this;
     }
 
-    PlayerModel setInventory(List<Player.InventoryItem> inventory) {
+    CharacterModel setInventory(List<Character.InventoryItem> inventory) {
         this.inventory = inventory;
         return this;
     }

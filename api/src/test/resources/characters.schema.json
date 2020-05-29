@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Loottable API Player Collection Schema",
-  "description": "Schema for collections of players in Loottable API",
+  "title": "Loottable API character Collection Schema",
+  "description": "Schema for collections of characters in Loottable API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -44,7 +44,7 @@
     "_embedded": {
       "type": "object",
       "properties": {
-        "loottable-api:player": {
+        "loottable-api:character": {
           "type": "array",
           "items": {
             "properties": {
@@ -97,7 +97,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "loottable-api:player"
+        "loottable-api:character"
       ]
     },
     "_links": {

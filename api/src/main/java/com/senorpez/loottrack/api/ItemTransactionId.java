@@ -4,5 +4,5 @@ import java.io.Serializable;
 
 public class ItemTransactionId implements Serializable {
     private int id;
-    private PlayerId player;
+    private CharacterId character;
 }

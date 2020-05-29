@@ -2,13 +2,13 @@ package com.senorpez.loottrack.api;
 
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 
-public class PlayerModelAssembler extends RepresentationModelAssemblerSupport<Player, PlayerModel> {
-    public PlayerModelAssembler(Class<?> controllerClass, Class<PlayerModel> resourceType) {
+public class CharacterModelAssembler extends RepresentationModelAssemblerSupport<Character, CharacterModel> {
+    public CharacterModelAssembler(Class<?> controllerClass, Class<CharacterModel> resourceType) {
         super(controllerClass, resourceType);
     }
 
     @Override
-    public PlayerModel toModel(Player entity) {
+    public CharacterModel toModel(Character entity) {
         return createModelWithId(entity.getId(), entity, entity.getCampaign().getId())
                 .setId(entity.getId())
                 .setName(entity.getName())
