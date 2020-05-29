@@ -21,7 +21,7 @@ There is only a single version of {apiname}.
 |===
 | API Versions | Accept Header
 
-| Version 1.0
+| Version 2.0.0
 | `application/hal+json`
 |===
 
