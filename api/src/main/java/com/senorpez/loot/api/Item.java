@@ -1,5 +1,7 @@
 package com.senorpez.loot.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -8,18 +10,23 @@ import java.math.BigDecimal;
 class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty
     private Integer id;
 
     @Column(nullable = false)
+    @JsonProperty
     private String name;
 
     @Column(precision = 19, scale=3)
+    @JsonProperty
     private BigDecimal weight;
 
     @Column
+    @JsonProperty
     private String details;
 
     @Column
+    @JsonProperty
     private Integer charges;
 
     Integer getId() {

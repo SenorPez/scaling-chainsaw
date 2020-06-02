@@ -13,20 +13,20 @@ public class ItemTransactionModel extends RepresentationModel<ItemTransactionMod
     @JsonProperty
     int quantity;
 
-    public ItemTransactionModel() {
+    ItemTransactionModel() {
     }
 
-    public ItemTransactionModel setId(int id) {
+    ItemTransactionModel setId(int id) {
         this.id = id;
         return this;
     }
 
-    public ItemTransactionModel setItemName(String itemName) {
+    ItemTransactionModel setItemName(String itemName) {
         this.itemName = itemName;
         return this;
     }
 
-    public ItemTransactionModel setQuantity(int quantity) {
+    ItemTransactionModel setQuantity(int quantity) {
         this.quantity = quantity;
         return this;
     }

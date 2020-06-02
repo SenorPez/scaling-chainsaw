@@ -1,7 +1,6 @@
 package com.senorpez.loot.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.senorpez.loot.api.ItemTransactionController.ItemTransactionInsert;
 import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
@@ -98,8 +97,7 @@ public class ItemTransactionControllerTest {
                 .perform(
                         post(String.format("/campaigns/%d/characters/%d/itemtransactions", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
-                                        .setItem(FIRST_TRANSACTION.getItem().getId())))
+                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
@@ -181,8 +179,7 @@ public class ItemTransactionControllerTest {
                 .perform(
                         post(String.format("/campaigns/%d/characters/8675309/itemtransactions", FIRST_CAMPAIGN.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
-                                        .setItem(FIRST_TRANSACTION.getItem().getId())))
+                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isNotFound())
@@ -259,8 +256,7 @@ public class ItemTransactionControllerTest {
                 .perform(
                         post(String.format("/campaigns/8675309/characters/%d/itemtransactions", FIRST_CHARACTER.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(new ItemTransactionInsert()
-                                        .setItem(FIRST_TRANSACTION.getItem().getId())))
+                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isNotFound())

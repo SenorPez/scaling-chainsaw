@@ -19,7 +19,7 @@ class ItemModel extends RepresentationModel<ItemModel> {
     @JsonProperty
     Integer charges;
 
-    public ItemModel() {
+    ItemModel() {
     }
 
     ItemModel setId(final int id) {

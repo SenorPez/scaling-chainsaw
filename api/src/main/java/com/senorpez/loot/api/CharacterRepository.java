@@ -7,6 +7,5 @@ import java.util.Optional;
 
 interface CharacterRepository extends CrudRepository<Character, Integer> {
     List<Character> findByCampaign(Campaign campaign);
-
     Optional<Character> findByCampaignAndId(Campaign campaign, int characterId);
 }

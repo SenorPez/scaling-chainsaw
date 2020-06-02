@@ -1,5 +1,7 @@
 package com.senorpez.loot.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -17,9 +19,11 @@ class ItemTransaction {
 
     @ManyToOne
     @JoinColumn(nullable = false)
+    @JsonProperty
     private Item item;
 
     @Column(nullable = false)
+    @JsonProperty
     private int quantity;
 
     @Column(nullable = false)
@@ -29,47 +33,47 @@ class ItemTransaction {
     @Column
     private String remark;
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public ItemTransaction setId(int id) {
+    ItemTransaction setId(int id) {
         this.id = id;
         return this;
     }
 
-    public Character getCharacter() {
+    Character getCharacter() {
         return character;
     }
 
-    public ItemTransaction setCharacter(Character character) {
+    ItemTransaction setCharacter(Character character) {
         this.character = character;
         return this;
     }
 
-    public Item getItem() {
+    Item getItem() {
         return item;
     }
 
-    public ItemTransaction setItem(Item item) {
+    ItemTransaction setItem(Item item) {
         this.item = item;
         return this;
     }
 
-    public int getQuantity() {
+    int getQuantity() {
         return quantity;
     }
 
-    public ItemTransaction setQuantity(int quantity) {
+    ItemTransaction setQuantity(int quantity) {
         this.quantity = quantity;
         return this;
     }
 
-    public String getRemark() {
+    String getRemark() {
         return remark;
     }
 
-    public ItemTransaction setRemark(String remark) {
+    ItemTransaction setRemark(String remark) {
         this.remark = remark;
         return this;
     }

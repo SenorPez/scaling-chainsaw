@@ -1,10 +1,10 @@
 package com.senorpez.loot.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,8 +22,8 @@ class Character {
     private int id;
 
     @Id
-    @ManyToOne
     @JoinColumn
+    @ManyToOne
     private Campaign campaign;
 
     @Column(nullable = false)
@@ -67,35 +67,37 @@ class Character {
     public Character setInventory(List<Object[]> inventory) {
         this.inventory = inventory
                 .stream()
-                .map(objects -> new InventoryItem((String) objects[0], ((Number) objects[1]).intValue(), (Integer) objects[2]))
+                .map(objects -> new InventoryItem(
+                        ((Number) objects[0]).intValue(),
+                        new Item()
+                                .setId(((Number) objects[1]).intValue())
+                                .setName((String) objects[2])
+//                                .setWeight(Optional.of(BigDecimal.valueOf(((Number) objects[3]).doubleValue())).orElse(null))
+                                .setWeight(objects[3] == null ? null : BigDecimal.valueOf(((Number) objects[3]).doubleValue()))
+                                .setDetails(objects[4] == null ? null : (String) objects[4])
+                                .setCharges(objects[5] == null ? null : ((Number) objects[5]).intValue())
+//                                .setWeight(Optional.of(BigDecimal.valueOf(((Number) objects[3]).doubleValue())))
+//                                .setDetails((String) objects[4])
+//                                .setCharges(((Number) objects[5]).intValue())
+                ))
                 .collect(Collectors.toList());
         return this;
     }
 
-    static class InventoryItem {
-        @JsonProperty
-        private final String name;
-        @JsonProperty
+    static final class InventoryItem extends Item {
         private final Integer quantity;
-        @JsonProperty
-        private final Integer charges;
 
-        public InventoryItem(String name, Integer quantity, Integer charges) {
-            this.name = name;
+        InventoryItem(Integer quantity, Item item) {
             this.quantity = quantity;
-            this.charges = charges;
+            this.setId(item.getId());
+            this.setName(item.getName());
+            this.setWeight(item.getWeight());
+            this.setDetails(item.getDetails());
+            this.setCharges(item.getCharges());
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public Integer getQuantity() {
+        Integer getQuantity() {
             return quantity;
-        }
-
-        public Integer getCharges() {
-            return charges;
         }
     }
 }
