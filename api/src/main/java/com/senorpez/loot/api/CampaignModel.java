@@ -11,7 +11,6 @@ class CampaignModel extends RepresentationModel<CampaignModel> {
     @JsonProperty
     private String name;
 
-
     CampaignModel setId(int id) {
         this.id = id;
         return this;

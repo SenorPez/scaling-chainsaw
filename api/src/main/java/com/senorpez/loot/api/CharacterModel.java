@@ -9,14 +9,11 @@ import java.util.List;
 @Relation(value = "character", collectionRelation = "character")
 class CharacterModel extends RepresentationModel<CharacterModel> {
     @JsonProperty
-    int id;
+    private int id;
     @JsonProperty
-    String name;
+    private String name;
     @JsonProperty
-    List<Character.InventoryItem> inventory;
-
-    CharacterModel() {
-    }
+    private List<InventoryItem> inventory;
 
     CharacterModel setId(int id) {
         this.id = id;
@@ -28,7 +25,7 @@ class CharacterModel extends RepresentationModel<CharacterModel> {
         return this;
     }
 
-    CharacterModel setInventory(List<Character.InventoryItem> inventory) {
+    CharacterModel setInventory(List<InventoryItem> inventory) {
         this.inventory = inventory;
         return this;
     }

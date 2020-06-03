@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static com.senorpez.loot.api.CampaignControllerTest.FIRST_CAMPAIGN;
+import static com.senorpez.loot.api.CharacterControllerTest.FIRST_CHARACTER;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
@@ -36,11 +37,6 @@ public class ItemTransactionControllerTest {
     private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "vnd.senorpez.loot.vx+json", UTF_8);
     private static final String OBJECT_SCHEMA = "character.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
-
-    private static final com.senorpez.loot.api.Character FIRST_CHARACTER = new com.senorpez.loot.api.Character()
-            .setId(1)
-            .setName("First Character")
-            .setCampaign(FIRST_CAMPAIGN);
 
     private static final Item FIRST_ITEM = new Item()
             .setId(1)

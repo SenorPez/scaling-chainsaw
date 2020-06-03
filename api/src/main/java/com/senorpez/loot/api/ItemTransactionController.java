@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.List;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -48,10 +49,10 @@ public class ItemTransactionController {
 
         itemTransactionRepository.save(newItemTransaction);
 
+        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
+
         Character updatedCharacter = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        CharacterModel characterModel = characterModelAssembler.toModel(
-                updatedCharacter.setInventory(itemTransactionRepository.getInventory(characterId, campaignId))
-        );
+        CharacterModel characterModel = characterModelAssembler.toModel(updatedCharacter, inventory);
         characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
         characterModel.add(linkTo(RootController.class).withRel("index"));
 

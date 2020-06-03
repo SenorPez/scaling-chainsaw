@@ -51,20 +51,11 @@ public class CharacterControllerTest {
     private static final String OBJECT_SCHEMA = "character.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
-    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{new BigInteger(String.valueOf(329)), 8675309, "Gold", null, null, null};
-    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{new BigInteger(String.valueOf(69)), 8675309, "Likes", null, null, null};
+    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{new BigInteger(String.valueOf(329)), "Gold", null, null, null};
+    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{new BigInteger(String.valueOf(69)), "Likes", null, null, null};
 
-    private static final com.senorpez.loot.api.Character FIRST_CHARACTER = new com.senorpez.loot.api.Character()
-            .setId(1)
-            .setName("First Character")
-            .setCampaign(FIRST_CAMPAIGN)
-            .setInventory(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
-
-    private static final com.senorpez.loot.api.Character SECOND_CHARACTER = new com.senorpez.loot.api.Character()
-            .setId(2)
-            .setName("Second Character")
-            .setCampaign(FIRST_CAMPAIGN)
-            .setInventory(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
+    static final Character FIRST_CHARACTER = new Character(1, FIRST_CAMPAIGN, "First Character");
+    private static final Character SECOND_CHARACTER = new Character(2, FIRST_CAMPAIGN, "Second Character");
 
     @InjectMocks
     CharacterController characterController;
