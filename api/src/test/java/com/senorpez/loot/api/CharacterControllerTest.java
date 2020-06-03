@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.senorpez.loot.api.CampaignControllerTest.FIRST_CAMPAIGN;
 import static com.senorpez.loot.api.RootControllerTest.commonLinks;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -49,10 +50,6 @@ public class CharacterControllerTest {
     private static final String COLLECTION_SCHEMA = "characters.schema.json";
     private static final String OBJECT_SCHEMA = "character.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
-
-    private static final Campaign FIRST_CAMPAIGN = new Campaign()
-            .setId(1)
-            .setName("First Campaign");
 
     private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{new BigInteger(String.valueOf(329)), 8675309, "Gold", null, null, null};
     private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{new BigInteger(String.valueOf(69)), 8675309, "Likes", null, null, null};

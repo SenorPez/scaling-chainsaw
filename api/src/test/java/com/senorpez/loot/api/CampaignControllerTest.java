@@ -51,12 +51,8 @@ public class CampaignControllerTest {
     private static final String OBJECT_SCHEMA = "campaign.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
-    private static final Campaign FIRST_CAMPAIGN = new Campaign()
-            .setId(1)
-            .setName("First Campaign");
-    private static final Campaign SECOND_CAMPAIGN = new Campaign()
-            .setId(2)
-            .setName("Second Campaign");
+    static final Campaign FIRST_CAMPAIGN = new Campaign(1, "First Campaign");
+    private static final Campaign SECOND_CAMPAIGN = new Campaign(2, "Second Campaign");
 
     @InjectMocks
     CampaignController campaignController;
@@ -296,7 +292,7 @@ public class CampaignControllerTest {
 
     @Test
     @WithMockUser(roles="user")
-    public void postCampaign() throws Exception {
+    public void postCampaign_ValidContent() throws Exception {
         when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
 
         ObjectMapper objectMapper = new ObjectMapper();
