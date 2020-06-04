@@ -1,7 +1,5 @@
 package com.senorpez.loot.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -19,62 +17,51 @@ class ItemTransaction {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    @JsonProperty
     private Item item;
 
     @Column(nullable = false)
-    @JsonProperty
     private int quantity;
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    Date datetime = new Date();
+    private Date datetime = new Date();
 
     @Column
     private String remark;
 
-    int getId() {
+    public ItemTransaction() {
+    }
+
+    public ItemTransaction(int id, Character character, Item item, int quantity, Date datetime, String remark) {
+        this.id = id;
+        this.character = character;
+        this.item = item;
+        this.quantity = quantity;
+        this.datetime = datetime;
+        this.remark = remark;
+    }
+
+    public int getId() {
         return id;
     }
 
-    ItemTransaction setId(int id) {
-        this.id = id;
-        return this;
-    }
-
-    Character getCharacter() {
+    public Character getCharacter() {
         return character;
     }
 
-    ItemTransaction setCharacter(Character character) {
-        this.character = character;
-        return this;
-    }
-
-    Item getItem() {
+    public Item getItem() {
         return item;
     }
 
-    ItemTransaction setItem(Item item) {
-        this.item = item;
-        return this;
-    }
-
-    int getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    ItemTransaction setQuantity(int quantity) {
-        this.quantity = quantity;
-        return this;
+    public Date getDatetime() {
+        return datetime;
     }
 
-    String getRemark() {
+    public String getRemark() {
         return remark;
-    }
-
-    ItemTransaction setRemark(String remark) {
-        this.remark = remark;
-        return this;
     }
 }

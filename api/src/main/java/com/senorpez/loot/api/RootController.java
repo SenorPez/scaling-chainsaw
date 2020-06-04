@@ -2,22 +2,21 @@ package com.senorpez.loot.api;
 
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RequestMapping(
         value = "/",
-        method = GET,
         produces = {HAL_JSON_VALUE}
 )
 @RestController
 public class RootController {
-    @RequestMapping
+    @GetMapping
     ResponseEntity<RepresentationModel<?>> root() {
         final RepresentationModel<?> root = new RepresentationModel<>();
         root.add(linkTo(RootController.class).withSelfRel());

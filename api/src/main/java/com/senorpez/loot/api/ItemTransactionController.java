@@ -28,31 +28,29 @@ public class ItemTransactionController {
     @Autowired
     private ItemTransactionRepository itemTransactionRepository;
 
-    private final CharacterModelAssembler characterModelAssembler = new CharacterModelAssembler(CharacterController.class, CharacterModel.class);
-    private final ItemTransactionAssembler assembler = new ItemTransactionAssembler(ItemTransactionController.class, ItemTransactionModel.class);
+    private final CharacterModelAssembler assembler = new CharacterModelAssembler(CharacterController.class, CharacterModel.class);
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
     ResponseEntity<CharacterModel> addItemTransaction(@RequestHeader String Authorization, @RequestBody ItemTransaction incomingValue, @PathVariable final int campaignId, @PathVariable final int characterId) {
-        ItemTransaction newItemTransaction = new ItemTransaction();
-
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        newItemTransaction.setCharacter(character);
-
         Item item = itemRepository.findById(incomingValue.getItem().getId()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem().getId()));
-        newItemTransaction.setItem(item);
 
-        newItemTransaction
-                .setQuantity(incomingValue.getQuantity())
-                .setRemark(incomingValue.getRemark());
-
+        ItemTransaction newItemTransaction = new ItemTransaction(
+                0, // ID doesn't matter, will be overwritten by DB
+                character,
+                item,
+                incomingValue.getQuantity(),
+                null, // Date doesn't matter, will be overwritten by DB
+                incomingValue.getRemark()
+        );
         itemTransactionRepository.save(newItemTransaction);
 
+        Character updatedCharacter = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
 
-        Character updatedCharacter = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        CharacterModel characterModel = characterModelAssembler.toModel(updatedCharacter, inventory);
+        CharacterModel characterModel = assembler.toModel(updatedCharacter, inventory);
         characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
         characterModel.add(linkTo(RootController.class).withRel("index"));
 

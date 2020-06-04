@@ -39,10 +39,14 @@ public class ItemTransactionControllerTest {
     private static final String OBJECT_SCHEMA = "character.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
-    private static final ItemTransaction FIRST_TRANSACTION = new ItemTransaction()
-            .setCharacter(FIRST_CHARACTER)
-            .setItem(FIRST_ITEM)
-            .setQuantity(5);
+    private static final ItemTransaction FIRST_TRANSACTION = new ItemTransaction(
+            1,
+            FIRST_CHARACTER,
+            FIRST_ITEM,
+            5,
+            null,
+            "Test transaction"
+    );
 
     @InjectMocks
     ItemTransactionController itemTransactionController;

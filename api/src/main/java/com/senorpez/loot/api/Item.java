@@ -41,35 +41,15 @@ class Item {
         return name;
     }
 
-    Item setName(String name) {
-        this.name = name;
-        return this;
-    }
-
     public BigDecimal getWeight() {
         return weight;
-    }
-
-    Item setWeight(BigDecimal weight) {
-        this.weight = weight;
-        return this;
     }
 
     public String getDetails() {
         return details;
     }
 
-    Item setDetails(String details) {
-        this.details = details;
-        return this;
-    }
-
     public Integer getCharges() {
         return charges;
-    }
-
-    Item setCharges(Integer charges) {
-        this.charges = charges;
-        return this;
     }
 }
