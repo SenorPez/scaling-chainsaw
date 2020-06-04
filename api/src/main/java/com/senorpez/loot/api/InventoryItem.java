@@ -1,43 +1,50 @@
 package com.senorpez.loot.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.math.BigDecimal;
 
-class InventoryItem {
-    @JsonProperty
+public class InventoryItem {
     private int quantity;
-    @JsonProperty
     private String name;
-    @JsonProperty
     private BigDecimal weight;
-    @JsonProperty
     private String details;
-    @JsonProperty
     private Integer charges;
 
-    public InventoryItem setQuantity(int quantity) {
+    InventoryItem() {
+    }
+
+    InventoryItem(Object[] databaseQueryResult) {
+        this.quantity = ((Number) databaseQueryResult[0]).intValue();
+        this.name = (String) databaseQueryResult[1];
+        this.weight = databaseQueryResult[2] == null ? null : BigDecimal.valueOf(((Number) databaseQueryResult[2]).doubleValue());
+        this.details = databaseQueryResult[3] == null ? null : (String) databaseQueryResult[3];
+        this.charges = databaseQueryResult[4] == null ? null : ((Number) databaseQueryResult[4]).intValue();
+    }
+
+    InventoryItem(int quantity, String name, BigDecimal weight, String details, Integer charges) {
         this.quantity = quantity;
-        return this;
-    }
-
-    public InventoryItem setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public InventoryItem setWeight(BigDecimal weight) {
         this.weight = weight;
-        return this;
-    }
-
-    public InventoryItem setDetails(String details) {
         this.details = details;
-        return this;
+        this.charges = charges;
     }
 
-    public InventoryItem setCharges(Integer charges) {
-        this.charges = charges;
-        return this;
+    int getQuantity() {
+        return quantity;
+    }
+
+    String getName() {
+        return name;
+    }
+
+    BigDecimal getWeight() {
+        return weight;
+    }
+
+    String getDetails() {
+        return details;
+    }
+
+    Integer getCharges() {
+        return charges;
     }
 }

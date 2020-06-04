@@ -9,11 +9,11 @@ class InventoryItemTemplate {
     public String details;
     public Integer charges;
 
-    public InventoryItemTemplate(int quantity, String name, BigDecimal weight, String details, Integer charges) {
-        this.quantity = quantity;
-        this.name = name;
-        this.weight = weight;
-        this.details = details;
-        this.charges = charges;
+    InventoryItemTemplate(InventoryItem inventoryItem) {
+        this.quantity = inventoryItem.getQuantity();
+        this.name = inventoryItem.getName();
+        this.weight = inventoryItem.getWeight();
+        this.details = inventoryItem.getDetails();
+        this.charges = inventoryItem.getCharges();
     }
 }
