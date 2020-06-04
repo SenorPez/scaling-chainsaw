@@ -68,8 +68,8 @@ public class CharacterController {
         Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
 
-        CharacterModel characterModel = assembler.toModel(character, inventory);
-        model.addAttribute(characterModel);
+        CharacterTemplate characterTemplate = new CharacterTemplate(character, inventory);
+        model.addAttribute("character", characterTemplate);
         return "character";
     }
 
