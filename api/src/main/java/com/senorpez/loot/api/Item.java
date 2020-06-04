@@ -1,7 +1,5 @@
 package com.senorpez.loot.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -10,66 +8,67 @@ import java.math.BigDecimal;
 class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty
     private Integer id;
 
     @Column(nullable = false)
-    @JsonProperty
     private String name;
 
-    @Column(precision = 19, scale=3)
-    @JsonProperty
+    @Column(precision = 19, scale = 3)
     private BigDecimal weight;
 
     @Column
-    @JsonProperty
     private String details;
 
     @Column
-    @JsonProperty
     private Integer charges;
 
-    Integer getId() {
+    public Item() {
+    }
+
+    public Item(Integer id, String name, BigDecimal weight, String details, Integer charges) {
+        this.id = id;
+        this.name = name;
+        this.weight = weight;
+        this.details = details;
+        this.charges = charges;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    Item setId(final Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    Item setName(final String name) {
+    Item setName(String name) {
         this.name = name;
         return this;
     }
 
-    BigDecimal getWeight() {
+    public BigDecimal getWeight() {
         return weight;
     }
 
-    Item setWeight(final BigDecimal weight) {
+    Item setWeight(BigDecimal weight) {
         this.weight = weight;
         return this;
     }
 
-    String getDetails() {
+    public String getDetails() {
         return details;
     }
 
-    Item setDetails(final String details) {
+    Item setDetails(String details) {
         this.details = details;
         return this;
     }
 
-    Integer getCharges() {
+    public Integer getCharges() {
         return charges;
     }
 
-    Item setCharges(final Integer charges) {
+    Item setCharges(Integer charges) {
         this.charges = charges;
         return this;
     }

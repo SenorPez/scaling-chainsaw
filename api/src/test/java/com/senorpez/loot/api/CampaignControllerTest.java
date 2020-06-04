@@ -1,7 +1,6 @@
 package com.senorpez.loot.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +22,7 @@ import java.util.Optional;
 import static com.senorpez.loot.api.RootControllerTest.commonLinks;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -300,9 +300,9 @@ public class CampaignControllerTest {
         mockMvc
                 .perform(
                         post("/campaigns")
-                        .contentType(HAL_JSON)
-                        .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
-                        .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                                .contentType(HAL_JSON)
+                                .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
+                                .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
@@ -355,6 +355,7 @@ public class CampaignControllerTest {
                         post("/campaigns")
                                 .contentType(INVALID_MEDIA_TYPE)
                                 .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
+                                .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -379,7 +380,7 @@ public class CampaignControllerTest {
                 post("/campaigns")
                         .contentType(HAL_JSON)
                         .content(invalidJson)
-                        .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                        .header(AUTHORIZATION, "bearer 12345")
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))

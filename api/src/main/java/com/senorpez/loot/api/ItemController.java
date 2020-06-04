@@ -59,14 +59,15 @@ public class ItemController {
     @RolesAllowed("user")
     ResponseEntity<ItemModel> updateItem(@RequestHeader String Authorization, @PathVariable final int itemId, @RequestBody final Item incomingItem) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
-        Item updatedItem = item
-                .setName(Optional.ofNullable(incomingItem.getName()).orElseGet(item::getName))
-                .setWeight(Optional.ofNullable(incomingItem.getWeight()).orElseGet(item::getWeight))
-                .setDetails(Optional.ofNullable(incomingItem.getDetails()).orElseGet(item::getDetails))
-                .setCharges(Optional.ofNullable(incomingItem.getCharges()).orElseGet(item::getCharges));
-        itemRepository.save(updatedItem);
+        Item updatedItem = new Item(
+                item.getId(),
+                Optional.ofNullable(incomingItem.getName()).orElseGet(item::getName),
+                Optional.ofNullable(incomingItem.getWeight()).orElseGet(item::getWeight),
+                Optional.ofNullable(incomingItem.getDetails()).orElseGet(item::getDetails),
+                Optional.ofNullable(incomingItem.getCharges()).orElseGet(item::getCharges)
+        );
 
-        ItemModel itemModel = assembler.toModel(updatedItem);
+        ItemModel itemModel = assembler.toModel(itemRepository.save(updatedItem));
         itemModel.add(linkTo(ItemController.class).withRel("lootitems"));
         itemModel.add(linkTo(RootController.class).withRel("index"));
 
