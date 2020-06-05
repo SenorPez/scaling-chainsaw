@@ -13,6 +13,7 @@ class CharacterTemplate {
                 .stream()
                 .map(InventoryItem::new)
                 .map(InventoryItemTemplate::new)
+                .sorted()
                 .collect(Collectors.toList());
     }
 }
