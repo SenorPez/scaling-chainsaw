@@ -23,12 +23,17 @@ class InventoryItemTemplate implements Comparable<InventoryItemTemplate> {
     public int compareTo(@NonNull InventoryItemTemplate other) {
         if (this.name.equalsIgnoreCase("Copper Piece")) {
             return 1;
+        } else if (other.name.equalsIgnoreCase("Copper Piece")) {
+            return -1;
         }
 
         if (this.name.equalsIgnoreCase("Silver Piece")
                 && !other.name.equalsIgnoreCase("Copper Piece")
         ) {
             return 1;
+        } else if (other.name.equalsIgnoreCase("Silver Piece")
+                && !this.name.equalsIgnoreCase("Copper Piece")) {
+            return -1;
         }
 
         if (this.name.equalsIgnoreCase("Gold Piece")
@@ -37,6 +42,12 @@ class InventoryItemTemplate implements Comparable<InventoryItemTemplate> {
                         other.name.equalsIgnoreCase("Copper Piece")
         )) {
             return 1;
+        } else if (other.name.equalsIgnoreCase("Gold Piece")
+                && !(
+                this.name.equalsIgnoreCase("Silver Piece") ||
+                        this.name.equalsIgnoreCase("Copper Piece")
+        )) {
+            return -1;
         }
 
         if (this.name.equalsIgnoreCase("Platinum Piece")
@@ -46,6 +57,13 @@ class InventoryItemTemplate implements Comparable<InventoryItemTemplate> {
                         other.name.equalsIgnoreCase("Copper Piece")
         )) {
             return 1;
+        } else if (other.name.equalsIgnoreCase("Platinum Piece")
+                && !(
+                this.name.equalsIgnoreCase("Gold Piece") ||
+                        this.name.equalsIgnoreCase("Silver Piece") ||
+                        this.name.equalsIgnoreCase("Copper Piece")
+        )) {
+            return -1;
         }
 
         return this.name.compareToIgnoreCase(other.name);
