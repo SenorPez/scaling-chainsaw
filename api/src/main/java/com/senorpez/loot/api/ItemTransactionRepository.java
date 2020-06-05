@@ -11,6 +11,7 @@ interface ItemTransactionRepository extends CrudRepository<ItemTransaction, Inte
             "FROM itemtransactions " +
             "LEFT JOIN items ON items.id = itemtransactions.item_id " +
             "WHERE character_id = :characterId AND campaign_id = :campaignId " +
-            "GROUP BY item_id", nativeQuery = true)
+            "GROUP BY item_id " +
+            "HAVING SUM(quantity) <> 0", nativeQuery = true)
     List<Object[]> getInventory(@Param("characterId") int characterId, @Param("campaignId") int campaignId);
 }
