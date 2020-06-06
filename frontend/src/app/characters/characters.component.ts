@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CharacterService} from '../character.service';
 import {Character} from '../character';
 
@@ -17,6 +17,8 @@ export class CharactersComponent implements OnInit {
   }
 
   getCharacters(): void {
-    this.characterService.getCharacters().subscribe(characters => this.characters = characters);
+    this.characterService.getCharacters().subscribe(observable => {
+      this.characters = observable._embedded['loot-api:character'];
+    });
   }
 }

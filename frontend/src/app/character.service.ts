@@ -1,16 +1,18 @@
-import { Injectable } from '@angular/core';
-import {Character} from './character';
-import {CHARACTERS} from './mock-characters';
-import {Observable, of} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {JsonReturn} from './character';
+import {Observable} from 'rxjs';
+
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
+  private characterUrl = 'https://www.loot.senorpez.com/campaigns/1/characters';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
-  getCharacters(): Observable<Character[]> {
-    return of(CHARACTERS);
+  getCharacters(): Observable<JsonReturn> {
+    return this.http.get<JsonReturn>(this.characterUrl);
   }
 }
