@@ -1,0 +1,8 @@
+<div *ngIf="character">
+  <h2>{{character.name}}</h2>
+  <ul class="inventory">
+    <li *ngFor="let inventoryItem of character.inventory">
+      {{inventoryItem.name}}
+    </li>
+  </ul>
+</div>

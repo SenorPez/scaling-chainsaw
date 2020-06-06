@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {CharacterService} from '../character.service';
-import {Character} from '../character';
+import {CharactersService} from '../characters.service';
+import {Character, Characters} from '../characters';
 
 @Component({
   selector: 'app-characters',
@@ -8,9 +8,10 @@ import {Character} from '../character';
   styleUrls: ['./characters.component.css']
 })
 export class CharactersComponent implements OnInit {
-  characters: Character[];
+  characters: Characters[];
+  selectedCharacter: Character;
 
-  constructor(private characterService: CharacterService) { }
+  constructor(private characterService: CharactersService) { }
 
   ngOnInit(): void {
     this.getCharacters();
@@ -19,6 +20,13 @@ export class CharactersComponent implements OnInit {
   getCharacters(): void {
     this.characterService.getCharacters().subscribe(observable => {
       this.characters = observable._embedded['loot-api:character'];
+    });
+  }
+
+  onClick(character: Characters) {
+    this.characterService.getCharacter(character.id).subscribe(observable => {
+      this.selectedCharacter = observable;
+
     });
   }
 }
