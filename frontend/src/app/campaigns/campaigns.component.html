@@ -1,0 +1,6 @@
+<h2>Campaigns</h2>
+<ul>
+  <li *ngFor="let campaign of campaigns" (click)="onClick(campaign)">
+    {{campaign.name}}
+  </li>
+</ul>

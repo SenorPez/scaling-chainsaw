@@ -3,14 +3,16 @@ import {NgModule} from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
 
 import {AppComponent} from './app.component';
-import {CharactersComponent} from './characters/characters.component';
-import { CharacterComponent } from './character/character.component';
+// import {CharactersComponent} from './characters/characters.component';
+// import { CharacterComponent } from './character/character.component';
+import { CampaignsComponent } from './campaigns/campaigns.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CharactersComponent,
-    CharacterComponent
+    // CharactersComponent,
+    // CharacterComponent,
+    CampaignsComponent
   ],
   imports: [
     BrowserModule,
