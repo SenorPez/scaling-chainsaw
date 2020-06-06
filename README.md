@@ -19,7 +19,7 @@ The reference implementation is at https://www.loot.senorpez.com/. Complete docu
 ### Changelog
 
 * **2.0.0**: `POST` and `PUT` endpoints now require an `Authentication` header. See the documentation for details on `Authentication` header format.
-* **2.0.0**: `Players` and `Player` resources renamed to `Characters` and `Character`. [[#3]](https://github.com/SenorPez/scaling-chainsaw/issues/3)
+* **2.0.0**: `Players` and `Characters` resources renamed to `Characters` and `Character`. [[#3]](https://github.com/SenorPez/scaling-chainsaw/issues/3)
 * **2.0.0**: Added additional reference links; should be completly navigable now. [[#9]](https://github.com/SenorPez/scaling-chainsaw/issues/9)
 * **2.0.0**: "Loottable" in CURIEs and project structure renamed to "Loot".
 * **1.1.0**: Added support for item charges. [[#17]](https://github.com/SenorPez/scaling-chainsaw/issues/17)
