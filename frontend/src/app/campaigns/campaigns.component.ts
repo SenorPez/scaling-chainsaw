@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Campaign, Link} from '../apiobjects';
-import {CampaignService} from '../campaign.service';
+import {Campaign} from '../apiobjects';
+import {ApiService} from '../api.service';
 
 @Component({
   selector: 'app-campaigns',
@@ -9,20 +9,18 @@ import {CampaignService} from '../campaign.service';
 })
 export class CampaignsComponent implements OnInit {
   campaigns: Campaign[];
-  indexLink: Link;
 
   selectedCampaign: Campaign;
 
-  constructor(private campaignService: CampaignService) { }
+  constructor(private apiService: ApiService) { }
 
   ngOnInit(): void {
     this.getCampaigns();
   }
 
   private getCampaigns(): void {
-    this.campaignService.getCampaigns().subscribe(result => {
-      this.campaigns = result._embedded['loot-api:campaign'];
-      this.indexLink = result._links.index;
+    this.apiService.getIndex().subscribe(index => {
+      this.apiService.getCampaigns(index).subscribe(campaigns => this.campaigns = campaigns._embedded['loot-api:campaign']);
     });
   }
 
