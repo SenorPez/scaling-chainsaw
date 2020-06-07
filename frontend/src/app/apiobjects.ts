@@ -35,6 +35,23 @@ export interface Characters {
 export interface EmbeddedCharacter {
   id: number;
   name: string;
+  _links: {
+    self: Link;
+  };
+}
+
+export interface Character {
+  id: number;
+  name: string;
+  inventory: InventoryItem[];
+}
+
+export interface InventoryItem {
+  quantity: number;
+  name: string;
+  weight: number;
+  details: string;
+  charges: number;
 }
 
 export interface Link {
