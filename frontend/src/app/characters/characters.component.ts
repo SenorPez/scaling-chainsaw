@@ -19,17 +19,54 @@ export class CharactersComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.campaign.currentValue !== changes.campaign.previousValue) {
+    if (changes.campaign.previousValue && changes.campaign.currentValue.id !== changes.campaign.previousValue.id) {
       this.getCharacters();
       this.selectedCharacter = null;
     }
   }
 
   private getCharacters(): void {
-    this.apiService.getCharacters(this.campaign).subscribe(characters => this.characters = characters._embedded['loot-api:character']);
+    this.apiService.getCharacters(this.campaign).subscribe(characters => {
+      this.characters = characters._embedded['loot-api:character'].sort((a, b) => {
+        return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
+      });
+    });
   }
 
   onClick(embeddedCharacter: EmbeddedCharacter) {
-    this.apiService.getCharacter(embeddedCharacter).subscribe(character => this.selectedCharacter = character);
+    this.apiService.getCharacter(embeddedCharacter).subscribe(character => {
+      character.inventory.sort((a, b) => {
+        if (a.name === 'Copper Piece') {
+          return 1;
+        } else if (b.name === 'Copper Piece') {
+          return -1;
+        }
+
+        if (a.name === 'Silver Piece' && b.name !== 'Copper Piece') {
+          return 1;
+        } else if (b.name === 'Silver Piece' && a.name !== 'Copper Piece') {
+          return -1;
+        }
+
+        if (a.name === 'Gold Piece' &&
+        !(b.name === 'Silver Piece' || b.name === 'Copper Piece')) {
+          return 1;
+        } else if (b.name === 'Gold Piece' &&
+        !(a.name === 'Silver Piece' || a.name === 'Copper Piece')) {
+          return -1;
+        }
+
+        if (a.name === 'Platinium Piece' &&
+          !(b.name === 'Gold Piece' || b.name === 'Silver Piece' || b.name === 'Copper Piece')) {
+          return 1;
+        } else if (b.name === 'Platinum Piece' &&
+          !(a.name === 'Gold Piece' || a.name === 'Silver Piece' || a.name === 'Copper Piece')) {
+          return -1;
+        }
+
+        return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
+      });
+      this.selectedCharacter = character;
+    });
   }
 }

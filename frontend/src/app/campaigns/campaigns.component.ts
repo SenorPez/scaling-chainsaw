@@ -19,7 +19,11 @@ export class CampaignsComponent implements OnInit {
 
   private getCampaigns(): void {
     this.apiService.getIndex().subscribe(index => {
-      this.apiService.getCampaigns(index).subscribe(campaigns => this.campaigns = campaigns._embedded['loot-api:campaign']);
+      this.apiService.getCampaigns(index).subscribe(campaigns => {
+        this.campaigns = campaigns._embedded['loot-api:campaign'].sort((a, b) => {
+          return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
+        });
+      });
     });
   }
 
