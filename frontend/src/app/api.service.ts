@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Campaigns, Index} from './apiobjects';
+import {Campaign, Campaigns, Characters, EmbeddedCampaign, Index} from './apiobjects';
 
 @Injectable({
   providedIn: 'root'
@@ -18,4 +18,20 @@ export class ApiService {
   getCampaigns(index: Index): Observable<Campaigns> {
     return this.http.get<Campaigns>(index._links['loot-api:campaigns'].href);
   }
+
+  getCampaign(embeddedCampaign: EmbeddedCampaign): Observable<Campaign> {
+    return this.http.get<Campaign>(embeddedCampaign._links.self.href);
+  }
+
+  getCharacters(campaign: Campaign): Observable<Characters> {
+    return this.http.get<Characters>(campaign._links['loot-api:characters'].href);
+  }
+  //
+  // getCampaign(campaign: Campaign): Observable<Campaign> {
+  //   return this.http.get<Campaign>(campaign._links.)
+  // }
+  //
+  // getCharacters(campaign: Campaign): Observable<Characters> {
+  //   return this.http.get<Characters>(campaign._links['loot-api:characters'].href);
+  // }
 }

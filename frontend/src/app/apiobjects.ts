@@ -6,10 +6,15 @@ export interface Index {
 
 export interface Campaigns {
   _embedded: {
-    'loot-api:campaign': Campaign[];
+    'loot-api:campaign': EmbeddedCampaign[];
   };
+}
+
+export interface EmbeddedCampaign {
+  id: number;
+  name: string;
   _links: {
-    index: Link;
+    self: Link;
   };
 }
 
@@ -17,38 +22,22 @@ export interface Campaign {
   id: number;
   name: string;
   _links: {
-    'loot-api:characters': object[];
+    'loot-api:characters': Link;
   };
+}
+
+export interface Characters {
+  _embedded: {
+    'loot-api:character': EmbeddedCharacter[];
+  };
+}
+
+export interface EmbeddedCharacter {
+  id: number;
+  name: string;
 }
 
 export interface Link {
   href: string;
 }
 
-
-
-// export interface JsonReturn {
-//   _embedded: CharacterList;
-// }
-//
-// export interface CharacterList {
-//   'loot-api:character': Characters[];
-// }
-//
-// export interface Characters {
-//   id: number;
-//   name: string;
-// }
-//
-// export interface Character {
-//   name: string;
-//   inventory: InventoryItem[];
-// }
-//
-// export interface InventoryItem {
-//   quantity: number;
-//   name: string;
-//   weight: number;
-//   details: string;
-//   charges: number;
-// }

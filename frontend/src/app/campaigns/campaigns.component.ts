@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Campaign} from '../apiobjects';
 import {ApiService} from '../api.service';
+import {Campaign, EmbeddedCampaign} from '../apiobjects';
 
 @Component({
   selector: 'app-campaigns',
@@ -8,8 +8,7 @@ import {ApiService} from '../api.service';
   styleUrls: ['./campaigns.component.css']
 })
 export class CampaignsComponent implements OnInit {
-  campaigns: Campaign[];
-
+  campaigns: EmbeddedCampaign[];
   selectedCampaign: Campaign;
 
   constructor(private apiService: ApiService) { }
@@ -24,7 +23,7 @@ export class CampaignsComponent implements OnInit {
     });
   }
 
-  onClick(campaign: Campaign) {
-    this.selectedCampaign = campaign;
+  onClick(embeddedCampaign: EmbeddedCampaign) {
+    this.apiService.getCampaign(embeddedCampaign).subscribe(campaign => this.selectedCampaign = campaign);
   }
 }
