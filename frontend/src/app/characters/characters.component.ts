@@ -9,28 +9,19 @@ import {Campaign, Character, EmbeddedCharacter} from '../apiobjects';
 })
 export class CharactersComponent implements OnInit, OnChanges {
   @Input() campaign: Campaign;
-  characters: EmbeddedCharacter[];
+  @Input() characters: EmbeddedCharacter[];
   selectedCharacter: Character;
 
   constructor(private apiService: ApiService) { }
 
-  ngOnInit(): void {
-    this.getCharacters();
-  }
+  ngOnInit(): void { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.campaign.previousValue && changes.campaign.currentValue.id !== changes.campaign.previousValue.id) {
-      this.getCharacters();
+    if (changes.campaign
+      && changes.campaign.previousValue
+      && changes.campaign.currentValue.id !== changes.campaign.previousValue.id) {
       this.selectedCharacter = null;
     }
-  }
-
-  private getCharacters(): void {
-    this.apiService.getCharacters(this.campaign).subscribe(characters => {
-      this.characters = characters._embedded['loot-api:character'].sort((a, b) => {
-        return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
-      });
-    });
   }
 
   onClick(embeddedCharacter: EmbeddedCharacter) {
