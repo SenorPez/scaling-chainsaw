@@ -4,13 +4,13 @@ Loot is a set of tools originally designed to manage inventory for roleplaying g
 
 ## Current Release
 
-**Release 3** is the most current release of Loot and consists of the following components. See below for detailed release notes for each component.
+**Release 3.1** is the most current release of Loot and consists of the following components. See below for detailed release notes for each component.
 
-* **API 2.0.0**
+* **API 2.0.1**
 * **Bot 1.2.0**
 
 ## API
-The current version of **API** is **2.0.0**.
+The current version of **API** is **2.0.1**.
 
 The API provides a HAL-compliant HATEOAS REST application for serving data.
 
@@ -18,6 +18,8 @@ The reference implementation is at https://www.loot.senorpez.com/. Complete docu
 
 ### Changelog
 
+* **2.0.1**: Adds CORS support to endpoints.
+* **2.0.1**: Corrects links in resources to correctly use `https` protocol.
 * **2.0.0**: `POST` and `PUT` endpoints now require an `Authentication` header. See the documentation for details on `Authentication` header format.
 * **2.0.0**: `Players` and `Player` resources renamed to `Characters` and `Character`. [[#3]](https://github.com/SenorPez/scaling-chainsaw/issues/3)
 * **2.0.0**: Added additional reference links; should be completly navigable now. [[#9]](https://github.com/SenorPez/scaling-chainsaw/issues/9)
