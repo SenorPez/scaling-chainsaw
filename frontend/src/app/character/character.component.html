@@ -1,6 +1,7 @@
-<h2>{{character.name}}</h2>
+<div class="character">
 <ul>
-  <li *ngFor="let inventoryitem of character.inventory">
-    {{inventoryitem.quantity}} {{inventoryitem.name}}
+  <li *ngFor="let inventoryitem of character.inventory" class="popup">
+    <span class="quantity">{{inventoryitem.quantity}}</span> {{inventoryitem.name}}
   </li>
 </ul>
+</div>

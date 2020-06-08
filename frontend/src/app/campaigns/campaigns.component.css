@@ -1,0 +1,23 @@
+li {
+  border: solid 3px #F5B895;
+  cursor: pointer;
+  float: left;
+  list-style: none;
+  text-align: center;
+  background-color: #0F4C81;
+  margin-right: 30px;
+  width: 150px;
+  line-height: 30px;
+}
+
+li.selected {
+  background-color: #B5C7D3;
+  color: #0F4C81;
+}
+
+li:hover {
+  background-color: #F3D5AD;
+  color: #0F4C81;
+}
+
+
