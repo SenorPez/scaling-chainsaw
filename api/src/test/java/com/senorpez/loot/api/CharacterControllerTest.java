@@ -1,6 +1,5 @@
 package com.senorpez.loot.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,6 +17,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.senorpez.loot.api.CampaignControllerTest.FIRST_CAMPAIGN;
 import static com.senorpez.loot.api.RootControllerTest.commonLinks;
@@ -56,6 +56,8 @@ public class CharacterControllerTest {
 
     static final Character FIRST_CHARACTER = new Character(1, FIRST_CAMPAIGN, "First Character");
     private static final Character SECOND_CHARACTER = new Character(2, FIRST_CAMPAIGN, "Second Character");
+    private static final Character NEW_CHARACTER = new Character(new Random().nextInt(), FIRST_CAMPAIGN, "New Character");
+    private static final String NEW_CHARACTER_JSON = "{\"name\": \"New Character\"}";
 
     @InjectMocks
     CharacterController characterController;
@@ -428,23 +430,22 @@ public class CharacterControllerTest {
     @Test
     public void postCharacter_ValidCampaign_ValidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(FIRST_CHARACTER);
+        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(NEW_CHARACTER);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         mockMvc
                 .perform(
                         post(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_CHARACTER))
+                                .content(NEW_CHARACTER_JSON)
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$.id", is(FIRST_CHARACTER.getId())))
-                .andExpect(jsonPath("$.name", is(FIRST_CHARACTER.getName())))
+                .andExpect(jsonPath("$.id", is(NEW_CHARACTER.getId())))
+                .andExpect(jsonPath("$.name", is(NEW_CHARACTER.getName())))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId()))))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), NEW_CHARACTER.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loot-{rel}"),
@@ -485,15 +486,13 @@ public class CharacterControllerTest {
     @Test
     public void postCharacter_ValidCampaign_InvalidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(FIRST_CHARACTER);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(NEW_CHARACTER);
 
         mockMvc
                 .perform(
                         post(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_CHARACTER))
+                                .content(NEW_CHARACTER_JSON)
                 )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -511,7 +510,7 @@ public class CharacterControllerTest {
     @Test
     public void postCharacter_ValidCampaign_InvalidSyntax() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(FIRST_CHARACTER);
+        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(NEW_CHARACTER);
         String invalidJson = "{\"name\": \"}";
 
         mockMvc
@@ -528,28 +527,5 @@ public class CharacterControllerTest {
                 .andExpect(jsonPath("$.message", is(BAD_REQUEST.getReasonPhrase())));
 
         verifyNoInteractions(campaignRepository, characterRepository);
-    }
-
-    private static class Inventory {
-        private String name;
-        private Integer quantity;
-
-        public String getName() {
-            return name;
-        }
-
-        public Inventory setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Integer getQuantity() {
-            return quantity;
-        }
-
-        public Inventory setQuantity(Integer quantity) {
-            this.quantity = quantity;
-            return this;
-        }
     }
 }

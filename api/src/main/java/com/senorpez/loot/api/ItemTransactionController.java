@@ -38,11 +38,9 @@ public class ItemTransactionController {
         Item item = itemRepository.findById(incomingValue.getItem().getId()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem().getId()));
 
         ItemTransaction newItemTransaction = new ItemTransaction(
-                0, // ID doesn't matter, will be overwritten by DB
                 character,
                 item,
                 incomingValue.getQuantity(),
-                null, // Date doesn't matter, will be overwritten by DB
                 incomingValue.getRemark()
         );
         itemTransactionRepository.save(newItemTransaction);

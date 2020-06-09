@@ -1,6 +1,5 @@
 package com.senorpez.loot.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Random;
 
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -58,6 +58,28 @@ public class ItemControllerTest {
             null,
             null
     );
+    private static final BigDecimal newWeight = BigDecimal.valueOf(new Random().nextDouble());
+    private static final Integer newCharges = new Random().nextInt();
+    private static final Item NEW_ITEM = new Item(
+            new Random().nextInt(),
+            "New Item",
+            newWeight,
+            "Adding a new item",
+            newCharges);
+    private static final String NEW_ITEM_JSON = String.format(
+            "{\"name\": \"New Item\", \"weight\": %.2f, \"details\": \"Adding a new item\", \"charges\": %d}",
+            newWeight, newCharges
+    );
+
+    private static final Item NEW_MINIMAL_ITEM = new Item(
+            new Random().nextInt(),
+            "Minimal Item",
+            null,
+            null,
+            null
+    );
+    private static final String NEW_MINIMAL_ITEM_JSON = "{\"name\": \"Minimal Item\"}";
+
 
     @InjectMocks
     ItemController itemController;
@@ -333,26 +355,24 @@ public class ItemControllerTest {
 
     @Test
     public void postItem_ValidContentType() throws Exception {
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
 
         mockMvc
                 .perform(
                         post("/items")
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_ITEM))
+                                .content(NEW_ITEM_JSON)
                                 .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$.id", is(FIRST_ITEM.getId())))
-                .andExpect(jsonPath("$.name", is(FIRST_ITEM.getName())))
-                .andExpect(jsonPath("$.weight", is(FIRST_ITEM.getWeight().doubleValue())))
-                .andExpect(jsonPath("$.details", is(FIRST_ITEM.getDetails())))
-                .andExpect(jsonPath("$.charges", is(FIRST_ITEM.getCharges())))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))))
+                .andExpect(jsonPath("$.id", is(NEW_ITEM.getId())))
+                .andExpect(jsonPath("$.name", is(NEW_ITEM.getName())))
+                .andExpect(jsonPath("$.weight", is(NEW_ITEM.getWeight().doubleValue())))
+                .andExpect(jsonPath("$.details", is(NEW_ITEM.getDetails())))
+                .andExpect(jsonPath("$.charges", is(NEW_ITEM.getCharges())))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", NEW_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
@@ -370,7 +390,6 @@ public class ItemControllerTest {
                                 headerWithName("Authorization").description("Authorization token")
                         ),
                         requestFields(
-                                fieldWithPath("id").ignored(),
                                 fieldWithPath("name").description("Item name"),
                                 fieldWithPath("weight").description("Item weight (lbs.); may be null").optional(),
                                 fieldWithPath("details").description("Item details; may be null").optional(),
@@ -403,26 +422,24 @@ public class ItemControllerTest {
 
     @Test
     public void postMinimalItem_ValidContentType() throws Exception {
-        when(itemRepository.save(any(Item.class))).thenReturn(SECOND_ITEM);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_MINIMAL_ITEM);
 
         mockMvc
                 .perform(
                         post("/items")
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(SECOND_ITEM))
+                                .content(NEW_MINIMAL_ITEM_JSON)
                                 .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$.id", is(SECOND_ITEM.getId())))
-                .andExpect(jsonPath("$.name", is(SECOND_ITEM.getName())))
+                .andExpect(jsonPath("$.id", is(NEW_MINIMAL_ITEM.getId())))
+                .andExpect(jsonPath("$.name", is(NEW_MINIMAL_ITEM.getName())))
                 .andExpect(jsonPath("$.weight", is(nullValue())))
                 .andExpect(jsonPath("$.details", is(nullValue())))
                 .andExpect(jsonPath("$.charges", is(nullValue())))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", NEW_MINIMAL_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
@@ -438,15 +455,13 @@ public class ItemControllerTest {
 
     @Test
     public void postItem_InvalidContentType() throws Exception {
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
 
         mockMvc
                 .perform(
                         post("/items")
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_ITEM))
+                                .content(NEW_ITEM_JSON)
                                 .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isUnsupportedMediaType())
@@ -461,7 +476,7 @@ public class ItemControllerTest {
 
     @Test
     public void postItem_InvalidSyntax() throws Exception {
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
         String invalidJson = "{\"name\": \"}";
 
         mockMvc
@@ -482,27 +497,25 @@ public class ItemControllerTest {
 
     @Test
     public void putItem_ValidItem_ValidContentType() throws Exception {
-        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(NEW_ITEM));
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
 
         mockMvc
                 .perform(
-                        put(String.format("/items/%d", FIRST_ITEM.getId()))
+                        put(String.format("/items/%d", NEW_ITEM.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_ITEM))
+                                .content(NEW_ITEM_JSON)
                                 .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$.id", is(FIRST_ITEM.getId())))
-                .andExpect(jsonPath("$.name", is(FIRST_ITEM.getName())))
-                .andExpect(jsonPath("$.weight", is(FIRST_ITEM.getWeight().doubleValue())))
-                .andExpect(jsonPath("$.details", is(FIRST_ITEM.getDetails())))
-                .andExpect(jsonPath("$.charges", is(FIRST_ITEM.getCharges())))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))))
+                .andExpect(jsonPath("$.id", is(NEW_ITEM.getId())))
+                .andExpect(jsonPath("$.name", is(NEW_ITEM.getName())))
+                .andExpect(jsonPath("$.weight", is(NEW_ITEM.getWeight().doubleValue())))
+                .andExpect(jsonPath("$.details", is(NEW_ITEM.getDetails())))
+                .andExpect(jsonPath("$.charges", is(NEW_ITEM.getCharges())))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", NEW_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
@@ -520,7 +533,6 @@ public class ItemControllerTest {
                                 headerWithName("Authorization").description("Authorization token")
                         ),
                         requestFields(
-                                fieldWithPath("id").ignored(),
                                 fieldWithPath("name").description("Item name; may be null to leave value unchanged"),
                                 fieldWithPath("weight").description("Item weight (lbs.); may be null to leave value unchanged").optional(),
                                 fieldWithPath("details").description("Item details; may be null to leave value unchanged").optional(),
@@ -551,26 +563,25 @@ public class ItemControllerTest {
         verify(itemRepository, times(1)).save(any(Item.class));
         verifyNoMoreInteractions(itemRepository);
     }
+    
     @Test
     public void putMinimalItem_ValidItem_ValidContentType() throws Exception {
-        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(SECOND_ITEM));
-        when(itemRepository.save(any(Item.class))).thenReturn(SECOND_ITEM);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(NEW_MINIMAL_ITEM));
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_MINIMAL_ITEM);
 
         mockMvc
                 .perform(
-                        put(String.format("/items/%d", SECOND_ITEM.getId()))
+                        put(String.format("/items/%d", NEW_MINIMAL_ITEM.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(SECOND_ITEM))
+                                .content(NEW_MINIMAL_ITEM_JSON)
                                 .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$.id", is(SECOND_ITEM.getId())))
-                .andExpect(jsonPath("$.name", is(SECOND_ITEM.getName())))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))))
+                .andExpect(jsonPath("$.id", is(NEW_MINIMAL_ITEM.getId())))
+                .andExpect(jsonPath("$.name", is(NEW_MINIMAL_ITEM.getName())))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", NEW_MINIMAL_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
@@ -587,16 +598,14 @@ public class ItemControllerTest {
 
     @Test
     public void putItem_ValidItem_InvalidContentType() throws Exception {
-        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(NEW_ITEM));
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
 
         mockMvc
                 .perform(
-                        put(String.format("/items/%d", FIRST_ITEM.getId()))
+                        put(String.format("/items/%d", NEW_ITEM.getId()))
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_ITEM))
+                                .content(NEW_ITEM_JSON)
                                 .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isUnsupportedMediaType())
@@ -611,13 +620,13 @@ public class ItemControllerTest {
 
     @Test
     public void putItem_ValidItem_InvalidSyntax() throws Exception {
-        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(NEW_ITEM));
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
         String invalidJson = "{\"name\": \"}";
 
         mockMvc
                 .perform(
-                        put(String.format("/items/%d", FIRST_ITEM.getId()))
+                        put(String.format("/items/%d", NEW_ITEM.getId()))
                                 .contentType(HAL_JSON)
                                 .content(invalidJson)
                                 .header(AUTHORIZATION, "bearer 12345")
@@ -634,15 +643,13 @@ public class ItemControllerTest {
     @Test
     public void putItem_InvalidItem_ValidContentType() throws Exception {
         when(itemRepository.findById(anyInt())).thenThrow(new ItemNotFoundException(8675309));
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
 
         mockMvc
                 .perform(
                         put("/items/8675309")
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_ITEM))
+                                .content(NEW_ITEM_JSON)
                                 .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isNotFound())
@@ -659,15 +666,13 @@ public class ItemControllerTest {
     @Test
     public void putItem_InvalidItem_InvalidContentType() throws Exception {
         when(itemRepository.findById(anyInt())).thenThrow(new ItemNotFoundException(8675309));
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
 
         mockMvc
                 .perform(
                         put("/items/8675309")
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_ITEM))
+                                .content(NEW_ITEM_JSON)
                                 .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isUnsupportedMediaType())
@@ -683,7 +688,7 @@ public class ItemControllerTest {
     @Test
     public void putItem_InvalidItem_InvalidSyntax() throws Exception {
         when(itemRepository.findById(anyInt())).thenThrow(new ItemNotFoundException(8675309));
-        when(itemRepository.save(any(Item.class))).thenReturn(FIRST_ITEM);
+        when(itemRepository.save(any(Item.class))).thenReturn(NEW_ITEM);
         String invalidJson = "{\"name\": \"}";
 
         mockMvc

@@ -32,12 +32,18 @@ class ItemTransaction {
     public ItemTransaction() {
     }
 
-    public ItemTransaction(int id, Character character, Item item, int quantity, Date datetime, String remark) {
+    public ItemTransaction(Character character, Item item, int quantity, String remark) {
+        this.character = character;
+        this.item = item;
+        this.quantity = quantity;
+        this.remark = remark;
+    }
+
+    public ItemTransaction(int id, Character character, Item item, int quantity, String remark) {
         this.id = id;
         this.character = character;
         this.item = item;
         this.quantity = quantity;
-        this.datetime = datetime;
         this.remark = remark;
     }
 

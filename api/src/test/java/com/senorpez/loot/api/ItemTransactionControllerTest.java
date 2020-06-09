@@ -1,6 +1,5 @@
 package com.senorpez.loot.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,6 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.senorpez.loot.api.CampaignControllerTest.FIRST_CAMPAIGN;
 import static com.senorpez.loot.api.CharacterControllerTest.FIRST_CHARACTER;
@@ -39,14 +39,17 @@ public class ItemTransactionControllerTest {
     private static final String OBJECT_SCHEMA = "character.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
-    private static final ItemTransaction FIRST_TRANSACTION = new ItemTransaction(
-            1,
+    private static final Integer newQuantity = new Random().nextInt();
+    private static final ItemTransaction NEW_TRANSACTION = new ItemTransaction(
+            new Random().nextInt(),
             FIRST_CHARACTER,
             FIRST_ITEM,
-            5,
-            null,
-            "Test transaction"
+            newQuantity,
+            "New Transaction"
     );
+    private static final String NEW_TRANSACTION_JSON = String.format(
+            "{\"item\": %d, \"quantity\": %d, \"remark\": \"New Transaction\"}",
+            FIRST_ITEM.getId(), newQuantity);
 
     @InjectMocks
     ItemTransactionController itemTransactionController;
@@ -83,15 +86,13 @@ public class ItemTransactionControllerTest {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
         when(itemRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_ITEM));
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
 
         mockMvc
                 .perform(
                         post(String.format("/campaigns/%d/characters/%d/itemtransactions", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
+                                .content(NEW_TRANSACTION_JSON)
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
@@ -117,15 +118,13 @@ public class ItemTransactionControllerTest {
 
     @Test
     public void postItemTransaction_ValidCampaign_ValidCharacter_InvalidContentType() throws Exception {
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
 
         mockMvc
                 .perform(
                         post(String.format("/campaigns/%d/characters/%d/itemtransactions", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId()))
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
+                                .content(NEW_TRANSACTION_JSON)
                 )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -142,7 +141,7 @@ public class ItemTransactionControllerTest {
 
     @Test
     public void postItemTransaction_ValidCampaign_ValidCharacter_InvalidSyntax() throws Exception {
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
         String invalidJson = "{\"name\": \"}";
 
         mockMvc
@@ -165,15 +164,13 @@ public class ItemTransactionControllerTest {
     public void postItemTransaction_ValidCampaign_InvalidCharacter_ValidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(characterRepository.findById(anyInt())).thenThrow(new CharacterNotFoundException(8675309));
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
 
         mockMvc
                 .perform(
                         post(String.format("/campaigns/%d/characters/8675309/itemtransactions", FIRST_CAMPAIGN.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
+                                .content(NEW_TRANSACTION_JSON)
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isNotFound())
@@ -193,15 +190,13 @@ public class ItemTransactionControllerTest {
     public void postItemTransaction_ValidCampaign_InvalidCharacter_InvalidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(characterRepository.findById(anyInt())).thenThrow(new CharacterNotFoundException(8675309));
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
 
         mockMvc
                 .perform(
                         post(String.format("/campaigns/%d/characters/8675309/itemtransactions", FIRST_CAMPAIGN.getId()))
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION)))
+                                .content(NEW_TRANSACTION_JSON))
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)))
@@ -219,7 +214,7 @@ public class ItemTransactionControllerTest {
     public void postItemTransaction_ValidCampaign_InvalidCharacter_InvalidSyntax() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(characterRepository.findById(anyInt())).thenThrow(new CharacterNotFoundException(8675309));
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
         String invalidJson = "{\"name\": \"";
 
         mockMvc
@@ -242,15 +237,13 @@ public class ItemTransactionControllerTest {
     public void postItemTransaction_InvalidCampaign_ValidCharacter_ValidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
         when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
 
         mockMvc
                 .perform(
                         post(String.format("/campaigns/8675309/characters/%d/itemtransactions", FIRST_CHARACTER.getId()))
                                 .contentType(HAL_JSON)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
+                                .content(NEW_TRANSACTION_JSON)
                                 .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isNotFound())
@@ -269,15 +262,13 @@ public class ItemTransactionControllerTest {
     public void postItemTransaction_InvalidCampaign_ValidCharacter_InvalidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
         when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
 
         mockMvc
                 .perform(
                         post(String.format("/campaigns/8675309/characters/%d/itemtransactions", FIRST_CHARACTER.getId()))
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_TRANSACTION))
+                                .content(NEW_TRANSACTION_JSON)
 
                 )
                 .andExpect(status().isUnsupportedMediaType())
@@ -297,7 +288,7 @@ public class ItemTransactionControllerTest {
     public void postItemTransaction_InvalidCampaign_ValidCharacter_InvalidSyntax() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
         when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
-        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(FIRST_TRANSACTION);
+        when(itemTransactionRepository.save(any(ItemTransaction.class))).thenReturn(NEW_TRANSACTION);
         String invalidJson = "{\"name\": \"";
 
         mockMvc
