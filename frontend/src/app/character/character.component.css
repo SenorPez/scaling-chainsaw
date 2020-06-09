@@ -19,3 +19,13 @@ li .quantity {
   min-width: 30px;
   text-align: center;
 }
+
+li .charges {
+  display: inline-block;
+  background-color: #B5C7D3;
+  color: #0F4C81;
+  text-align: center;
+  position: relative;
+  right: -10px;
+  padding: 0 10px;
+}
