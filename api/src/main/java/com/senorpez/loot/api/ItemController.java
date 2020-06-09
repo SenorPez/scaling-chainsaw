@@ -20,7 +20,7 @@ public class ItemController {
     @Autowired
     private ItemRepository itemRepository;
 
-    private final EmbeddedItemModelAssembler collectionAssembler = new EmbeddedItemModelAssembler(ItemController.class, EmbeddedItemModel.class);
+    private final EmbeddedItemModelAssembler collectionAssembler = new EmbeddedItemModelAssembler();
     private final ItemModelAssembler assembler = new ItemModelAssembler(ItemController.class, ItemModel.class);
 
     @GetMapping

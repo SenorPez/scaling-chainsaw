@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class CharacterTemplate {
-    public String name;
-    public List<InventoryItemTemplate> inventory;
+    public final String name;
+    public final List<InventoryItemTemplate> inventory;
 
     CharacterTemplate(Character character, List<Object[]> inventory) {
         this.name = character.getName();

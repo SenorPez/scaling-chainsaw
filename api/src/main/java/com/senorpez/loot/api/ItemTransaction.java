@@ -24,7 +24,7 @@ class ItemTransaction {
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date datetime = new Date();
+    private final Date datetime = new Date();
 
     @Column
     private String remark;

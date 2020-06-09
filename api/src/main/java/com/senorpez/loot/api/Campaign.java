@@ -12,7 +12,7 @@ class Campaign {
     @Column(nullable = false)
     private String name;
 
-    Campaign() {
+    public Campaign() {
     }
 
     Campaign(int id, String name) {

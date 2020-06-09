@@ -5,11 +5,11 @@ import org.springframework.lang.NonNull;
 import java.math.BigDecimal;
 
 class InventoryItemTemplate implements Comparable<InventoryItemTemplate> {
-    public int quantity;
-    public String name;
-    public BigDecimal weight;
-    public String details;
-    public Integer charges;
+    public final int quantity;
+    public final String name;
+    public final BigDecimal weight;
+    public final String details;
+    public final Integer charges;
 
     InventoryItemTemplate(InventoryItem inventoryItem) {
         this.quantity = inventoryItem.getQuantity();
