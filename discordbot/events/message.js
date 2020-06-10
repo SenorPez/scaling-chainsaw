@@ -1,8 +1,12 @@
 const campaign = require('../commands/campaign');
+const character = require('../commands/character');
 
 const alias = {
     'campaign': campaign,
     'cid': campaign,
+    'character': character,
+    'pid': character,
+    'char': character,
 };
 
 module.exports = (client, message) => {
