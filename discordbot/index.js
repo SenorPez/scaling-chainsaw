@@ -3,8 +3,8 @@ const Discord = require("discord.js")
 const fetch = require("node-fetch")
 const client = new Discord.Client()
 
-var campaignId = null
-var characterId = null
+let campaignId = null;
+let characterId = null;
 
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}`)
@@ -12,11 +12,11 @@ client.on("ready", () => {
 
 client.on("message", receivedMessage => {
     // Prevent bot from responding to its own messages
-    if (receivedMessage.author == client.user) {
+    if (receivedMessage.author === client.user) {
         return
     }
 
-    if (receivedMessage.content.startsWith("!")) {
+    if (receivedMessage.content.startsWith("$")) {
         processCommand(receivedMessage)
     }
 })
@@ -49,36 +49,36 @@ function processCommand(receivedMessage) {
     const item = matches[0][3]
     const args = matches[0][4]
 
-    if (command == "!add" || command == "!drop" || command == "!setCharges") {
+    if (command === "$add" || command === "$drop" || command === "$setCharges") {
       if (campaignId === null || characterId === null) {
-          receivedMessage.channel.send("Campaign or character ID not set. Set with !cid and !pid.")
+          receivedMessage.channel.send("Campaign or character ID not set. Set with $cid and $pid.")
           return
       }
     }
 
-    if (command == "!add"){
+    if (command === "$add"){
         addItem(receivedMessage, quantity, item, args)
     }
-    if (command == "!drop") {
+    if (command === "$drop") {
         dropItem(receivedMessage, quantity, item, args)
     }
-    if (command == "!cid") {
+    if (command === "$cid") {
         // Number goes into the item capture group
         campaignId = item
         receivedMessage.channel.send(`Campaign ID set to ${campaignId}`)
     }
-    if (command == "!pid") {
+    if (command === "$pid") {
       // Number goes into the item capture group
         characterId = item
         receivedMessage.channel.send(`Character Id set to ${characterId}`)
     }
-    if (command == "!setcharges") {
+    if (command === "$setcharges") {
         setCharges(receivedMessage, quantity, item, args)
     }
 }
 
 function addItem(receivedMessage, quantity, item, args) {
-    if (quantity == "") {
+    if (quantity === "") {
         quantity = 1
     }
 
@@ -94,7 +94,7 @@ function addItem(receivedMessage, quantity, item, args) {
 }
 
 function dropItem(receivedMessage, quantity, item, args) {
-    if (quantity == "") {
+    if (quantity === "") {
         quantity = -1
     } else {
         quantity = -quantity
@@ -111,16 +111,16 @@ function getItems(receivedMessage, item, args) {
 
 function getItemId(receivedMessage, item, args, data) {
   const itemArray = data._embedded['loot-api:lootitem']
-  const filteredItemArray = itemArray.filter(singleItem => singleItem.name == item)
+  const filteredItemArray = itemArray.filter(singleItem => singleItem.name === item)
 
   const idRegEx = /(--[i]) ?(.+?(?=--|$))/g
   const idMatches = [...args.matchAll(idRegEx)]
 
   if (filteredItemArray.length < 1) {
     receivedMessage.channel.send("Item not found.");
-  } else if (filteredItemArray.length > 1 && idMatches.length != 1) {
+  } else if (filteredItemArray.length > 1 && idMatches.length !== 1) {
     receivedMessage.channel.send("Multiple item matches. Include item ID with --i option.")
-  } else if (filteredItemArray.length > 1 && idMatches.length == 1) {
+  } else if (filteredItemArray.length > 1 && idMatches.length === 1) {
     return idMatches[0][2];
   } else {
     return filteredItemArray[0].id;
