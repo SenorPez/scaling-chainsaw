@@ -1,6 +1,6 @@
 const state = {
-    campaignId: null,
-    characterId: null
+    campaignId: 1,
+    characterId: 1
 };
 
 const getCampaignId = () => {

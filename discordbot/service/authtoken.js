@@ -1,10 +1,12 @@
+const fetch = require("node-fetch");
+
 module.exports = () => {
     const authData = {
-        'grant_type': 'password',
-        'client_id': 'api',
-        'client_secret': process.env.CLIENT_SECRET,
-        'username': 'senorpez',
-        'password': process.env.PASSWORD
+        grant_type: 'password',
+        client_id: 'api',
+        client_secret: process.env.CLIENT_SECRET,
+        username: 'senorpez',
+        password: process.env.PASSWORD
     }
     const authBody = Object.keys(authData).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(authData[key])).join('&');
 
