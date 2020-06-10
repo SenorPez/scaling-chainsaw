@@ -4,6 +4,8 @@ const fs = require("fs");
 const fetch = require("node-fetch");
 const client = new Discord.Client();
 
+const getToken = require('./service/authtoken');
+
 const state = {
     campaignId: 4,
     characterId: 4
@@ -21,26 +23,6 @@ fs.readdir("./events/", (err, files) => {
 
 let campaignId = null;
 let characterId = null;
-
-function getToken() {
-  const authData = {
-    'grant_type': 'password',
-    'client_id': 'api',
-    'client_secret': process.env.CLIENT_SECRET,
-    'username': 'senorpez',
-    'password': process.env.PASSWORD
-  };
-  const authBody = Object.keys(authData).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(authData[key])).join('&');
-
-  return fetch(`https://www.senorpez.com:8448/auth/realms/loot/protocol/openid-connect/token`, {
-    method: "post",
-    body: authBody,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  })
-  .then(response => response.json());
-}
 
 function processCommand(receivedMessage) {
     const regex = /(!\S*) (-?\d*) ?(.+?(?= --|$)) ?(.*)/g
@@ -166,7 +148,7 @@ function addJsonItem(itemId, quantity, args, access_token, autoremark) {
 
 function setCharges(receivedMessage, quantity, item, args) {
   const itemPromise = getItems(receivedMessage, item, args);
-  const tokenPromise = getToken();
+    const tokenPromise = getToken();
 
   Promise.all([itemPromise, tokenPromise])
   .then((values) => {
