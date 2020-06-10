@@ -1,7 +1,9 @@
 const regex = /^.+?(?:\s)+(.+)/g
 const fetch = require("node-fetch");
 
-module.exports = (message, state) => {
+const state = require('../service/state');
+
+module.exports = (message) => {
     const matches = [...message.content.matchAll(regex)];
     if (matches[0]) {
         const campaignId = Number(matches[0][1]).valueOf();
@@ -14,10 +16,9 @@ module.exports = (message, state) => {
                         message.channel.send(`Multiple matches`);
                     } else {
                         message.channel.send(`Campaign set to ${data[0].name}`);
-                        state.campaignId = data[0].id;
-                        console.log("Campaign", state);
+                        state.setCampaignId(data[0].id);
                     }
-                })
+                });
         } else {
             findCampaignById(campaignId)
                 .then(data => {
@@ -27,8 +28,7 @@ module.exports = (message, state) => {
                         message.channel.send(`Seriously, how did you manage this?`);
                     } else {
                         message.channel.send(`Campaign set to ${data[0].name}`);
-                        console.log(campaignId);
-                        state.campaignId = campaignId;
+                        state.setCampaignId(campaignId);
                     }
                 });
         }

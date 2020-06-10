@@ -6,19 +6,13 @@ const client = new Discord.Client();
 
 const getToken = require('./service/authtoken');
 
-const state = {
-    campaignId: 4,
-    characterId: 4
-}
-
 fs.readdir("./events/", (err, files) => {
     files.forEach(file => {
         const eventHandler = require(`./events/${file}`);
         const eventName = file.split('.')[0];
-        client.on(eventName, (...args) => eventHandler(client, state, ...args));
+        client.on(eventName, (...args) => eventHandler(client, ...args));
     });
 });
-
 
 
 let campaignId = null;
