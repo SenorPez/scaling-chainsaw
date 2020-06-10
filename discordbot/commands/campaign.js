@@ -16,7 +16,10 @@ module.exports = (message) => {
                         message.channel.send(`Multiple matches`);
                     } else {
                         message.channel.send(`Campaign set to ${data[0].name}`);
-                        state.setCampaignId(data[0].id);
+                        if (state.getCampaignId() !== data[0].id) {
+                            state.setCharacterId(null);
+                            state.setCampaignId(data[0].id);
+                        }
                     }
                 });
         } else {
@@ -28,7 +31,10 @@ module.exports = (message) => {
                         message.channel.send(`Seriously, how did you manage this?`);
                     } else {
                         message.channel.send(`Campaign set to ${data[0].name}`);
-                        state.setCampaignId(campaignId);
+                        if (state.getCampaignId() !== data[0].id) {
+                            state.setCharacterId(null);
+                            state.setCampaignId(data[0].id);
+                        }
                     }
                 });
         }

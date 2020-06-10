@@ -3,6 +3,11 @@ const fetch = require("node-fetch");
 const state = require('../service/state');
 
 module.exports = (message) => {
+    if (state.getCampaignId() === null) {
+        message.channel.send("Campaign must be set; use the $campaign command");
+        return
+    }
+
     const matches = [...message.content.matchAll(regex)];
     if (matches[0]) {
         const characterId = Number(matches[0][1]).valueOf();
@@ -37,7 +42,7 @@ module.exports = (message) => {
 }
 
 function getCharacters() {
-    return fetch("https://www.loot.senorpez.com/campaigns/1/characters")
+    return fetch(`https://www.loot.senorpez.com/campaigns/${state.getCampaignId()}/characters`)
         .then(response => response.json());
 }
 
