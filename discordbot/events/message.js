@@ -2,6 +2,7 @@ const additem = require('../commands/additem');
 const campaign = require('../commands/campaign');
 const character = require('../commands/character');
 const dropitem = require('../commands/dropitem');
+const setcharges = require('../commands/setcharges');
 
 const alias = {
     'campaign': campaign,
@@ -10,7 +11,8 @@ const alias = {
     'pid': character,
     'char': character,
     'additem': additem,
-    'dropitem': dropitem
+    'dropitem': dropitem,
+    'setcharges': setcharges
 };
 
 module.exports = (client, message) => {
