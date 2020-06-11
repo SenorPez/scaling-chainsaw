@@ -50,7 +50,12 @@ module.exports = (message) => {
 
         Promise.all([itemPromise, tokenPromise])
             .then(values => {
-                if (values[0] !== undefined) {
+                if (values[0].length < 1) {
+                    message.channel.send(`Item ${itemname} not found`);
+                } else if (values[0].length > 1) {
+                    message.channel.send(`Multiple items found:`);
+                    values[0].forEach(item => message.channel.send(`${item.name}`));
+                } else {
                     postTransaction(message, values[0][0], quantity, values[1].access_token, args);
                 }
             })
@@ -65,7 +70,7 @@ function getItems() {
 
 function getItemId(itemname) {
     return getItems()
-        .then(data => data._embedded['loot-api:lootitem'].filter(item => item.name === itemname));
+        .then(data => data._embedded['loot-api:lootitem'].filter(item => item.name.toLowerCase().includes(itemname.toLowerCase())));
 }
 
 function postTransaction(message, item, quantity, accessToken, args) {
