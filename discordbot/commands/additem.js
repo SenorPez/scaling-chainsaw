@@ -1,4 +1,4 @@
-const regex = /^.+?\s+(\d+)\s+(.+?)(?=\s+(--.+)|\s*$)/g;
+const regex = /^.+?\s+(\d+(?=\s))?\s*(.+?)(?=\s+(--.+)|\s*$)/g;
 const argregex = /--(\S)\s+(.+?)(?=\s+--|\s*$)/g;
 const fetch = require("node-fetch");
 const state = require('../service/state');
@@ -42,7 +42,7 @@ module.exports = (message) => {
     }
 
     if (matches[0]) {
-        const quantity = matches[0][1];
+        const quantity = matches[0][1] ? matches[0][1] : 1;
         const itemname = matches[0][2];
 
         const itemPromise = getItemId(itemname);
