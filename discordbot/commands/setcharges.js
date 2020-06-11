@@ -32,12 +32,12 @@ module.exports = (message) => {
                     }
                 })
             } else {
-                message.channel.send('Usage: $setcharges [&lt;quantity&gt;] &lt;item name&gt; [--r &ltremark&gt]');
+                message.channel.send('Usage: $setcharges &lt;quantity&gt; &lt;item name&gt; [--r &ltremark&gt]');
                 return;
             }
         }
     } else {
-        message.channel.send('Usage: $additem [&lt;quantity&gt;] &lt;item name&gt; [--r &ltremark&gt]');
+        message.channel.send('Usage: setcharges &lt;quantity&gt; &lt;item name&gt; [--r &ltremark&gt]');
         return;
     }
 
