@@ -220,4 +220,21 @@ suite('Reference API', function () {
                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
             })
     });
+
+    test('Rejection, multiple matches', function () {
+        return findCampaignByName('e')
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                return response.json();
+            })
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name', '_links']);
+                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+            },
+                rejection => {
+                    assert.isOk(rejection.constructor.name, "MultipleMatchError");
+                    assert.hasAllKeys(rejection, ['data']);
+                    rejection.data.forEach(val => assert.hasAllKeys(val, ['id', 'name', '_links']))
+                })
+    });
 });

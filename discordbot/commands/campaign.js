@@ -4,6 +4,10 @@ const regex = /^.+?(?:\s)+(.+)/g
 const api = require('../service/api')
 const state = require('../service/state');
 
+function MultipleMatchError(data) {
+    this.data = data;
+}
+
 module.exports = (message) => {
     const matches = [...message.content.matchAll(regex)];
     if (matches[0]) {
@@ -63,7 +67,10 @@ module.exports.findCampaignByName = (campaignName) => {
     return module.exports.getCampaigns()
         .then(response => response.json())
         .then(campaigns => {
-            const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(campaign => campaign.name.toLowerCase().includes(campaignName.toLowerCase())).pop();
-            return api.get(embeddedCampaign._links.self.href);
+            const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(campaign => campaign.name.toLowerCase().includes(campaignName.toLowerCase()));
+            if (embeddedCampaign.length === 1) {
+                return api.get(embeddedCampaign._links.self.href);
+            }
+            throw new MultipleMatchError(embeddedCampaign);
         })
 }
