@@ -54,14 +54,16 @@ module.exports.findCampaignById = (campaignId) => {
     return module.exports.getCampaigns()
         .then(response => response.json())
         .then(campaigns => {
-            console.log(campaigns);
             const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(embeddedCampaign => embeddedCampaign.id === campaignId).pop();
             return api.get(embeddedCampaign._links.self.href);
         })
 }
 
-function findCampaignByName(campaignName) {
-    return getCampaigns().then(data => {
-        return data._embedded['loot-api:campaign'].filter(campaign => campaign.name.toLowerCase().includes(campaignName.toLowerCase()));
-    })
+module.exports.findCampaignByName = (campaignName) => {
+    return module.exports.getCampaigns()
+        .then(response => response.json())
+        .then(campaigns => {
+            const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(campaign => campaign.name.toLowerCase().includes(campaignName.toLowerCase())).pop();
+            return api.get(embeddedCampaign._links.self.href);
+        })
 }

@@ -1,5 +1,6 @@
 const assert = require('chai').assert;
-const {getCampaigns, findCampaignById} = require('../commands/campaign');
+const {getCampaigns, findCampaignById, findCampaignByName} = require('../commands/campaign');
+
 
 const mockResponse = {hello: 'world'}
 const mockIndex = {
@@ -24,8 +25,7 @@ const mockCampaigns = {
 };
 
 
-
-suite('Mock API', function() {
+suite('Mock API', function () {
     test('Should return valid mock Campaigns JSON', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
@@ -38,7 +38,7 @@ suite('Mock API', function() {
             mockResponse
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
-        const { getCampaigns } = proxyquire('../commands/campaign', {'../service/api': api});
+        const {getCampaigns} = proxyquire('../commands/campaign', {'../service/api': api});
 
         return getCampaigns()
             .then(response => response.json())
@@ -48,7 +48,7 @@ suite('Mock API', function() {
             })
     });
 
-    test('Should return valid mock Campaign JSON', function() {
+    test('Should return valid mock Campaign JSON, matched by ID', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
@@ -71,10 +71,88 @@ suite('Mock API', function() {
             .then(data => {
                 assert.hasAllKeys(data, ['hello']);
                 assert.isOk(fetchMock.done());
-            })
+            });
+    });
 
-    })
-})
+    test('Should return valid mock Campaign JSON, matched by exact name', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/',
+            mockCampaigns
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/',
+            mockResponse
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
+
+        return findCampaignByName('Test Campaign')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['hello']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('Should return valid mock Campaign JSON, matched by differently cased name', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/',
+            mockCampaigns
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/',
+            mockResponse
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
+
+        return findCampaignByName('tESt CAmpaIGn')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['hello']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('Should return valid mock Campaign JSON, matched by partial name', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/',
+            mockCampaigns
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/',
+            mockResponse
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
+
+        return findCampaignByName('test')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['hello']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+});
+
 
 suite('Reference API', function () {
     test('Should return valid Campaigns JSON', function () {
@@ -95,7 +173,7 @@ suite('Reference API', function () {
             });
     });
 
-    test('Should return valid Campaign JSON', function () {
+    test('Should return valid Campaign JSON, matched by ID', function () {
         return findCampaignById(1)
             .then(response => {
                 assert.strictEqual(response.status, 200);
@@ -106,4 +184,40 @@ suite('Reference API', function () {
                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
             });
     })
+
+    test('Should return valid Campaign JSON, matched by exact name', function () {
+        return findCampaignByName('Defiance in Phlan')
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                return response.json();
+            })
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name', '_links']);
+                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+            })
+    });
+
+    test('Should return valid Campaign JSON, matched by differently cased name', function () {
+        return findCampaignByName('dEFianCe iN pHLan')
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                return response.json();
+            })
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name', '_links']);
+                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+            })
+    });
+
+    test('Should return valid Campaign JSON, matched by partial name', function () {
+        return findCampaignByName('phlan')
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                return response.json();
+            })
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name', '_links']);
+                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+            })
+    });
 });
