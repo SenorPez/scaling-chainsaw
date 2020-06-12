@@ -4,6 +4,14 @@ const regex = /^.+?(?:\s)+(.+)/g
 const api = require('../service/api')
 const state = require('../service/state');
 
+function CampaignIdNotFoundError(campaignId) {
+    this.campaignId = campaignId;
+}
+
+function CampaignNotFoundError(campaignName) {
+    this.campaignName = campaignName;
+}
+
 function MultipleMatchError(data) {
     this.data = data;
 }
@@ -58,8 +66,11 @@ module.exports.findCampaignById = (campaignId) => {
     return module.exports.getCampaigns()
         .then(response => response.json())
         .then(campaigns => {
-            const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(embeddedCampaign => embeddedCampaign.id === campaignId).pop();
-            return api.get(embeddedCampaign._links.self.href);
+            const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(embeddedCampaign => embeddedCampaign.id === campaignId);
+            if (embeddedCampaign.length === 1) {
+                return api.get(embeddedCampaign.pop()._links.self.href);
+            }
+            throw new CampaignIdNotFoundError(campaignId);
         })
 }
 
@@ -69,7 +80,9 @@ module.exports.findCampaignByName = (campaignName) => {
         .then(campaigns => {
             const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(campaign => campaign.name.toLowerCase().includes(campaignName.toLowerCase()));
             if (embeddedCampaign.length === 1) {
-                return api.get(embeddedCampaign._links.self.href);
+                return api.get(embeddedCampaign.pop()._links.self.href);
+            } else if (embeddedCampaign.length < 1) {
+                throw new CampaignNotFoundError(campaignName);
             }
             throw new MultipleMatchError(embeddedCampaign);
         })

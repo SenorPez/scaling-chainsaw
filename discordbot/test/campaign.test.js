@@ -1,7 +1,6 @@
 const assert = require('chai').assert;
 const {getCampaigns, findCampaignById, findCampaignByName} = require('../commands/campaign');
 
-
 const mockResponse = {hello: 'world'}
 const mockIndex = {
     _links: {
@@ -185,6 +184,22 @@ suite('Reference API', function () {
             });
     })
 
+    test('Rejection, ID not found', function () {
+        return findCampaignById(8675309)
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                return response.json();
+            })
+            .then(() => {
+                    assert.fail();
+                },
+                rejection => {
+                    assert.isOk(rejection.constructor.name, "CampaignIdNotFoundError");
+                    assert.hasAllKeys(rejection, ['campaignId']);
+                    assert.isOk(rejection.campaignId, 8675309);
+                });
+    });
+
     test('Should return valid Campaign JSON, matched by exact name', function () {
         return findCampaignByName('Defiance in Phlan')
             .then(response => {
@@ -206,7 +221,7 @@ suite('Reference API', function () {
             .then(data => {
                 assert.hasAllKeys(data, ['id', 'name', '_links']);
                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-            })
+            });
     });
 
     test('Should return valid Campaign JSON, matched by partial name', function () {
@@ -218,7 +233,22 @@ suite('Reference API', function () {
             .then(data => {
                 assert.hasAllKeys(data, ['id', 'name', '_links']);
                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+            });
+    });
+
+    test('Rejection, no matches', function () {
+        return findCampaignByName('erewqasdfadsger')
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                return response.json();
             })
+            .then(() => {
+                    assert.fail();
+                },
+                rejection => {
+                    assert.isOk(rejection.constructor.name, "CampaignNotFoundError");
+                    assert.hasAllKeys(rejection, ['campaignName']);
+                });
     });
 
     test('Rejection, multiple matches', function () {
@@ -227,14 +257,13 @@ suite('Reference API', function () {
                 assert.strictEqual(response.status, 200);
                 return response.json();
             })
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name', '_links']);
-                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-            },
+            .then(() => {
+                    assert.fail();
+                },
                 rejection => {
                     assert.isOk(rejection.constructor.name, "MultipleMatchError");
                     assert.hasAllKeys(rejection, ['data']);
                     rejection.data.forEach(val => assert.hasAllKeys(val, ['id', 'name', '_links']))
-                })
+                });
     });
 });
