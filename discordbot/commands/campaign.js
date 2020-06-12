@@ -4,8 +4,6 @@ const regex = /^.+?(?:\s)+(.+)/g
 const api = require('../service/api')
 const state = require('../service/state');
 
-var campaignsUrl = null;
-
 module.exports = (message) => {
     const matches = [...message.content.matchAll(regex)];
     if (matches[0]) {
@@ -47,16 +45,19 @@ module.exports = (message) => {
 }
 
 module.exports.getCampaigns = () => {
-    campaignsUrl = api.get(process.env.API_URL)
+    return api.get(process.env.API_URL)
         .then(response => response.json())
-        .then(apiindex => apiindex._links['loot-api:campaigns'].href);
-    return campaignsUrl.then(url => api.get(url));
+        .then(apiindex => api.get(apiindex._links['loot-api:campaigns'].href));
 }
 
-function findCampaignById(campaignId) {
-    return getCampaigns().then(data => {
-        return data._embedded['loot-api:campaign'].filter(campaign => campaign.id === campaignId);
-    });
+module.exports.findCampaignById = (campaignId) => {
+    return module.exports.getCampaigns()
+        .then(response => response.json())
+        .then(campaigns => {
+            console.log(campaigns);
+            const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(embeddedCampaign => embeddedCampaign.id === campaignId).pop();
+            return api.get(embeddedCampaign._links.self.href);
+        })
 }
 
 function findCampaignByName(campaignName) {
