@@ -1,7 +1,14 @@
 const fetch = require("node-fetch");
 
-module.exports.getIndex = getIndex;
+module.exports.get = get;
 
-function getIndex() {
-    return fetch("https://www.loot.senorpez.com/")
+function get(url) {
+    return fetch(
+        url,
+        {
+            headers: {
+                'Accept': 'application/hal+json'
+            }
+        }
+    );
 }

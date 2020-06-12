@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "nyc --reporter=text --all mocha"
+    "test": "nyc --reporter=text --all mocha --ui tdd"
   },
   "keywords": [],
   "author": "SenorPez",
