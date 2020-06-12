@@ -1,7 +1,10 @@
+require("dotenv").config();
 const regex = /^.+?(?:\s)+(.+)/g
-const fetch = require("node-fetch");
 
+const api = require('../service/api')
 const state = require('../service/state');
+
+var campaignsUrl = null;
 
 module.exports = (message) => {
     const matches = [...message.content.matchAll(regex)];
@@ -43,9 +46,11 @@ module.exports = (message) => {
     }
 }
 
-function getCampaigns() {
-    return fetch("https://www.loot.senorpez.com/campaigns")
-        .then(response => response.json());
+module.exports.getCampaigns = () => {
+    campaignsUrl = api.get(process.env.API_URL)
+        .then(response => response.json())
+        .then(apiindex => apiindex._links['loot-api:campaigns'].href);
+    return campaignsUrl.then(url => api.get(url));
 }
 
 function findCampaignById(campaignId) {

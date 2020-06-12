@@ -1,20 +1,22 @@
 const assert = require('chai').assert;
 const api = require('../service/api')
-const url = 'http://www.loot.senorpez.com/'
+const url = 'https://www.loot.senorpez.com/'
 
 suite('Mock API', function() {
     test('Should return valid mock JSON', function() {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            '*',
-            {hello: 'world'});
+            'https://www.loot.senorpez.com/',
+            {hello: 'world'}
+        );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
 
         return api.get(url)
             .then(response => response.json())
             .then(data => {
                 assert.hasAllKeys(data, ['hello']);
+                assert.isOk(fetchMock.done());
             });
     });
 });
