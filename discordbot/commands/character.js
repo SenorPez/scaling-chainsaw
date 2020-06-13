@@ -70,3 +70,14 @@ module.exports.parseMessage = (message) => {
         throw new ParseError();
     })
 }
+
+module.exports.parseArguments = (matches) => {
+    return new Promise((resolve, reject) => {
+        /*
+        Resolve: Text search for campaign
+        Reject: Lookup campaign by id
+         */
+        const characterId = Number(matches[1]).valueOf();
+        isNaN(characterId) ? resolve(matches[1]) : reject(characterId);
+    });
+}
