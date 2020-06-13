@@ -2,7 +2,6 @@ const assert = require('chai').assert;
 const sinon = require('sinon');
 
 const {parseMessage, parseArguments} = require('../commands/character');
-const state = require('../service/state');
 
 const mockCampaign = {
     id: 1,
@@ -36,6 +35,10 @@ const mockCharacters = {
             }
         ]
     }
+};
+const mockCharacter = {
+    id: 1,
+    name: 'Vorgansharanx'
 };
 
 suite('Mock API', function() {
@@ -86,12 +89,168 @@ suite('Mock API', function() {
             }, '../service/api': api
         });
 
-        state.setCampaignId(5);
         return getCharacters()
             .then(response => response.json())
             .then(data => {
                 assert.hasAllKeys(data, ['_embedded']);
                 assert.isOk(fetchMock.done())
             });
+    });
+
+    test('findCharacterByName: Valid Character JSON, matched by exact name', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/',
+            mockCharacters
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/1/',
+            mockCharacter
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+
+        const mockCampaignJson = sinon.stub().resolves(mockCampaign);
+        const mockCampaignResponse = {json: mockCampaignJson};
+        const mockFindCampaignById = sinon.stub().resolves(mockCampaignResponse);
+
+        const {findCharacterByName} = proxyquire('../commands/character', {
+            '../commands/campaign': {
+                findCampaignById: mockFindCampaignById
+            }, '../service/api': api
+        });
+
+        return findCharacterByName('Vorgansharanx')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('findCharacterByName: Valid Character JSON, matched by differently cased name', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/',
+            mockCharacters
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/1/',
+            mockCharacter
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+
+        const mockCampaignJson = sinon.stub().resolves(mockCampaign);
+        const mockCampaignResponse = {json: mockCampaignJson};
+        const mockFindCampaignById = sinon.stub().resolves(mockCampaignResponse);
+
+        const {findCharacterByName} = proxyquire('../commands/character', {
+            '../commands/campaign': {
+                findCampaignById: mockFindCampaignById
+            }, '../service/api': api
+        });
+
+        return findCharacterByName('VoRGAnsHaRAnx')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('findCharacterByName: Valid Character JSON, matched by exact name', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/',
+            mockCharacters
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/1/',
+            mockCharacter
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+
+        const mockCampaignJson = sinon.stub().resolves(mockCampaign);
+        const mockCampaignResponse = {json: mockCampaignJson};
+        const mockFindCampaignById = sinon.stub().resolves(mockCampaignResponse);
+
+        const {findCharacterByName} = proxyquire('../commands/character', {
+            '../commands/campaign': {
+                findCampaignById: mockFindCampaignById
+            }, '../service/api': api
+        });
+
+        return findCharacterByName('Vorg')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('findCharacterByName: No text match', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/',
+            mockCharacters
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/1/',
+            mockCharacter
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+
+        const mockCampaignJson = sinon.stub().resolves(mockCampaign);
+        const mockCampaignResponse = {json: mockCampaignJson};
+        const mockFindCampaignById = sinon.stub().resolves(mockCampaignResponse);
+
+        const {findCharacterByName} = proxyquire('../commands/character', {
+            '../commands/campaign': {
+                findCampaignById: mockFindCampaignById
+            }, '../service/api': api
+        });
+
+        return findCharacterByName('leeadamaisfat')
+            .then(() => assert.fail())
+            .catch(error => assert.strictEqual(error.message, 'Character containing \'leeadamaisfat\' not found'));
+    });
+
+    test('findCharacterByName: Multiple text matches', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/',
+            mockCharacters
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/1/',
+            mockCharacter
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+
+        const mockCampaignJson = sinon.stub().resolves(mockCampaign);
+        const mockCampaignResponse = {json: mockCampaignJson};
+        const mockFindCampaignById = sinon.stub().resolves(mockCampaignResponse);
+
+        const {findCharacterByName} = proxyquire('../commands/character', {
+            '../commands/campaign': {
+                findCampaignById: mockFindCampaignById
+            }, '../service/api': api
+        });
+
+        return findCharacterByName('a')
+            .then(() => assert.fail())
+            .catch((error) => assert.strictEqual(
+                error.message,
+                'Multiple characters containing \'a\' found:\nID: 1 Name: Vorgansharanx\nID: 2 Name: Kai Ithor'
+            ));
     });
 })

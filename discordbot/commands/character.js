@@ -9,6 +9,15 @@ function ParseError() {
     this.message = "Usage: $character <character name>";
 }
 
+function CharacterNotFoundError(characterName) {
+    this.message = `Character containing '${characterName}' not found`;
+}
+
+function MultipleMatchError(characterName, data) {
+    this.message = `Multiple characters containing '${characterName}' found:`;
+    data.forEach(character => this.message = this.message + `\nID: ${character.id} Name: ${character.name}`);
+}
+
 module.exports = (message) => {
     if (state.getCampaignId() === null) {
         message.channel.send("Campaign must be set; use the $campaign command");
@@ -89,4 +98,18 @@ module.exports.getCharacters = () => {
     return findCampaignById(state.getCampaignId())
         .then(response => response.json())
         .then(campaign => api.get(campaign._links['loot-api:characters'].href));
+}
+
+module.exports.findCharacterByName = (characterName) => {
+    return module.exports.getCharacters()
+        .then(response => response.json())
+        .then(chracters => {
+            const embeddedCharacter = chracters._embedded['loot-api:character'].filter(character => character.name.toLowerCase().includes(characterName.toLowerCase()));
+            if (embeddedCharacter.length === 1) {
+                return api.get(embeddedCharacter.pop()._links.self.href);
+            } else if (embeddedCharacter.length < 1) {
+                throw new CharacterNotFoundError(characterName);
+            }
+            throw new MultipleMatchError(characterName, embeddedCharacter);
+        });
 }
