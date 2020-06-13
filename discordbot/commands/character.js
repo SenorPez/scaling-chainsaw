@@ -129,3 +129,11 @@ module.exports.findCharacterById = (characterId) => {
             throw new CharacterIdNotFoundError(characterId);
         })
 }
+
+module.exports.setCharacter = (character, message) => {
+    return character.json()
+        .then(characterData => {
+            message.channel.send(`Character set to ${characterData.name}`);
+            state.setCharacterId(characterData.id);
+        })
+}

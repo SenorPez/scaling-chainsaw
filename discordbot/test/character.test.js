@@ -1,7 +1,8 @@
 const assert = require('chai').assert;
 const sinon = require('sinon');
 
-const {parseMessage, parseArguments} = require('../commands/character');
+const {parseMessage, parseArguments, setCharacter} = require('../commands/character');
+const state = require('../service/state');
 
 const mockCampaign = {
     id: 1,
@@ -314,4 +315,20 @@ suite('Mock API', function() {
             .then(() => assert.fail())
             .catch(error => assert.strictEqual(error.message, "Character with ID of 8675309 not found"));
     })
+
+    test('setCharacter', function () {
+        const mockJson = sinon.stub().resolves(mockCharacter);
+        const mockResponse = {json: mockJson};
+
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            channel: {send: mockSend}
+        };
+
+        state.setCharacterId(8675309);
+        return setCharacter(mockResponse, mockMessage)
+            .then(() => {
+                assert.strictEqual(state.getCharacterId(), mockCharacter.id);
+            });
+    });
 })
