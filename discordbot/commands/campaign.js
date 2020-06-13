@@ -21,6 +21,15 @@ function CampaignIdNotFoundError(campaignId) {
     this.message = `Campaign with ID of ${campaignId} not found`;
 }
 
+module.exports = (message) => {
+    module.exports.parseMessage(message)
+        .then(matches => module.exports.parseArguments(matches))
+        .then(searchParam => module.exports.findCampaignByName(searchParam),
+            searchParam => module.exports.findCampaignById(searchParam))
+        .then(campaign => module.exports.setCampaign(campaign, message))
+        .catch(error => message.channel.send(error.message));
+}
+
 module.exports.parseMessage = (message) => {
     return new Promise(resolve => {
         const matches = [...message.content.matchAll(regex)];
@@ -76,9 +85,12 @@ module.exports.findCampaignById = (campaignId) => {
 }
 
 module.exports.setCampaign = (campaign, message) => {
-    message.channel.send(`Campaign set to ${campaign.name}`);
-    if (state.getCampaignId() !== campaign.id) {
-        state.setCampaignId(campaign.id);
-        state.setCharacterId(null);
-    }
+    return campaign.json()
+        .then(campaignData => {
+            message.channel.send(`Campaign set to ${campaignData.name}`);
+            if (state.getCampaignId() !== campaignData.id) {
+                state.setCampaignId(campaignData.id);
+                state.setCharacterId(null);
+            }
+        });
 }

@@ -269,33 +269,49 @@ suite('Mock API', function () {
     })
 
     test('setCampaign: No character reset', function () {
+        const mockJson = sinon.stub().returns(Promise.resolve(mockCampaign));
         const mockSend = sinon.stub();
+
+        const mockResponse = {
+            json: mockJson
+        };
         const mockMessage = {
             channel: {
                 send: mockSend
             }
         };
+
         state.setCampaignId(1);
         state.setCharacterId(8675309);
 
-        setCampaign(mockCampaign, mockMessage);
-        assert.strictEqual(state.getCampaignId(), mockCampaign.id);
-        assert.strictEqual(state.getCharacterId(), 8675309);
-    })
+        return setCampaign(mockResponse, mockMessage)
+            .then(() => {
+                assert.strictEqual(state.getCampaignId(), mockCampaign.id);
+                assert.strictEqual(state.getCharacterId(), 8675309);
+            });
+    });
 
     test('setCampaign: Character reset', function () {
+        const mockJson = sinon.stub().returns(Promise.resolve(mockCampaign));
         const mockSend = sinon.stub();
+
+        const mockResponse = {
+            json: mockJson
+        };
         const mockMessage = {
             channel: {
                 send: mockSend
             }
         };
+
         state.setCampaignId(2);
         state.setCharacterId(8675309);
 
-        setCampaign(mockCampaign, mockMessage);
-        assert.strictEqual(state.getCampaignId(), mockCampaign.id);
-        assert.strictEqual(state.getCharacterId(), null);
+        return setCampaign(mockResponse, mockMessage)
+            .then(() => {
+                assert.strictEqual(state.getCampaignId(), mockCampaign.id);
+                assert.strictEqual(state.getCharacterId(), null);
+            });
     })
 });
 
