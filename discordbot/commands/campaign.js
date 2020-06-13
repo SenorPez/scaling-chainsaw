@@ -4,6 +4,10 @@ const regex = /^.+?(?:\s)+(.+)/g
 const api = require('../service/api')
 const state = require('../service/state');
 
+function ParseError() {
+    this.message = "Usage: $campaign <campaign name>";
+}
+
 function CampaignIdNotFoundError(campaignId) {
     this.campaignId = campaignId;
 }
@@ -54,6 +58,17 @@ module.exports = (message) => {
     } else {
         message.channel.send("Campaign data must be an integer.");
     }
+}
+
+module.exports.parseMessage = (message) => {
+    return new Promise(resolve => {
+        const matches = [...message.content.matchAll(regex)];
+
+        if (matches[0]) {
+            resolve(matches[0]);
+        }
+        throw new ParseError();
+    })
 }
 
 module.exports.getCampaigns = () => {

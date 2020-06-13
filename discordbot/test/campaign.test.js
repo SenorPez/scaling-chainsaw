@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-const {getCampaigns, findCampaignById, findCampaignByName} = require('../commands/campaign');
+const {getCampaigns, findCampaignById, findCampaignByName, parseMessage} = require('../commands/campaign');
 
 const mockResponse = {hello: 'world'}
 const mockIndex = {
@@ -23,8 +23,22 @@ const mockCampaigns = {
     }
 };
 
-
 suite('Mock API', function () {
+    test('Valid command regex match', function () {
+        const mockMessage = {content: '$campaign Defiance in Phlan'};
+        return parseMessage(mockMessage)
+            .then(response => assert.isArray(response));
+    })
+
+    test('Invalid command regex match', function () {
+        const mockMessage = {content: 'fail'}
+        return parseMessage(mockMessage)
+            .then(() => assert.fail())
+            .catch(error => {
+                assert.strictEqual(error.message, "Usage: $campaign <campaign name>");
+            });
+    })
+
     test('Should return valid mock Campaigns JSON', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
@@ -153,117 +167,117 @@ suite('Mock API', function () {
 });
 
 
-suite('Reference API', function () {
-    test('Should return valid Campaigns JSON', function () {
-        return getCampaigns()
-            .then(response => {
-                assert.strictEqual(response.status, 200);
-                return response.json();
-            })
-            .then(data => {
-                assert.hasAllKeys(data, ['_embedded', '_links']);
-                assert.hasAllKeys(data._embedded, ['loot-api:campaign']);
-                data._embedded['loot-api:campaign'].forEach(campaign => {
-                    assert.hasAllKeys(campaign, ['id', 'name', '_links']);
-                    assert.hasAllKeys(campaign._links, ['self']);
-                    assert.hasAllKeys(campaign._links['self'], ['href']);
-                    assert.isString(campaign._links['self'].href);
-                })
-            });
-    });
-
-    test('Should return valid Campaign JSON, matched by ID', function () {
-        return findCampaignById(1)
-            .then(response => {
-                assert.strictEqual(response.status, 200);
-                return response.json();
-            })
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name', '_links']);
-                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-            });
-    })
-
-    test('Rejection, ID not found', function () {
-        return findCampaignById(8675309)
-            .then(response => {
-                assert.strictEqual(response.status, 200);
-                return response.json();
-            })
-            .then(() => {
-                    assert.fail();
-                },
-                rejection => {
-                    assert.isOk(rejection.constructor.name, "CampaignIdNotFoundError");
-                    assert.hasAllKeys(rejection, ['campaignId']);
-                    assert.isOk(rejection.campaignId, 8675309);
-                });
-    });
-
-    test('Should return valid Campaign JSON, matched by exact name', function () {
-        return findCampaignByName('Defiance in Phlan')
-            .then(response => {
-                assert.strictEqual(response.status, 200);
-                return response.json();
-            })
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name', '_links']);
-                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-            })
-    });
-
-    test('Should return valid Campaign JSON, matched by differently cased name', function () {
-        return findCampaignByName('dEFianCe iN pHLan')
-            .then(response => {
-                assert.strictEqual(response.status, 200);
-                return response.json();
-            })
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name', '_links']);
-                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-            });
-    });
-
-    test('Should return valid Campaign JSON, matched by partial name', function () {
-        return findCampaignByName('phlan')
-            .then(response => {
-                assert.strictEqual(response.status, 200);
-                return response.json();
-            })
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name', '_links']);
-                assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-            });
-    });
-
-    test('Rejection, no matches', function () {
-        return findCampaignByName('erewqasdfadsger')
-            .then(response => {
-                assert.strictEqual(response.status, 200);
-                return response.json();
-            })
-            .then(() => {
-                    assert.fail();
-                },
-                rejection => {
-                    assert.isOk(rejection.constructor.name, "CampaignNotFoundError");
-                    assert.hasAllKeys(rejection, ['campaignName']);
-                });
-    });
-
-    test('Rejection, multiple matches', function () {
-        return findCampaignByName('e')
-            .then(response => {
-                assert.strictEqual(response.status, 200);
-                return response.json();
-            })
-            .then(() => {
-                    assert.fail();
-                },
-                rejection => {
-                    assert.isOk(rejection.constructor.name, "MultipleMatchError");
-                    assert.hasAllKeys(rejection, ['data']);
-                    rejection.data.forEach(val => assert.hasAllKeys(val, ['id', 'name', '_links']))
-                });
-    });
-});
+// suite('Reference API', function () {
+//     test('Should return valid Campaigns JSON', function () {
+//         return getCampaigns()
+//             .then(response => {
+//                 assert.strictEqual(response.status, 200);
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 assert.hasAllKeys(data, ['_embedded', '_links']);
+//                 assert.hasAllKeys(data._embedded, ['loot-api:campaign']);
+//                 data._embedded['loot-api:campaign'].forEach(campaign => {
+//                     assert.hasAllKeys(campaign, ['id', 'name', '_links']);
+//                     assert.hasAllKeys(campaign._links, ['self']);
+//                     assert.hasAllKeys(campaign._links['self'], ['href']);
+//                     assert.isString(campaign._links['self'].href);
+//                 })
+//             });
+//     });
+//
+//     test('Should return valid Campaign JSON, matched by ID', function () {
+//         return findCampaignById(1)
+//             .then(response => {
+//                 assert.strictEqual(response.status, 200);
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 assert.hasAllKeys(data, ['id', 'name', '_links']);
+//                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+//             });
+//     })
+//
+//     test('Rejection, ID not found', function () {
+//         return findCampaignById(8675309)
+//             .then(response => {
+//                 assert.strictEqual(response.status, 200);
+//                 return response.json();
+//             })
+//             .then(() => {
+//                     assert.fail();
+//                 },
+//                 rejection => {
+//                     assert.isOk(rejection.constructor.name, "CampaignIdNotFoundError");
+//                     assert.hasAllKeys(rejection, ['campaignId']);
+//                     assert.isOk(rejection.campaignId, 8675309);
+//                 });
+//     });
+//
+//     test('Should return valid Campaign JSON, matched by exact name', function () {
+//         return findCampaignByName('Defiance in Phlan')
+//             .then(response => {
+//                 assert.strictEqual(response.status, 200);
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 assert.hasAllKeys(data, ['id', 'name', '_links']);
+//                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+//             })
+//     });
+//
+//     test('Should return valid Campaign JSON, matched by differently cased name', function () {
+//         return findCampaignByName('dEFianCe iN pHLan')
+//             .then(response => {
+//                 assert.strictEqual(response.status, 200);
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 assert.hasAllKeys(data, ['id', 'name', '_links']);
+//                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+//             });
+//     });
+//
+//     test('Should return valid Campaign JSON, matched by partial name', function () {
+//         return findCampaignByName('phlan')
+//             .then(response => {
+//                 assert.strictEqual(response.status, 200);
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 assert.hasAllKeys(data, ['id', 'name', '_links']);
+//                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
+//             });
+//     });
+//
+//     test('Rejection, no matches', function () {
+//         return findCampaignByName('erewqasdfadsger')
+//             .then(response => {
+//                 assert.strictEqual(response.status, 200);
+//                 return response.json();
+//             })
+//             .then(() => {
+//                     assert.fail();
+//                 },
+//                 rejection => {
+//                     assert.isOk(rejection.constructor.name, "CampaignNotFoundError");
+//                     assert.hasAllKeys(rejection, ['campaignName']);
+//                 });
+//     });
+//
+//     test('Rejection, multiple matches', function () {
+//         return findCampaignByName('e')
+//             .then(response => {
+//                 assert.strictEqual(response.status, 200);
+//                 return response.json();
+//             })
+//             .then(() => {
+//                     assert.fail();
+//                 },
+//                 rejection => {
+//                     assert.isOk(rejection.constructor.name, "MultipleMatchError");
+//                     assert.hasAllKeys(rejection, ['data']);
+//                     rejection.data.forEach(val => assert.hasAllKeys(val, ['id', 'name', '_links']))
+//                 });
+//     });
+// });
