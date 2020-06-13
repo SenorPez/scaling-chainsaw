@@ -18,6 +18,10 @@ function MultipleMatchError(characterName, data) {
     data.forEach(character => this.message = this.message + `\nID: ${character.id} Name: ${character.name}`);
 }
 
+function CharacterIdNotFoundError(characterId) {
+    this.message = `Character with ID of ${characterId} not found`;
+}
+
 module.exports = (message) => {
     if (state.getCampaignId() === null) {
         message.channel.send("Campaign must be set; use the $campaign command");
@@ -103,8 +107,8 @@ module.exports.getCharacters = () => {
 module.exports.findCharacterByName = (characterName) => {
     return module.exports.getCharacters()
         .then(response => response.json())
-        .then(chracters => {
-            const embeddedCharacter = chracters._embedded['loot-api:character'].filter(character => character.name.toLowerCase().includes(characterName.toLowerCase()));
+        .then(characters => {
+            const embeddedCharacter = characters._embedded['loot-api:character'].filter(character => character.name.toLowerCase().includes(characterName.toLowerCase()));
             if (embeddedCharacter.length === 1) {
                 return api.get(embeddedCharacter.pop()._links.self.href);
             } else if (embeddedCharacter.length < 1) {
@@ -112,4 +116,16 @@ module.exports.findCharacterByName = (characterName) => {
             }
             throw new MultipleMatchError(characterName, embeddedCharacter);
         });
+}
+
+module.exports.findCharacterById = (characterId) => {
+    return module.exports.getCharacters()
+        .then(response => response.json())
+        .then(characters => {
+            const embeddedCharacter = characters._embedded['loot-api:character'].filter(embeddedCharacter => embeddedCharacter.id === characterId);
+            if (embeddedCharacter.length === 1) {
+                return api.get(embeddedCharacter.pop()._links.self.href);
+            }
+            throw new CharacterIdNotFoundError(characterId);
+        })
 }

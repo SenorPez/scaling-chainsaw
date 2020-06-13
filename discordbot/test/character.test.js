@@ -253,4 +253,65 @@ suite('Mock API', function() {
                 'Multiple characters containing \'a\' found:\nID: 1 Name: Vorgansharanx\nID: 2 Name: Kai Ithor'
             ));
     });
+
+    test('findCharacterById: Valid Character JSON, matched by ID', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/',
+            mockCharacters
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/1/',
+            mockCharacter
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+
+        const mockCampaignJson = sinon.stub().resolves(mockCampaign);
+        const mockCampaignResponse = {json: mockCampaignJson};
+        const mockFindCampaignById = sinon.stub().resolves(mockCampaignResponse);
+
+        const {findCharacterById} = proxyquire('../commands/character', {
+            '../commands/campaign': {
+                findCampaignById: mockFindCampaignById
+            }, '../service/api': api
+        });
+
+        return findCharacterById(1)
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name']);
+                assert.isOk(fetchMock.done());
+            });
+    })
+
+    test('findCharacterById: No ID match', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/',
+            mockCharacters
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/1/',
+            mockCharacter
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+
+        const mockCampaignJson = sinon.stub().resolves(mockCampaign);
+        const mockCampaignResponse = {json: mockCampaignJson};
+        const mockFindCampaignById = sinon.stub().resolves(mockCampaignResponse);
+
+        const {findCharacterById} = proxyquire('../commands/character', {
+            '../commands/campaign': {
+                findCampaignById: mockFindCampaignById
+            }, '../service/api': api
+        });
+
+        return findCharacterById(8675309)
+            .then(() => assert.fail())
+            .catch(error => assert.strictEqual(error.message, "Character with ID of 8675309 not found"));
+    })
 })
