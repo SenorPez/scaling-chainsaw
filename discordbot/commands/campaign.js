@@ -21,46 +21,6 @@ function CampaignIdNotFoundError(campaignId) {
     this.message = `Campaign with ID of ${campaignId} not found`;
 }
 
-// module.exports = (message) => {
-//     const matches = [...message.content.matchAll(regex)];
-//     if (matches[0]) {
-//         const campaignId = Number(matches[0][1]).valueOf();
-//         if (isNaN(campaignId)) {
-//             findCampaignByName(matches[0][1])
-//                 .then(data => {
-//                     if (data.length < 1) {
-//                         message.channel.send(`Campaign with name of ${matches[0][1]} not found.`);
-//                     } else if (data.length > 1) {
-//                         message.channel.send(`Multiple matches`);
-//                     } else {
-//                         message.channel.send(`Campaign set to ${data[0].name}`);
-//                         if (state.getCampaignId() !== data[0].id) {
-//                             state.setCharacterId(null);
-//                             state.setCampaignId(data[0].id);
-//                         }
-//                     }
-//                 });
-//         } else {
-//             findCampaignById(campaignId)
-//                 .then(data => {
-//                     if (data.length < 1) {
-//                         message.channel.send(`Campaign with id of ${campaignId} not found.`);
-//                     } else if (data.length > 1) {
-//                         message.channel.send(`Seriously, how did you manage this?`);
-//                     } else {
-//                         message.channel.send(`Campaign set to ${data[0].name}`);
-//                         if (state.getCampaignId() !== data[0].id) {
-//                             state.setCharacterId(null);
-//                             state.setCampaignId(data[0].id);
-//                         }
-//                     }
-//                 });
-//         }
-//     } else {
-//         message.channel.send("Campaign data must be an integer.");
-//     }
-// }
-
 module.exports.parseMessage = (message) => {
     return new Promise(resolve => {
         const matches = [...message.content.matchAll(regex)];
@@ -113,4 +73,12 @@ module.exports.findCampaignById = (campaignId) => {
             }
             throw new CampaignIdNotFoundError(campaignId);
         })
+}
+
+module.exports.setCampaign = (campaign, message) => {
+    message.channel.send(`Campaign set to ${campaign.name}`);
+    if (state.getCampaignId() !== campaign.id) {
+        state.setCampaignId(campaign.id);
+        state.setCharacterId(null);
+    }
 }

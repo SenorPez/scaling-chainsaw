@@ -1,5 +1,7 @@
 const assert = require('chai').assert;
-const {getCampaigns, findCampaignById, findCampaignByName, parseMessage, parseArguments} = require('../commands/campaign');
+const {parseMessage, parseArguments, setCampaign} = require('../commands/campaign');
+const sinon = require('sinon');
+const state = require('../service/state');
 
 const mockIndex = {
     _links: {
@@ -33,6 +35,10 @@ const mockCampaigns = {
     }
 };
 const mockResponse = {hello: 'world'}
+const mockCampaign = {
+    id: 1,
+    name: 'Test Campaign'
+}
 
 suite('Mock API', function () {
     test('parseMessage: Regex match, valid command', function () {
@@ -260,6 +266,36 @@ suite('Mock API', function () {
         return findCampaignById(8675309)
             .then(() => assert.fail())
             .catch(error => assert.strictEqual(error.message, "Campaign with ID of 8675309 not found"));
+    })
+
+    test('setCampaign: No character reset', function () {
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            channel: {
+                send: mockSend
+            }
+        };
+        state.setCampaignId(1);
+        state.setCharacterId(8675309);
+
+        setCampaign(mockCampaign, mockMessage);
+        assert.strictEqual(state.getCampaignId(), mockCampaign.id);
+        assert.strictEqual(state.getCharacterId(), 8675309);
+    })
+
+    test('setCampaign: Character reset', function () {
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            channel: {
+                send: mockSend
+            }
+        };
+        state.setCampaignId(2);
+        state.setCharacterId(8675309);
+
+        setCampaign(mockCampaign, mockMessage);
+        assert.strictEqual(state.getCampaignId(), mockCampaign.id);
+        assert.strictEqual(state.getCharacterId(), null);
     })
 });
 
