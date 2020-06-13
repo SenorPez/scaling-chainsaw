@@ -1,5 +1,5 @@
 require("dotenv").config();
-const regex = /^.+?(?:\s)+(.+)/g
+const regex = /^.+?(?:\s)+(.+)/g;
 
 const api = require('../service/api')
 const state = require('../service/state');

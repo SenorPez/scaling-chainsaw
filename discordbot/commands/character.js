@@ -2,6 +2,10 @@ const regex = /^.+?(?:\s)+(.+)/g;
 const fetch = require("node-fetch");
 const state = require('../service/state');
 
+function ParseError() {
+    this.message = "Usage: $character <character name>";
+}
+
 module.exports = (message) => {
     if (state.getCampaignId() === null) {
         message.channel.send("Campaign must be set; use the $campaign command");
@@ -54,4 +58,15 @@ function findCharacterById(characterId) {
 function findCharacterByName(characterName) {
     return getCharacters()
         .then(data => data._embedded['loot-api:character'].filter(character => character.name.toLowerCase().includes(characterName.toLowerCase())));
+}
+
+module.exports.parseMessage = (message) => {
+    return new Promise(resolve => {
+        const matches = [...message.content.matchAll(regex)];
+
+        if (matches[0]) {
+            resolve(matches[0]);
+        }
+        throw new ParseError();
+    })
 }

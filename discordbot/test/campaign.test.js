@@ -50,9 +50,7 @@ suite('Mock API', function () {
         const mockMessage = {content: 'fail'}
         return parseMessage(mockMessage)
             .then(() => assert.fail())
-            .catch(error => {
-                assert.strictEqual(error.message, "Usage: $campaign <campaign name>");
-            });
+            .catch(error => assert.strictEqual(error.message, "Usage: $campaign <campaign name>"));
     })
 
     test('parseArguments: Search argument is text', function() {
