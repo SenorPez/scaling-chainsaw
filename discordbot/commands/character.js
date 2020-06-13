@@ -4,6 +4,10 @@ const api = require('../service/api');
 const {findCampaignById} = require('../commands/campaign');
 const state = require('../service/state');
 
+function CampaignNotSetError() {
+    this.message = 'Campaign not set; use $campaign to set';
+}
+
 function ParseError() {
     this.message = "Usage: $character <character name>";
 }
@@ -34,6 +38,10 @@ module.exports = (message) => {
 
 module.exports.parseMessage = (message) => {
     return new Promise(resolve => {
+        if (state.getCampaignId() === null) {
+            throw new CampaignNotSetError();
+        }
+
         const matches = [...message.content.matchAll(regex)];
 
         if (matches[0]) {

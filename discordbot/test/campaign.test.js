@@ -40,6 +40,16 @@ const mockCampaign = {
 }
 
 suite('Mock API', function () {
+    setup(function () {
+        state.setCampaignId(null);
+        state.setCharacterId(null);
+    });
+
+    teardown(function () {
+        state.setCampaignId(null);
+        state.setCharacterId(null);
+    });
+
     test('parseMessage: Regex match, valid command', function () {
         const mockMessage = {content: '$campaign Defiance in Phlan'};
         return parseMessage(mockMessage)
