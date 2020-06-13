@@ -20,45 +20,45 @@ function MultipleMatchError(data) {
     this.data = data;
 }
 
-module.exports = (message) => {
-    const matches = [...message.content.matchAll(regex)];
-    if (matches[0]) {
-        const campaignId = Number(matches[0][1]).valueOf();
-        if (isNaN(campaignId)) {
-            findCampaignByName(matches[0][1])
-                .then(data => {
-                    if (data.length < 1) {
-                        message.channel.send(`Campaign with name of ${matches[0][1]} not found.`);
-                    } else if (data.length > 1) {
-                        message.channel.send(`Multiple matches`);
-                    } else {
-                        message.channel.send(`Campaign set to ${data[0].name}`);
-                        if (state.getCampaignId() !== data[0].id) {
-                            state.setCharacterId(null);
-                            state.setCampaignId(data[0].id);
-                        }
-                    }
-                });
-        } else {
-            findCampaignById(campaignId)
-                .then(data => {
-                    if (data.length < 1) {
-                        message.channel.send(`Campaign with id of ${campaignId} not found.`);
-                    } else if (data.length > 1) {
-                        message.channel.send(`Seriously, how did you manage this?`);
-                    } else {
-                        message.channel.send(`Campaign set to ${data[0].name}`);
-                        if (state.getCampaignId() !== data[0].id) {
-                            state.setCharacterId(null);
-                            state.setCampaignId(data[0].id);
-                        }
-                    }
-                });
-        }
-    } else {
-        message.channel.send("Campaign data must be an integer.");
-    }
-}
+// module.exports = (message) => {
+//     const matches = [...message.content.matchAll(regex)];
+//     if (matches[0]) {
+//         const campaignId = Number(matches[0][1]).valueOf();
+//         if (isNaN(campaignId)) {
+//             findCampaignByName(matches[0][1])
+//                 .then(data => {
+//                     if (data.length < 1) {
+//                         message.channel.send(`Campaign with name of ${matches[0][1]} not found.`);
+//                     } else if (data.length > 1) {
+//                         message.channel.send(`Multiple matches`);
+//                     } else {
+//                         message.channel.send(`Campaign set to ${data[0].name}`);
+//                         if (state.getCampaignId() !== data[0].id) {
+//                             state.setCharacterId(null);
+//                             state.setCampaignId(data[0].id);
+//                         }
+//                     }
+//                 });
+//         } else {
+//             findCampaignById(campaignId)
+//                 .then(data => {
+//                     if (data.length < 1) {
+//                         message.channel.send(`Campaign with id of ${campaignId} not found.`);
+//                     } else if (data.length > 1) {
+//                         message.channel.send(`Seriously, how did you manage this?`);
+//                     } else {
+//                         message.channel.send(`Campaign set to ${data[0].name}`);
+//                         if (state.getCampaignId() !== data[0].id) {
+//                             state.setCharacterId(null);
+//                             state.setCampaignId(data[0].id);
+//                         }
+//                     }
+//                 });
+//         }
+//     } else {
+//         message.channel.send("Campaign data must be an integer.");
+//     }
+// }
 
 module.exports.parseMessage = (message) => {
     return new Promise(resolve => {
@@ -69,6 +69,17 @@ module.exports.parseMessage = (message) => {
         }
         throw new ParseError();
     })
+}
+
+module.exports.parseArguments = (matches) => {
+    return new Promise((resolve, reject) => {
+        /*
+        Resolve: Text search for campaign.
+        Reject: Lookup campaign by id.
+         */
+        const campaignId = Number(matches[1]).valueOf();
+        isNaN(campaignId) ? resolve(matches[1]) : reject(campaignId);
+    });
 }
 
 module.exports.getCampaigns = () => {

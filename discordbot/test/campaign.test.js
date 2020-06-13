@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-const {getCampaigns, findCampaignById, findCampaignByName, parseMessage} = require('../commands/campaign');
+const {getCampaigns, findCampaignById, findCampaignByName, parseMessage, parseArguments} = require('../commands/campaign');
 
 const mockResponse = {hello: 'world'}
 const mockIndex = {
@@ -37,6 +37,20 @@ suite('Mock API', function () {
             .catch(error => {
                 assert.strictEqual(error.message, "Usage: $campaign <campaign name>");
             });
+    })
+
+    test('Search argument is text', function() {
+        const mockMatches = [null, 'Search'];
+        return parseArguments(mockMatches)
+            .then((textId) => assert.strictEqual(textId, 'Search'),
+                () => assert.fail());
+    })
+
+    test('Search argument is numeric', function() {
+        const mockMatches = [null, '8675309'];
+        return parseArguments(mockMatches)
+            .then(() => assert.fail(),
+                (numberId) => assert.strictEqual(numberId, 8675309));
     })
 
     test('Should return valid mock Campaigns JSON', function () {
@@ -165,7 +179,6 @@ suite('Mock API', function () {
             });
     });
 });
-
 
 // suite('Reference API', function () {
 //     test('Should return valid Campaigns JSON', function () {
