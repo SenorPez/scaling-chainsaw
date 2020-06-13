@@ -34,7 +34,6 @@ const mockCampaigns = {
         ]
     }
 };
-const mockResponse = {hello: 'world'}
 const mockCampaign = {
     id: 1,
     name: 'Test Campaign'
@@ -79,7 +78,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/',
-            mockResponse
+            mockCampaign
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {getCampaigns} = proxyquire('../commands/campaign', {'../service/api': api});
@@ -87,7 +86,7 @@ suite('Mock API', function () {
         return getCampaigns()
             .then(response => response.json())
             .then(data => {
-                assert.hasAllKeys(data, ['hello']);
+                assert.hasAllKeys(data, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             })
     });
@@ -105,7 +104,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/1/',
-            mockResponse
+            mockCampaign
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
@@ -113,7 +112,7 @@ suite('Mock API', function () {
         return findCampaignByName('Test Campaign')
             .then(response => response.json())
             .then(data => {
-                assert.hasAllKeys(data, ['hello']);
+                assert.hasAllKeys(data, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
     });
@@ -131,7 +130,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/1/',
-            mockResponse
+            mockCampaign
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
@@ -139,7 +138,7 @@ suite('Mock API', function () {
         return findCampaignByName('tESt CAmpaIGn')
             .then(response => response.json())
             .then(data => {
-                assert.hasAllKeys(data, ['hello']);
+                assert.hasAllKeys(data, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
     });
@@ -157,7 +156,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/1/',
-            mockResponse
+            mockCampaign
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
@@ -165,7 +164,7 @@ suite('Mock API', function () {
         return findCampaignByName('test')
             .then(response => response.json())
             .then(data => {
-                assert.hasAllKeys(data, ['hello']);
+                assert.hasAllKeys(data, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
     });
@@ -183,7 +182,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/1/',
-            mockResponse
+            mockCampaign
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
@@ -206,7 +205,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/1/',
-            mockResponse
+            mockCampaign
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
@@ -232,7 +231,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/1/',
-            mockResponse
+            mockCampaign
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {findCampaignById} = proxyquire('../commands/campaign', {'../service/api': api});
@@ -240,7 +239,7 @@ suite('Mock API', function () {
         return findCampaignById(1)
             .then(response => response.json())
             .then(data => {
-                assert.hasAllKeys(data, ['hello']);
+                assert.hasAllKeys(data, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
     });
@@ -258,7 +257,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/1/',
-            mockResponse
+            mockCampaign
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {findCampaignById} = proxyquire('../commands/campaign', {'../service/api': api});

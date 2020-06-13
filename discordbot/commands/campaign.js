@@ -24,8 +24,10 @@ function CampaignIdNotFoundError(campaignId) {
 module.exports = (message) => {
     module.exports.parseMessage(message)
         .then(matches => module.exports.parseArguments(matches))
-        .then(searchParam => module.exports.findCampaignByName(searchParam),
-            searchParam => module.exports.findCampaignById(searchParam))
+        .then(
+            searchParam => module.exports.findCampaignByName(searchParam),
+            searchParam => module.exports.findCampaignById(searchParam)
+        )
         .then(campaign => module.exports.setCampaign(campaign, message))
         .catch(error => message.channel.send(error.message));
 }
