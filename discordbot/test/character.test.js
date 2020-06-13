@@ -1,5 +1,42 @@
 const assert = require('chai').assert;
+const sinon = require('sinon');
+
 const {parseMessage, parseArguments} = require('../commands/character');
+const state = require('../service/state');
+
+const mockCampaign = {
+    id: 1,
+    name: 'Test Campaign',
+    _links: {
+        'loot-api:characters': {
+            href: 'http://mockserver/campaigns/1/characters/'
+        }
+    }
+};
+const mockCharacters = {
+    _embedded: {
+        'loot-api:character': [
+            {
+                id: 1,
+                name: 'Vorgansharanx',
+                _links: {
+                    self: {
+                        href: 'http://mockserver/campaigns/1/characters/1/'
+                    }
+                }
+            },
+            {
+                id: 2,
+                name: 'Kai Ithor',
+                _links: {
+                    self: {
+                        href: 'http://mockserver/campaigns/1/characters/2/'
+                    }
+                }
+            }
+        ]
+    }
+};
 
 suite('Mock API', function() {
     test('parseMessage: Regex match, valid command', function () {
@@ -27,5 +64,34 @@ suite('Mock API', function() {
         return parseArguments(mockMatches)
             .then(() => assert.fail(),
                 (numberId) => assert.strictEqual(numberId, 8675309));
+    });
+
+    test('getCharacters: Valid Characters JSON', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/characters/',
+            mockCharacters
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+
+        const mockCampaignJson = sinon.stub().resolves(mockCampaign);
+        const mockCampaignResponse = {json: mockCampaignJson};
+        const mockFindCampaignById = sinon.stub().resolves(mockCampaignResponse);
+
+        const {getCharacters} = proxyquire('../commands/character', {
+            '../commands/campaign': {
+                findCampaignById: mockFindCampaignById
+            }, '../service/api': api
+        });
+
+        state.setCampaignId(5);
+        return getCharacters()
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['_embedded']);
+                assert.isOk(fetchMock.done())
+            });
     });
 })

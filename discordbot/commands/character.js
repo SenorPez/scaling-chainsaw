@@ -1,5 +1,8 @@
 const regex = /^.+?(?:\s)+(.+)/g;
 const fetch = require("node-fetch");
+
+const api = require('../service/api');
+const {findCampaignById} = require('../commands/campaign');
 const state = require('../service/state');
 
 function ParseError() {
@@ -80,4 +83,10 @@ module.exports.parseArguments = (matches) => {
         const characterId = Number(matches[1]).valueOf();
         isNaN(characterId) ? resolve(matches[1]) : reject(characterId);
     });
+}
+
+module.exports.getCharacters = () => {
+    return findCampaignById(state.getCampaignId())
+        .then(response => response.json())
+        .then(campaign => api.get(campaign._links['loot-api:characters'].href));
 }
