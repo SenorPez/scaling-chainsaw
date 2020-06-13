@@ -153,6 +153,29 @@ suite('Mock API', function () {
             });
     });
 
+    test('findCampaignByName: No text match', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/',
+            mockCampaigns
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/',
+            mockResponse
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
+
+        return findCampaignByName('leeadamaisfat')
+            .then(() => assert.fail())
+            .catch((error) => assert.strictEqual(error.message, 'Campaign containing \'leeadamaisfat\' not found'));
+    });
+
     test('findCampaignById: Valid Campaign JSON, matched by ID', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();

@@ -9,7 +9,7 @@ function ParseError() {
 }
 
 function CampaignNotFoundError(campaignName) {
-    this.campaignName = campaignName;
+    this.message = `Campaign containing '${campaignName}' not found`;
 }
 
 function MultipleMatchError(data) {
