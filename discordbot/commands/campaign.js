@@ -12,8 +12,9 @@ function CampaignNotFoundError(campaignName) {
     this.message = `Campaign containing '${campaignName}' not found`;
 }
 
-function MultipleMatchError(data) {
-    this.data = data;
+function MultipleMatchError(campaignName, data) {
+    this.message = `Multiple campaigns containing '${campaignName}' found:`;
+    data.forEach(campaign => this.message = this.message + `\nID: ${campaign.id} Name: ${campaign.name}`);
 }
 
 function CampaignIdNotFoundError(campaignId) {
@@ -98,7 +99,7 @@ module.exports.findCampaignByName = (campaignName) => {
             } else if (embeddedCampaign.length < 1) {
                 throw new CampaignNotFoundError(campaignName);
             }
-            throw new MultipleMatchError(embeddedCampaign);
+            throw new MultipleMatchError(campaignName, embeddedCampaign);
         })
 }
 

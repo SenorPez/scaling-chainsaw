@@ -1,7 +1,6 @@
 const assert = require('chai').assert;
 const {getCampaigns, findCampaignById, findCampaignByName, parseMessage, parseArguments} = require('../commands/campaign');
 
-const mockResponse = {hello: 'world'}
 const mockIndex = {
     _links: {
         'loot-api:campaigns': {
@@ -11,17 +10,29 @@ const mockIndex = {
 };
 const mockCampaigns = {
     _embedded: {
-        'loot-api:campaign': [{
-            id: 1,
-            name: 'Test Campaign',
-            _links: {
-                self: {
-                    href: 'http://mockserver/campaigns/1/'
+        'loot-api:campaign': [
+            {
+                id: 1,
+                name: 'Test Campaign',
+                _links: {
+                    self: {
+                        href: 'http://mockserver/campaigns/1/'
+                    }
+                }
+            },
+            {
+                id: 2,
+                name: 'Mock Campaign',
+                _links: {
+                    self: {
+                        href: 'http://mockserver/campaigns/2/'
+                    }
                 }
             }
-        }]
+        ]
     }
 };
+const mockResponse = {hello: 'world'}
 
 suite('Mock API', function () {
     test('parseMessage: Regex match, valid command', function () {
@@ -174,6 +185,32 @@ suite('Mock API', function () {
         return findCampaignByName('leeadamaisfat')
             .then(() => assert.fail())
             .catch((error) => assert.strictEqual(error.message, 'Campaign containing \'leeadamaisfat\' not found'));
+    });
+
+    test('findCampaignByName: Multiple text matches', function() {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/',
+            mockCampaigns
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/',
+            mockResponse
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findCampaignByName} = proxyquire('../commands/campaign', {'../service/api': api});
+
+        return findCampaignByName('campaign')
+            .then(() => assert.fail())
+            .catch((error) => assert.strictEqual(
+                error.message,
+                'Multiple campaigns containing \'campaign\' found:\nID: 1 Name: Test Campaign\nID: 2 Name: Mock Campaign'
+            ));
     });
 
     test('findCampaignById: Valid Campaign JSON, matched by ID', function () {
