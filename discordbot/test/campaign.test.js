@@ -44,28 +44,28 @@ suite('Mock API', function () {
         const mockMessage = {content: '$campaign Defiance in Phlan'};
         return parseMessage(mockMessage)
             .then(response => assert.isArray(response));
-    })
+    });
 
     test('parseMessage: No regex match, invalid command', function () {
         const mockMessage = {content: 'fail'}
         return parseMessage(mockMessage)
             .then(() => assert.fail())
             .catch(error => assert.strictEqual(error.message, "Usage: $campaign <campaign name>"));
-    })
+    });
 
-    test('parseArguments: Search argument is text', function() {
+    test('parseArguments: Search argument is text', function () {
         const mockMatches = [null, 'Search'];
         return parseArguments(mockMatches)
-            .then((textId) => assert.strictEqual(textId, 'Search'),
+            .then(textId => assert.strictEqual(textId, 'Search'),
                 () => assert.fail());
-    })
+    });
 
-    test('parseArguments: Search argument is number', function() {
+    test('parseArguments: Search argument is number', function () {
         const mockMatches = [null, '8675309'];
         return parseArguments(mockMatches)
             .then(() => assert.fail(),
                 (numberId) => assert.strictEqual(numberId, 8675309));
-    })
+    });
 
     test('getCampaigns: Valid Campaigns JSON', function () {
         const proxyquire = require('proxyquire')
@@ -76,7 +76,7 @@ suite('Mock API', function () {
         );
         fetchMock.mock(
             'http://mockserver/campaigns/',
-            mockCampaign
+            mockCampaigns
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
         const {getCampaigns} = proxyquire('../commands/campaign', {'../service/api': api});
@@ -84,9 +84,9 @@ suite('Mock API', function () {
         return getCampaigns()
             .then(response => response.json())
             .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
+                assert.hasAllKeys(data, ['_embedded']);
                 assert.isOk(fetchMock.done());
-            })
+            });
     });
 
     test('findCampaignByName: Valid Campaign JSON, matched by exact name', function () {
@@ -190,7 +190,7 @@ suite('Mock API', function () {
             .catch((error) => assert.strictEqual(error.message, 'Campaign containing \'leeadamaisfat\' not found'));
     });
 
-    test('findCampaignByName: Multiple text matches', function() {
+    test('findCampaignByName: Multiple text matches', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(

@@ -40,14 +40,14 @@ module.exports.parseMessage = (message) => {
             resolve(matches[0]);
         }
         throw new ParseError();
-    })
+    });
 }
 
 module.exports.parseArguments = (matches) => {
     return new Promise((resolve, reject) => {
         /*
-        Resolve: Text search for campaign.
-        Reject: Lookup campaign by id.
+        Resolve: Text search for campaign
+        Reject: Lookup campaign by id
          */
         const campaignId = Number(matches[1]).valueOf();
         isNaN(campaignId) ? resolve(matches[1]) : reject(campaignId);
@@ -71,7 +71,7 @@ module.exports.findCampaignByName = (campaignName) => {
                 throw new CampaignNotFoundError(campaignName);
             }
             throw new MultipleMatchError(campaignName, embeddedCampaign);
-        })
+        });
 }
 
 module.exports.findCampaignById = (campaignId) => {
@@ -83,7 +83,7 @@ module.exports.findCampaignById = (campaignId) => {
                 return api.get(embeddedCampaign.pop()._links.self.href);
             }
             throw new CampaignIdNotFoundError(campaignId);
-        })
+        });
 }
 
 module.exports.setCampaign = (campaign, message) => {
