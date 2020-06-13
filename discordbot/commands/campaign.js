@@ -8,16 +8,16 @@ function ParseError() {
     this.message = "Usage: $campaign <campaign name>";
 }
 
-function CampaignIdNotFoundError(campaignId) {
-    this.campaignId = campaignId;
-}
-
 function CampaignNotFoundError(campaignName) {
     this.campaignName = campaignName;
 }
 
 function MultipleMatchError(data) {
     this.data = data;
+}
+
+function CampaignIdNotFoundError(campaignId) {
+    this.message = `Campaign with ID of ${campaignId} not found`;
 }
 
 // module.exports = (message) => {
@@ -88,18 +88,6 @@ module.exports.getCampaigns = () => {
         .then(apiindex => api.get(apiindex._links['loot-api:campaigns'].href));
 }
 
-module.exports.findCampaignById = (campaignId) => {
-    return module.exports.getCampaigns()
-        .then(response => response.json())
-        .then(campaigns => {
-            const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(embeddedCampaign => embeddedCampaign.id === campaignId);
-            if (embeddedCampaign.length === 1) {
-                return api.get(embeddedCampaign.pop()._links.self.href);
-            }
-            throw new CampaignIdNotFoundError(campaignId);
-        })
-}
-
 module.exports.findCampaignByName = (campaignName) => {
     return module.exports.getCampaigns()
         .then(response => response.json())
@@ -111,5 +99,17 @@ module.exports.findCampaignByName = (campaignName) => {
                 throw new CampaignNotFoundError(campaignName);
             }
             throw new MultipleMatchError(embeddedCampaign);
+        })
+}
+
+module.exports.findCampaignById = (campaignId) => {
+    return module.exports.getCampaigns()
+        .then(response => response.json())
+        .then(campaigns => {
+            const embeddedCampaign = campaigns._embedded['loot-api:campaign'].filter(embeddedCampaign => embeddedCampaign.id === campaignId);
+            if (embeddedCampaign.length === 1) {
+                return api.get(embeddedCampaign.pop()._links.self.href);
+            }
+            throw new CampaignIdNotFoundError(campaignId);
         })
 }

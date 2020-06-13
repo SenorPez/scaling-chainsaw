@@ -24,13 +24,13 @@ const mockCampaigns = {
 };
 
 suite('Mock API', function () {
-    test('Valid command regex match', function () {
+    test('parseMessage: Regex match, valid command', function () {
         const mockMessage = {content: '$campaign Defiance in Phlan'};
         return parseMessage(mockMessage)
             .then(response => assert.isArray(response));
     })
 
-    test('Invalid command regex match', function () {
+    test('parseMessage: No regex match, invalid command', function () {
         const mockMessage = {content: 'fail'}
         return parseMessage(mockMessage)
             .then(() => assert.fail())
@@ -39,21 +39,21 @@ suite('Mock API', function () {
             });
     })
 
-    test('Search argument is text', function() {
+    test('parseArguments: Search argument is text', function() {
         const mockMatches = [null, 'Search'];
         return parseArguments(mockMatches)
             .then((textId) => assert.strictEqual(textId, 'Search'),
                 () => assert.fail());
     })
 
-    test('Search argument is numeric', function() {
+    test('parseArguments: Search argument is number', function() {
         const mockMatches = [null, '8675309'];
         return parseArguments(mockMatches)
             .then(() => assert.fail(),
                 (numberId) => assert.strictEqual(numberId, 8675309));
     })
 
-    test('Should return valid mock Campaigns JSON', function () {
+    test('getCampaigns: Valid Campaigns JSON', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
@@ -75,33 +75,7 @@ suite('Mock API', function () {
             })
     });
 
-    test('Should return valid mock Campaign JSON, matched by ID', function () {
-        const proxyquire = require('proxyquire')
-        const fetchMock = require('fetch-mock').sandbox();
-        fetchMock.mock(
-            'https://www.loot.senorpez.com/',
-            mockIndex
-        );
-        fetchMock.mock(
-            'http://mockserver/campaigns/',
-            mockCampaigns
-        );
-        fetchMock.mock(
-            'http://mockserver/campaigns/1/',
-            mockResponse
-        );
-        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
-        const {findCampaignById} = proxyquire('../commands/campaign', {'../service/api': api});
-
-        return findCampaignById(1)
-            .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['hello']);
-                assert.isOk(fetchMock.done());
-            });
-    });
-
-    test('Should return valid mock Campaign JSON, matched by exact name', function () {
+    test('findCampaignByName: Valid Campaign JSON, matched by exact name', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
@@ -127,7 +101,7 @@ suite('Mock API', function () {
             });
     });
 
-    test('Should return valid mock Campaign JSON, matched by differently cased name', function () {
+    test('findCampaignByName: Valid Campaign JSON, matched by differently cased name', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
@@ -153,7 +127,7 @@ suite('Mock API', function () {
             });
     });
 
-    test('Should return valid mock Campaign JSON, matched by partial name', function () {
+    test('findCampaignByName: Valid Campaign JSON, matched by partial name', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
@@ -178,6 +152,55 @@ suite('Mock API', function () {
                 assert.isOk(fetchMock.done());
             });
     });
+
+    test('findCampaignById: Valid Campaign JSON, matched by ID', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/',
+            mockCampaigns
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/',
+            mockResponse
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findCampaignById} = proxyquire('../commands/campaign', {'../service/api': api});
+
+        return findCampaignById(1)
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['hello']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('findCampaignById: No ID match', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/',
+            mockCampaigns
+        );
+        fetchMock.mock(
+            'http://mockserver/campaigns/1/',
+            mockResponse
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findCampaignById} = proxyquire('../commands/campaign', {'../service/api': api});
+
+        return findCampaignById(8675309)
+            .then(() => assert.fail())
+            .catch(error => assert.strictEqual(error.message, "Campaign with ID of 8675309 not found"));
+    })
 });
 
 // suite('Reference API', function () {
