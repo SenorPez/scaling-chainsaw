@@ -91,6 +91,26 @@ module.exports = (message) => {
     }
 }
 
+module.exports = (message) => {
+    const tokenPromise = getToken();
+    const itemPromise = module.exports.parseMessage(message)
+        .then(matches => module.exports.parseArguments(matches))
+        .then(
+            searchParam => module.exports.findItemByName(searchParam),
+            searchParam => module.exports.findItemById(searchParam)
+        );
+    const argsPromise = module.exports.parseMessage(message)
+        .then(matches => module.exports.parseCommand(matches));
+
+    Promise.all([tokenPromise, itemPromise, argsPromise])
+        .then(values => {
+            const item = values[1];
+            const arguments = values[2];
+            const token = values[0];
+            module.exports.postTransaction(message, item, arguments, token);
+        });
+}
+
 function getItems() {
     return fetch("https://www.loot.senorpez.com/items")
         .then(response => response.json());
@@ -107,7 +127,6 @@ function postTransaction(message, item, quantity, accessToken, args) {
         quantity: quantity,
         remark: args.r
     }
-    console.log(newTransaction);
     const authHeader = `bearer ${accessToken}`;
 
     fetch(`https://www.loot.senorpez.com/campaigns/${state.getCampaignId()}/characters/${state.getCharacterId()}/itemtransactions`, {
@@ -123,7 +142,6 @@ function postTransaction(message, item, quantity, accessToken, args) {
             message.channel.send(`Added ${quantity} ${item.name} to ${data.name}`);
             updatedItem = data.inventory.filter(invItem => invItem.name === item.name);
             message.channel.send(`Now has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
-            console.log(data);
         });
 }
 
@@ -152,38 +170,35 @@ module.exports.parseCommand = (matches) => {
         Resolve: Text search for item
         Reject: Lookup item by id
          */
-        const quantity = matches[1] ? matches[1] : 1;
-        const arguments = matches[3];
-
         const itemId = Number(matches[2]).valueOf();
-        isNaN(itemId) ? resolve({
-            id: matches[2],
-            quantity: quantity,
-            args: arguments
-        }) : reject({
-            id: itemId,
-            quantity: quantity,
-            args: arguments});
+        isNaN(itemId) ? resolve(matches[2]) : reject(itemId);
     });
 }
 
-module.exports.parseArguments = (argumentString) => {
+module.exports.parseArguments = (matches) => {
+    for (const key of Object.keys(args)) {
+        args[key] = null;
+    }
+
+    const parsed = {
+        quantity: matches[1] ? matches[1] : 1,
+        arguments: matches[3]
+    }
+
     return new Promise(resolve => {
-        for (const key of Object.keys(args)) {
-            args[key] = null;
+        if (parsed.arguments === null) {
+            parsed.arguments = args;
+            resolve(parsed);
         }
 
-        if (argumentString === null) {
-            resolve(args);
-        }
-
-        const matches = [...argumentString.matchAll(argregex)];
+        const matches = [...parsed.arguments.matchAll(argregex)];
         matches.forEach(match => {
             if (match[1] in args) {
                 args[match[1]] = match[2];
             }
         });
-        resolve(args);
+        parsed.arguments = args;
+        resolve(parsed);
     });
 }
 
@@ -219,14 +234,13 @@ module.exports.findItemById = (itemId) => {
         });
 }
 
-module.exports.postTransaction = (message, item, quantity, arguments, accessToken) => {
+module.exports.postTransaction = (message, item, arguments, token) => {
     const newTransaction = {
         item: item.id,
-        quantity: quantity,
-        remark: arguments.r
-    }
-
-    const authHeader = `bearer ${accessToken}`;
+        quantity: arguments.quantity,
+        remark: arguments.arguments.r
+    };
+    const authHeader = `bearer ${token}`;
 
     return new Promise(resolve => {
         fetch(`https://www.loot.senorpez.com/campaigns/${state.getCampaignId()}/characters/${state.getCharacterId()}/itemtransactions/`, {
@@ -240,8 +254,8 @@ module.exports.postTransaction = (message, item, quantity, arguments, accessToke
             .then(response => response.json())
             .then(character => {
                 updatedItem = character.inventory.filter(inventoryItem => inventoryItem.name === item.name);
-                message.channel.send(`Added ${quantity} ${item.name} to ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
+                message.channel.send(`Added ${arguments.quantity} ${item.name} to ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
                 resolve(character);
             });
     });
-}
+};

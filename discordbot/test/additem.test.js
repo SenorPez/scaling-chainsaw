@@ -93,128 +93,90 @@ suite('Mock API', function() {
             .catch(error => assert.strictEqual(error.message, "Usage: $additem <item name> [--r <remark>]"));
     });
 
-    test('parseCommand: Search argument is text, quantity is set, args are set', function () {
-        const mockMatches = [null, 11, 'Search', '--r Remark'];
-        return parseCommand(mockMatches)
-            .then((result) => {
-                    assert.strictEqual(result.id, 'Search');
-                    assert.strictEqual(result.quantity, 11);
-                    assert.strictEqual(result.args, '--r Remark');
-                },
-                () => assert.fail());
-    });
-
-    test('parseCommand: Search argument is text, quantity is set, args are not set', function () {
-        const mockMatches = [null, 11, 'Search', null];
-        return parseCommand(mockMatches)
-            .then((result) => {
-                    assert.strictEqual(result.id, 'Search');
-                    assert.strictEqual(result.quantity, 11);
-                    assert.strictEqual(result.args, null);
-                },
-                () => assert.fail());
-    });
-
-    test('parseCommand: Search argument is text, quantity is defaulted to 1, args are set', function () {
-        const mockMatches = [null, null, 'Search', '--r Remark'];
-        return parseCommand(mockMatches)
-            .then((result) => {
-                    assert.strictEqual(result.id, 'Search');
-                    assert.strictEqual(result.quantity, 1);
-                    assert.strictEqual(result.args, '--r Remark');
-                },
-                () => assert.fail());
-    });
-
-    test('parseCommand: Search argument is text, quantity is defaulted to 1, args are not set', function () {
+    test('parseCommand: Search argument is text', function () {
         const mockMatches = [null, null, 'Search', null];
         return parseCommand(mockMatches)
-            .then((result) => {
-                    assert.strictEqual(result.id, 'Search');
-                    assert.strictEqual(result.quantity, 1);
-                    assert.strictEqual(result.args, null);
-                },
+            .then((result) => assert.strictEqual(result, 'Search'),
                 () => assert.fail());
     });
 
-    test('parseCommand: Search argument is number, quantity is set, args are set', function () {
-        const mockMatches = [null, 11, '8675309', '--r Remark'];
-        return parseCommand(mockMatches)
-            .then(() => assert.fail(),
-                (result) => {
-                    assert.strictEqual(result.id, 8675309);
-                    assert.strictEqual(result.quantity, 11);
-                    assert.strictEqual(result.args, '--r Remark');
-                });
-    });
-
-    test('parseCommand: Search argument is number, quantity is set, args are not set', function () {
-        const mockMatches = [null, 11, '8675309', null];
-        return parseCommand(mockMatches)
-            .then(() => assert.fail(),
-                (result) => {
-                    assert.strictEqual(result.id, 8675309);
-                    assert.strictEqual(result.quantity, 11);
-                    assert.strictEqual(result.args, null);
-                });
-    });
-
-    test('parseCommand: Search argument is number, quantity is defaulted to 1, args are set', function () {
-        const mockMatches = [null, null, '8675309', '--r Remark'];
-        return parseCommand(mockMatches)
-            .then(() => assert.fail(),
-                (result) => {
-                    assert.strictEqual(result.id, 8675309);
-                    assert.strictEqual(result.quantity, 1);
-                    assert.strictEqual(result.args, '--r Remark');
-                });
-    });
-
-    test('parseCommand: Search argument is number, quantity is defaulted to 1, args are not set', function () {
+    test('parseCommand: Search argument is number', function () {
         const mockMatches = [null, null, '8675309', null];
         return parseCommand(mockMatches)
             .then(() => assert.fail(),
-                (result) => {
-                    assert.strictEqual(result.id, 8675309);
-                    assert.strictEqual(result.quantity, 1);
-                    assert.strictEqual(result.args, null);
-                });
+                (result) => assert.strictEqual(result, 8675309));
     });
 
-    test('parseArguments: Single match', function () {
-        const mockArguments = '--r Remark';
-        return parseArguments(mockArguments)
-            .then(arguments => assert.strictEqual(arguments['r'], 'Remark'));
+    test('parseArguments: Quantity is set, args are set', function () {
+        const mockMatches = [null, 11, null, '--r Remark'];
+        return parseArguments(mockMatches)
+            .then(result => {
+                assert.strictEqual(result.quantity, 11);
+                assert.strictEqual(result.arguments.r, 'Remark');
+            });
     });
 
-    test('parseArguments: Duplicate matches', function () {
-        const mockArguments = '--r Remark --r Second Remark';
-        return parseArguments(mockArguments)
-            .then(arguments => assert.strictEqual(arguments['r'], 'Second Remark'));
+    test('parseArguments: Quantity is set, args are blank', function () {
+        const mockMatches = [null, 11, null, null];
+        return parseArguments(mockMatches)
+            .then(result => {
+                assert.strictEqual(result.quantity, 11);
+                assert.isNull(result.arguments.r);
+            });
+    });
+
+    test('parseArguments: Quantity is defaulted, args are set', function () {
+        const mockMatches = [null, null, null, '--r Remark'];
+        return parseArguments(mockMatches)
+            .then(result => {
+                assert.strictEqual(result.quantity, 1);
+                assert.strictEqual(result.arguments.r, 'Remark');
+            });
+    });
+
+    test('parseArguments: Quantity is default, args are not set', function () {
+        const mockMatches = [null, null, null, null];
+        return parseArguments(mockMatches)
+            .then(result => {
+                assert.strictEqual(result.quantity, 1);
+                assert.isNull(result.arguments.r);
+            });
+    });
+
+    test('parseArguments: args single match', function () {
+        const mockMatches = [null, 11, null, '--r Remark'];
+        return parseArguments(mockMatches)
+            .then(result => assert.strictEqual(result.arguments.r, 'Remark'));
+    });
+
+    test('parseArguments: args duplicate matches', function () {
+        const mockMatches = [null, 11, null, '--r Remark --r Second Remark'];
+        return parseArguments(mockMatches)
+            .then(result => assert.strictEqual(result.arguments.r, 'Second Remark'));
     });
 
     test('parseArguments: No arguments', function () {
-        const mockArguments = null;
-        return parseArguments(mockArguments)
-            .then(arguments => assert.isNull(arguments['r']));
+        const mockMatches = [null, 11, null, null];
+        return parseArguments(mockMatches)
+            .then(result => assert.isNull(result.arguments.r));
     });
 
     test('parseArguments: One match, one unsupported', function () {
-        const mockArguments = '--r Remark --t Whatever';
-        return parseArguments(mockArguments)
-            .then(arguments => assert.strictEqual(arguments['r'], 'Remark'));
+        const mockMatches = [null, 11, null, '--r Remark --t Whatever'];
+        return parseArguments(mockMatches)
+            .then(result => assert.strictEqual(result.arguments.r, 'Remark'));
     });
 
     test('parseArguments: One unsupported, one match', function () {
-        const mockArguments = '--t Whatever --r Remark';
-        return parseArguments(mockArguments)
-            .then(arguments => assert.strictEqual(arguments['r'], 'Remark'));
+        const mockMatches = [null, 11, null, '--t Whatever --r Remark'];
+        return parseArguments(mockMatches)
+            .then(result => assert.strictEqual(result.arguments.r, 'Remark'));
     });
 
     test('parseArguments: Malformed arguments', function () {
-        const mockArguments = 'Error';
-        return parseArguments(mockArguments)
-            .then(arguments => assert.isNull(arguments['r']));
+        const mockMatches = [null, 11, null, 'Error'];
+        return parseArguments(mockMatches)
+            .then(result => assert.isNull(result.arguments.r));
     })
 
     test('getItems: Valid Items JSON', function () {
@@ -423,13 +385,10 @@ suite('Mock API', function() {
         const mockMessage = {
             channel: {send: mockSend}
         };
-        const mockItem = {
-            id: 8675309,
-            name: 'Gold Piece'
-        };
         const mockArgs = {
-            r: 'Fantastic Thing'
-        };
+            quantity: 11,
+            arguments: {r: 'Remark'}
+        }
 
         const proxyquire = require('proxyquire');
         const fetchMock = require('fetch-mock').sandbox();
@@ -439,7 +398,7 @@ suite('Mock API', function() {
         );
         const {postTransaction} = proxyquire('../commands/additem', {'node-fetch': fetchMock});
 
-        return postTransaction(mockMessage, mockItem, 11, mockArgs, '12345')
+        return postTransaction(mockMessage, mockItem, mockArgs, '12345')
             .then(character => assert.strictEqual(character.inventory[0].quantity, 12));
     })
 })
