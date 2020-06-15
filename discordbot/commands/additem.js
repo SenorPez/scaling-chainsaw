@@ -130,3 +130,23 @@ module.exports.parseMessage = (message) => {
     })
 }
 
+module.exports.parseCommand = (matches) => {
+    return new Promise(((resolve, reject) => {
+        /*
+        Resolve: Text search for item
+        Reject: Lookup item by id
+         */
+        const quantity = matches[1] ? matches[1] : 1;
+        const arguments = matches[3];
+
+        const itemId = Number(matches[2]).valueOf();
+        isNaN(itemId) ? resolve({
+            id: matches[2],
+            quantity: quantity,
+            args: arguments
+        }) : reject({
+            id: itemId,
+            quantity: quantity,
+            args: arguments});
+    }));
+}
