@@ -353,4 +353,53 @@ suite('Mock API', function() {
                 'Multiple items containing \'i\' found:\nID: 1 Name: Gold Piece\nID: 2 Name: Magic Item'
             ));
     });
+
+    test('findItemById: Valid Item JSON, matched by ID', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/items/',
+            mockItems
+        );
+        fetchMock.mock(
+            'http://mockserver/items/1/',
+            mockItem
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findItemById} = proxyquire('../commands/additem', {'../service/api': api});
+
+        return findItemById(1)
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('findItemById: No ID match', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/items/',
+            mockItems
+        );
+        fetchMock.mock(
+            'http://mockserver/items/1/',
+            mockItem
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findItemById} = proxyquire('../commands/additem', {'../service/api': api});
+
+        return findItemById(8675309)
+            .then(() => assert.fail())
+            .catch(error => assert.strictEqual(error.message, "Item with ID of 8675309 not found"));
+    });
 })

@@ -33,6 +33,9 @@ function MultipleMatchError(itemName, data) {
     data.forEach(item => this.message = this.message + `\nID: ${item.id} Name: ${item.name}`);
 }
 
+function ItemIdNotFoundError(itemId) {
+    this.message = `Item with ID of ${itemId} not found`;
+}
 
 module.exports = (message) => {
     if (state.getCampaignId() === null) {
@@ -201,5 +204,17 @@ module.exports.findItemByName = (itemName) => {
                 throw new ItemNotFoundError(itemName);
             }
             throw new MultipleMatchError(itemName, embeddedItem);
+        });
+}
+
+module.exports.findItemById = (itemId) => {
+    return module.exports.getItems()
+        .then(response => response.json())
+        .then(items => {
+            const embeddedItem = items._embedded['loot-api:lootitem'].filter(embeddedItem => embeddedItem.id === itemId);
+            if (embeddedItem.length === 1) {
+                return api.get(embeddedItem.pop()._links.self.href);
+            }
+            throw new ItemIdNotFoundError(itemId);
         });
 }
