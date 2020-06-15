@@ -11,7 +11,7 @@ const mockIndex = {
 };
 const mockItems = {
     _embedded: {
-        'loot-api:item': [
+        'loot-api:lootitem': [
             {
                 id: 1,
                 name: 'Gold Piece',
@@ -33,6 +33,10 @@ const mockItems = {
         ]
     }
 };
+const mockItem = {
+    id: 1,
+    name: 'Gold Piece'
+}
 
 suite('Mock API', function() {
     setup(function() {
@@ -221,5 +225,132 @@ suite('Mock API', function() {
                 assert.hasAllKeys(data, ['_embedded']);
                 assert.isOk(fetchMock.done());
             });
+    });
+
+    test('findItemByName: Valid Item JSON, matched by exact name', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/items/',
+            mockItems
+        );
+        fetchMock.mock(
+            'http://mockserver/items/1/',
+            mockItem
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findItemByName} = proxyquire('../commands/additem', {'../service/api': api});
+
+        return findItemByName('Gold Piece')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('findItemByName: Valid Item JSON, matched by differently cased name', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/items/',
+            mockItems
+        );
+        fetchMock.mock(
+            'http://mockserver/items/1/',
+            mockItem
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findItemByName} = proxyquire('../commands/additem', {'../service/api': api});
+
+        return findItemByName('gOLd PiECe')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('findItemByName: Valid Item JSON, matched by partial name', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/items/',
+            mockItems
+        );
+        fetchMock.mock(
+            'http://mockserver/items/1/',
+            mockItem
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findItemByName} = proxyquire('../commands/additem', {'../service/api': api});
+
+        return findItemByName('Gold')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['id', 'name']);
+                assert.isOk(fetchMock.done());
+            });
+    });
+
+    test('findItemByName: No text match', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/items/',
+            mockItems
+        );
+        fetchMock.mock(
+            'http://mockserver/items/1/',
+            mockItem
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findItemByName} = proxyquire('../commands/additem', {'../service/api': api});
+
+        return findItemByName('leeadamaisfat')
+            .then(() => assert.fail())
+            .catch(error => assert.strictEqual(error.message, 'Item containing \'leeadamaisfat\' not found'));
+    });
+
+    test('findItemByName: Multiple text matches', function () {
+        const proxyquire = require('proxyquire')
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/items/',
+            mockItems
+        );
+        fetchMock.mock(
+            'http://mockserver/items/1/',
+            mockItem
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {findItemByName} = proxyquire('../commands/additem', {'../service/api': api});
+
+        return findItemByName('i')
+            .then(() => assert.fail())
+            .catch((error) => assert.strictEqual(
+                error.message,
+                'Multiple items containing \'i\' found:\nID: 1 Name: Gold Piece\nID: 2 Name: Magic Item'
+            ));
     });
 })

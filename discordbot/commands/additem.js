@@ -24,6 +24,16 @@ function ParseError() {
     this.message = "Usage: $additem <item name> [--r <remark>]";
 }
 
+function ItemNotFoundError(itemName) {
+    this.message = `Item containing '${itemName}' not found`;
+}
+
+function MultipleMatchError(itemName, data) {
+    this.message = `Multiple items containing '${itemName}' found:`;
+    data.forEach(item => this.message = this.message + `\nID: ${item.id} Name: ${item.name}`);
+}
+
+
 module.exports = (message) => {
     if (state.getCampaignId() === null) {
         message.channel.send("Campaign must be set; use the $campaign command");
@@ -154,17 +164,17 @@ module.exports.parseCommand = (matches) => {
     });
 }
 
-module.exports.parseArguments = (arguments) => {
+module.exports.parseArguments = (argumentString) => {
     return new Promise(resolve => {
         for (const key of Object.keys(args)) {
             args[key] = null;
         }
 
-        if (arguments === null) {
+        if (argumentString === null) {
             resolve(args);
         }
 
-        const matches = [...arguments.matchAll(argregex)];
+        const matches = [...argumentString.matchAll(argregex)];
         matches.forEach(match => {
             if (match[1] in args) {
                 args[match[1]] = match[2];
@@ -178,4 +188,18 @@ module.exports.getItems = () => {
     return api.get(process.env.API_URL)
         .then(response => response.json())
         .then(apiindex => api.get(apiindex._links['loot-api:lootitems'].href));
+}
+
+module.exports.findItemByName = (itemName) => {
+    return module.exports.getItems()
+        .then(response => response.json())
+        .then(items => {
+            const embeddedItem = items._embedded['loot-api:lootitem'].filter(item => item.name.toLowerCase().includes(itemName.toLowerCase()));
+            if (embeddedItem.length === 1) {
+                return api.get(embeddedItem.pop()._links.self.href);
+            } else if (embeddedItem.length < 1) {
+                throw new ItemNotFoundError(itemName);
+            }
+            throw new MultipleMatchError(itemName, embeddedItem);
+        });
 }
