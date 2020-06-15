@@ -1,6 +1,6 @@
 const assert = require('chai').assert;
 
-const {parseMessage, parseCommand} = require('../commands/additem');
+const {parseMessage, parseCommand, parseArguments} = require('../commands/additem');
 const state = require('../service/state');
 
 suite('Mock API', function() {
@@ -135,4 +135,40 @@ suite('Mock API', function() {
                     assert.strictEqual(result.args, null);
                 });
     });
+
+    test('parseArguments: Single match', function () {
+        const mockArguments = '--r Remark';
+        return parseArguments(mockArguments)
+            .then(arguments => assert.strictEqual(arguments['r'], 'Remark'));
+    });
+
+    test('parseArguments: Duplicate matches', function () {
+        const mockArguments = '--r Remark --r Second Remark';
+        return parseArguments(mockArguments)
+            .then(arguments => assert.strictEqual(arguments['r'], 'Second Remark'));
+    });
+
+    test('parseArguments: No arguments', function () {
+        const mockArguments = null;
+        return parseArguments(mockArguments)
+            .then(arguments => assert.isNull(arguments['r']));
+    });
+
+    test('parseArguments: One match, one unsupported', function () {
+        const mockArguments = '--r Remark --t Whatever';
+        return parseArguments(mockArguments)
+            .then(arguments => assert.strictEqual(arguments['r'], 'Remark'));
+    });
+
+    test('parseArguments: One unsupported, one match', function () {
+        const mockArguments = '--t Whatever --r Remark';
+        return parseArguments(mockArguments)
+            .then(arguments => assert.strictEqual(arguments['r'], 'Remark'));
+    });
+
+    test('parseArguments: Malformed arguments', function () {
+        const mockArguments = 'Error';
+        return parseArguments(mockArguments)
+            .then(arguments => assert.isNull(arguments['r']));
+    })
 })

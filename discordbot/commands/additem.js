@@ -131,7 +131,7 @@ module.exports.parseMessage = (message) => {
 }
 
 module.exports.parseCommand = (matches) => {
-    return new Promise(((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         /*
         Resolve: Text search for item
         Reject: Lookup item by id
@@ -148,5 +148,25 @@ module.exports.parseCommand = (matches) => {
             id: itemId,
             quantity: quantity,
             args: arguments});
-    }));
+    });
+}
+
+module.exports.parseArguments = (arguments) => {
+    return new Promise(resolve => {
+        for (const key of Object.keys(args)) {
+            args[key] = null;
+        }
+
+        if (arguments === null) {
+            resolve(args);
+        }
+
+        const matches = [...arguments.matchAll(argregex)];
+        matches.forEach(match => {
+            if (match[1] in args) {
+                args[match[1]] = match[2];
+            }
+        });
+        resolve(args);
+    });
 }
