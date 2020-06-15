@@ -1,7 +1,38 @@
 const assert = require('chai').assert;
-
 const {parseMessage, parseCommand, parseArguments} = require('../commands/additem');
 const state = require('../service/state');
+
+const mockIndex = {
+    _links: {
+        'loot-api:lootitems': {
+            href: 'http://mockserver/items/'
+        }
+    }
+};
+const mockItems = {
+    _embedded: {
+        'loot-api:item': [
+            {
+                id: 1,
+                name: 'Gold Piece',
+                _links: {
+                    self: {
+                        href: 'http://mockserver/items/1/'
+                    }
+                }
+            },
+            {
+                id: 2,
+                name: 'Magic Item',
+                _links: {
+                    self: {
+                        href: 'http://mockserver/items/2/'
+                    }
+                }
+            }
+        ]
+    }
+};
 
 suite('Mock API', function() {
     setup(function() {
@@ -45,8 +76,6 @@ suite('Mock API', function() {
             .then(() => assert.fail())
             .catch(error => assert.strictEqual(error.message, "Usage: $additem <item name> [--r <remark>]"));
     });
-
-
 
     test('parseCommand: Search argument is text, quantity is set, args are set', function () {
         const mockMatches = [null, 11, 'Search', '--r Remark'];
@@ -171,4 +200,26 @@ suite('Mock API', function() {
         return parseArguments(mockArguments)
             .then(arguments => assert.isNull(arguments['r']));
     })
+
+    test('getItems: Valid Items JSON', function () {
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/',
+            mockIndex
+        );
+        fetchMock.mock(
+            'http://mockserver/items/',
+            mockItems
+        );
+        const api = proxyquire('../service/api', {'node-fetch': fetchMock});
+        const {getItems} = proxyquire('../commands/additem', {'../service/api': api});
+
+        return getItems()
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['_embedded']);
+                assert.isOk(fetchMock.done());
+            });
+    });
 })

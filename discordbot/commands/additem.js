@@ -1,6 +1,9 @@
+require("dotenv").config();
 const regex = /^.+?\s+(\d+(?=\s))?\s*(.+?)(?=\s+(--.+)|\s*$)/g;
 const argregex = /--(\S)\s+(.+?)(?=\s+--|\s*$)/g;
 const fetch = require("node-fetch");
+
+const api = require('../service/api')
 const state = require('../service/state');
 
 const getToken = require('../service/authtoken');
@@ -169,4 +172,10 @@ module.exports.parseArguments = (arguments) => {
         });
         resolve(args);
     });
+}
+
+module.exports.getItems = () => {
+    return api.get(process.env.API_URL)
+        .then(response => response.json())
+        .then(apiindex => api.get(apiindex._links['loot-api:lootitems'].href));
 }
