@@ -37,7 +37,7 @@ const mockCampaigns = {
 const mockCampaign = {
     id: 1,
     name: 'Test Campaign'
-}
+};
 
 suite('Mock API', function () {
     setup(function () {
@@ -273,7 +273,7 @@ suite('Mock API', function () {
         return findCampaignById(8675309)
             .then(() => assert.fail())
             .catch(error => assert.strictEqual(error.message, "Campaign with ID of 8675309 not found"));
-    })
+    });
 
     test('setCampaign: No character reset', function () {
         const mockJson = sinon.stub().returns(Promise.resolve(mockCampaign));
@@ -319,7 +319,7 @@ suite('Mock API', function () {
                 assert.strictEqual(state.getCampaignId(), mockCampaign.id);
                 assert.strictEqual(state.getCharacterId(), null);
             });
-    })
+    });
 });
 
 // suite('Reference API', function () {

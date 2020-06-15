@@ -38,7 +38,7 @@ const mockItems = {
 const mockItem = {
     id: 1,
     name: 'Gold Piece'
-}
+};
 const mockItemTransactions = {
     id: 1,
     name: 'Vorgansharanx',
@@ -48,18 +48,18 @@ const mockItemTransactions = {
             quantity: 12
         }
     ]
-}
+};
 
-suite('Mock API', function() {
-    setup(function() {
+suite('Mock API', function () {
+    setup(function () {
         state.setCampaignId(null);
         state.setCharacterId(null);
-    })
+    });
 
     teardown(function () {
         state.setCampaignId(null);
         state.setCharacterId(null);
-    })
+    });
 
     test('parseMessage: Campaign not set', function () {
         const mockMessage = {content: '$additem Gold Piece'};
@@ -400,5 +400,5 @@ suite('Mock API', function() {
 
         return postTransaction(mockMessage, mockItem, mockArgs, '12345')
             .then(character => assert.strictEqual(character.inventory[0].quantity, 12));
-    })
-})
+    });
+});

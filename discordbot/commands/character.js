@@ -34,7 +34,7 @@ module.exports = (message) => {
         )
         .then(character => module.exports.setCharacter(character, message))
         .catch(error => message.channel.send(error.message));
-}
+};
 
 module.exports.parseMessage = (message) => {
     return new Promise(resolve => {
@@ -48,8 +48,8 @@ module.exports.parseMessage = (message) => {
             resolve(matches[0]);
         }
         throw new ParseError();
-    })
-}
+    });
+};
 
 module.exports.parseArguments = (matches) => {
     return new Promise((resolve, reject) => {
@@ -60,13 +60,13 @@ module.exports.parseArguments = (matches) => {
         const characterId = Number(matches[1]).valueOf();
         isNaN(characterId) ? resolve(matches[1]) : reject(characterId);
     });
-}
+};
 
 module.exports.getCharacters = () => {
     return findCampaignById(state.getCampaignId())
         .then(response => response.json())
         .then(campaign => api.get(campaign._links['loot-api:characters'].href));
-}
+};
 
 module.exports.findCharacterByName = (characterName) => {
     return module.exports.getCharacters()
@@ -80,7 +80,7 @@ module.exports.findCharacterByName = (characterName) => {
             }
             throw new MultipleMatchError(characterName, embeddedCharacter);
         });
-}
+};
 
 module.exports.findCharacterById = (characterId) => {
     return module.exports.getCharacters()
@@ -91,13 +91,13 @@ module.exports.findCharacterById = (characterId) => {
                 return api.get(embeddedCharacter.pop()._links.self.href);
             }
             throw new CharacterIdNotFoundError(characterId);
-        })
-}
+        });
+};
 
 module.exports.setCharacter = (character, message) => {
     return character.json()
         .then(characterData => {
             message.channel.send(`Character set to ${characterData.name}`);
             state.setCharacterId(characterData.id);
-        })
-}
+        });
+};

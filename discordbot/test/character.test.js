@@ -42,7 +42,7 @@ const mockCharacter = {
     name: 'Vorgansharanx'
 };
 
-suite('Mock API', function() {
+suite('Mock API', function () {
     setup(function () {
         state.setCampaignId(null);
         state.setCharacterId(null);
@@ -51,14 +51,14 @@ suite('Mock API', function() {
     teardown(function () {
         state.setCampaignId(null);
         state.setCharacterId(null);
-    })
+    });
 
-    test('parseMessage: Campaign not set', function() {
+    test('parseMessage: Campaign not set', function () {
         const mockMessage = {content: '$character Vorgansharax'};
         return parseMessage(mockMessage)
             .then(() => assert.fail())
             .catch(error => assert.strictEqual(error.message, "Campaign not set; use $campaign to set"));
-    })
+    });
 
     test('parseMessage: Regex match, valid command', function () {
         state.setCampaignId(1);
@@ -304,7 +304,7 @@ suite('Mock API', function() {
                 assert.hasAllKeys(data, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
-    })
+    });
 
     test('findCharacterById: No ID match', function () {
         const proxyquire = require('proxyquire');
@@ -333,7 +333,7 @@ suite('Mock API', function() {
         return findCharacterById(8675309)
             .then(() => assert.fail())
             .catch(error => assert.strictEqual(error.message, "Character with ID of 8675309 not found"));
-    })
+    });
 
     test('setCharacter', function () {
         const mockJson = sinon.stub().resolves(mockCharacter);
@@ -350,4 +350,4 @@ suite('Mock API', function() {
                 assert.strictEqual(state.getCharacterId(), mockCharacter.id);
             });
     });
-})
+});

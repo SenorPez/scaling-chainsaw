@@ -30,7 +30,7 @@ module.exports = (message) => {
         )
         .then(campaign => module.exports.setCampaign(campaign, message))
         .catch(error => message.channel.send(error.message));
-}
+};
 
 module.exports.parseMessage = (message) => {
     return new Promise(resolve => {
@@ -41,7 +41,7 @@ module.exports.parseMessage = (message) => {
         }
         throw new ParseError();
     });
-}
+};
 
 module.exports.parseArguments = (matches) => {
     return new Promise((resolve, reject) => {
@@ -52,13 +52,13 @@ module.exports.parseArguments = (matches) => {
         const campaignId = Number(matches[1]).valueOf();
         isNaN(campaignId) ? resolve(matches[1]) : reject(campaignId);
     });
-}
+};
 
 module.exports.getCampaigns = () => {
     return api.get(process.env.API_URL)
         .then(response => response.json())
         .then(apiindex => api.get(apiindex._links['loot-api:campaigns'].href));
-}
+};
 
 module.exports.findCampaignByName = (campaignName) => {
     return module.exports.getCampaigns()
@@ -72,7 +72,7 @@ module.exports.findCampaignByName = (campaignName) => {
             }
             throw new MultipleMatchError(campaignName, embeddedCampaign);
         });
-}
+};
 
 module.exports.findCampaignById = (campaignId) => {
     return module.exports.getCampaigns()
@@ -84,7 +84,7 @@ module.exports.findCampaignById = (campaignId) => {
             }
             throw new CampaignIdNotFoundError(campaignId);
         });
-}
+};
 
 module.exports.setCampaign = (campaign, message) => {
     return campaign.json()
@@ -95,4 +95,4 @@ module.exports.setCampaign = (campaign, message) => {
                 state.setCharacterId(null);
             }
         });
-}
+};

@@ -10,7 +10,7 @@ const getToken = require('../service/authtoken');
 
 const args = {
     'r': null
-}
+};
 
 function CampaignNotSetError() {
     this.message = 'Campaign not set; use $campaign to set';
@@ -38,60 +38,6 @@ function ItemIdNotFoundError(itemId) {
 }
 
 module.exports = (message) => {
-    if (state.getCampaignId() === null) {
-        message.channel.send("Campaign must be set; use the $campaign command");
-        return
-    }
-
-    if (state.getCharacterId() === null) {
-        message.channel.send("Character must be set; use the $character command");
-        return;
-    }
-
-    const matches = [...message.content.matchAll(regex)];
-
-    if (matches[0]) {
-        if (matches[0][3]) {
-            const argmatches = [...matches[0][3].matchAll(argregex)];
-            if (argmatches[0]) {
-                argmatches.forEach(match => {
-                    if (match[1] in args) {
-                        args[match[1]] = match[2];
-                    }
-                })
-            } else {
-                message.channel.send('Usage: $additem &lt;quantity&gt; &lt;item name&gt; [--r &ltremark&gt]');
-                return;
-            }
-        }
-    } else {
-        message.channel.send('Usage: $additem &lt;quantity&gt; &lt;item name&gt; [--r &ltremark&gt]');
-        return;
-    }
-
-    if (matches[0]) {
-        const quantity = matches[0][1] ? matches[0][1] : 1;
-        const itemname = matches[0][2];
-
-        const itemPromise = getItemId(itemname);
-        const tokenPromise = getToken();
-
-        Promise.all([itemPromise, tokenPromise])
-            .then(values => {
-                if (values[0].length < 1) {
-                    message.channel.send(`Item ${itemname} not found`);
-                } else if (values[0].length > 1) {
-                    message.channel.send(`Multiple items found:`);
-                    values[0].forEach(item => message.channel.send(`${item.name}`));
-                } else {
-                    postTransaction(message, values[0][0], quantity, values[1].access_token, args);
-                }
-            })
-            .then(() => args.r = null);
-    }
-}
-
-module.exports = (message) => {
     const tokenPromise = getToken();
     const itemPromise = module.exports.parseMessage(message)
         .then(matches => module.exports.parseArguments(matches))
@@ -109,41 +55,7 @@ module.exports = (message) => {
             const token = values[0];
             module.exports.postTransaction(message, item, arguments, token);
         });
-}
-
-function getItems() {
-    return fetch("https://www.loot.senorpez.com/items")
-        .then(response => response.json());
-}
-
-function getItemId(itemname) {
-    return getItems()
-        .then(data => data._embedded['loot-api:lootitem'].filter(item => item.name.toLowerCase().includes(itemname.toLowerCase())));
-}
-
-function postTransaction(message, item, quantity, accessToken, args) {
-    const newTransaction = {
-        item: item.id,
-        quantity: quantity,
-        remark: args.r
-    }
-    const authHeader = `bearer ${accessToken}`;
-
-    fetch(`https://www.loot.senorpez.com/campaigns/${state.getCampaignId()}/characters/${state.getCharacterId()}/itemtransactions`, {
-        method: "post",
-        body: JSON.stringify(newTransaction),
-        headers: {
-            "Content-Type": "application/hal+json",
-            "Authorization": authHeader,
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            message.channel.send(`Added ${quantity} ${item.name} to ${data.name}`);
-            updatedItem = data.inventory.filter(invItem => invItem.name === item.name);
-            message.channel.send(`Now has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
-        });
-}
+};
 
 module.exports.parseMessage = (message) => {
     return new Promise(resolve => {
@@ -161,8 +73,8 @@ module.exports.parseMessage = (message) => {
             resolve(matches[0]);
         }
         throw new ParseError();
-    })
-}
+    });
+};
 
 module.exports.parseCommand = (matches) => {
     return new Promise((resolve, reject) => {
@@ -173,7 +85,7 @@ module.exports.parseCommand = (matches) => {
         const itemId = Number(matches[2]).valueOf();
         isNaN(itemId) ? resolve(matches[2]) : reject(itemId);
     });
-}
+};
 
 module.exports.parseArguments = (matches) => {
     for (const key of Object.keys(args)) {
@@ -200,7 +112,7 @@ module.exports.parseArguments = (matches) => {
         parsed.arguments = args;
         resolve(parsed);
     });
-}
+};
 
 module.exports.getItems = () => {
     return api.get(process.env.API_URL)
@@ -220,7 +132,7 @@ module.exports.findItemByName = (itemName) => {
             }
             throw new MultipleMatchError(itemName, embeddedItem);
         });
-}
+};
 
 module.exports.findItemById = (itemId) => {
     return module.exports.getItems()
@@ -232,7 +144,7 @@ module.exports.findItemById = (itemId) => {
             }
             throw new ItemIdNotFoundError(itemId);
         });
-}
+};
 
 module.exports.postTransaction = (message, item, arguments, token) => {
     const newTransaction = {
