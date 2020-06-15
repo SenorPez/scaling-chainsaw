@@ -1,4 +1,6 @@
 const assert = require('chai').assert;
+const sinon = require('sinon');
+
 const {parseMessage, parseCommand, parseArguments} = require('../commands/additem');
 const state = require('../service/state');
 
@@ -36,6 +38,16 @@ const mockItems = {
 const mockItem = {
     id: 1,
     name: 'Gold Piece'
+}
+const mockItemTransactions = {
+    id: 1,
+    name: 'Vorgansharanx',
+    inventory: [
+        {
+            name: 'Gold Piece',
+            quantity: 12
+        }
+    ]
 }
 
 suite('Mock API', function() {
@@ -402,4 +414,32 @@ suite('Mock API', function() {
             .then(() => assert.fail())
             .catch(error => assert.strictEqual(error.message, "Item with ID of 8675309 not found"));
     });
+
+    test('postTransaction: Valid updated JSON', function () {
+        state.setCampaignId(6);
+        state.setCharacterId(6);
+
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            channel: {send: mockSend}
+        };
+        const mockItem = {
+            id: 8675309,
+            name: 'Gold Piece'
+        };
+        const mockArgs = {
+            r: 'Fantastic Thing'
+        };
+
+        const proxyquire = require('proxyquire');
+        const fetchMock = require('fetch-mock').sandbox();
+        fetchMock.mock(
+            'https://www.loot.senorpez.com/campaigns/6/characters/6/itemtransactions/',
+            mockItemTransactions
+        );
+        const {postTransaction} = proxyquire('../commands/additem', {'node-fetch': fetchMock});
+
+        return postTransaction(mockMessage, mockItem, 11, mockArgs, '12345')
+            .then(character => assert.strictEqual(character.inventory[0].quantity, 12));
+    })
 })

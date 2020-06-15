@@ -218,3 +218,30 @@ module.exports.findItemById = (itemId) => {
             throw new ItemIdNotFoundError(itemId);
         });
 }
+
+module.exports.postTransaction = (message, item, quantity, arguments, accessToken) => {
+    const newTransaction = {
+        item: item.id,
+        quantity: quantity,
+        remark: arguments.r
+    }
+
+    const authHeader = `bearer ${accessToken}`;
+
+    return new Promise(resolve => {
+        fetch(`https://www.loot.senorpez.com/campaigns/${state.getCampaignId()}/characters/${state.getCharacterId()}/itemtransactions/`, {
+            method: "post",
+            body: JSON.stringify(newTransaction),
+            headers: {
+                "Content-Type": "application/hal+json",
+                "Authorization": authHeader,
+            }
+        })
+            .then(response => response.json())
+            .then(character => {
+                updatedItem = character.inventory.filter(inventoryItem => inventoryItem.name === item.name);
+                message.channel.send(`Added ${quantity} ${item.name} to ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
+                resolve(character);
+            });
+    });
+}
