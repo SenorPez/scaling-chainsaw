@@ -9,6 +9,18 @@ const args = {
     'r': null
 }
 
+function CampaignNotSetError() {
+    this.message = 'Campaign not set; use $campaign to set';
+}
+
+function CharacterNotSetError() {
+    this.message = 'Character not set; use $character to set';
+}
+
+function ParseError() {
+    this.message = "Usage: $additem <item name> [--r <remark>]";
+}
+
 module.exports = (message) => {
     if (state.getCampaignId() === null) {
         message.channel.send("Campaign must be set; use the $campaign command");
@@ -98,3 +110,23 @@ function postTransaction(message, item, quantity, accessToken, args) {
             console.log(data);
         });
 }
+
+module.exports.parseMessage = (message) => {
+    return new Promise(resolve => {
+        if (state.getCampaignId() === null) {
+            throw new CampaignNotSetError();
+        }
+
+        if (state.getCharacterId() === null) {
+            throw new CharacterNotSetError();
+        }
+
+        const matches = [...message.content.matchAll(regex)];
+
+        if (matches[0]) {
+            resolve(matches[0]);
+        }
+        throw new ParseError();
+    })
+}
+
