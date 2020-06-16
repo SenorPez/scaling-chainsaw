@@ -40,21 +40,32 @@ function ItemIdNotFoundError(itemId) {
 module.exports = (message) => {
     const tokenPromise = getToken();
     const itemPromise = module.exports.parseMessage(message)
-        .then(matches => module.exports.parseArguments(matches))
+        .then(matches => module.exports.parseCommand(matches))
         .then(
             searchParam => module.exports.findItemByName(searchParam),
             searchParam => module.exports.findItemById(searchParam)
-        );
+        )
+        .then(result => result.json())
+        .catch(error => {
+            message.channel.send(error.message);
+            throw error;
+        });
     const argsPromise = module.exports.parseMessage(message)
-        .then(matches => module.exports.parseCommand(matches));
+        .then(matches => module.exports.parseArguments(matches))
+        .catch(error => {
+            message.channel.send(error.message);
+            throw error;
+        });
 
     Promise.all([tokenPromise, itemPromise, argsPromise])
         .then(values => {
+            console.log(values);
             const item = values[1];
             const arguments = values[2];
             const token = values[0];
             module.exports.postTransaction(message, item, arguments, token);
-        });
+        })
+        .catch(error => console.log(error));
 };
 
 module.exports.parseMessage = (message) => {
@@ -98,7 +109,7 @@ module.exports.parseArguments = (matches) => {
     }
 
     return new Promise(resolve => {
-        if (parsed.arguments === null) {
+        if (parsed.arguments == null) {
             parsed.arguments = args;
             resolve(parsed);
         }
@@ -152,7 +163,7 @@ module.exports.postTransaction = (message, item, arguments, token) => {
         quantity: arguments.quantity,
         remark: arguments.arguments.r
     };
-    const authHeader = `bearer ${token}`;
+    const authHeader = `bearer ${token.access_token}`;
 
     return new Promise(resolve => {
         fetch(`https://www.loot.senorpez.com/campaigns/${state.getCampaignId()}/characters/${state.getCharacterId()}/itemtransactions/`, {
@@ -168,7 +179,7 @@ module.exports.postTransaction = (message, item, arguments, token) => {
                 updatedItem = character.inventory.filter(inventoryItem => inventoryItem.name === item.name);
                 arguments.quantity > 0
                     ? message.channel.send(`Added ${arguments.quantity} ${item.name} to ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`)
-                    : message.channel.send(`Dropped ${arguments.quantity} ${item.name} from ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
+                    : message.channel.send(`Dropped ${-arguments.quantity} ${item.name} from ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
                 resolve(character);
             });
     });
