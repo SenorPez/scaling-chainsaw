@@ -26,12 +26,13 @@ function CharacterIdNotFoundError(characterId) {
 }
 
 module.exports = (message) => {
-    module.exports.parseMessage(message)
+    return module.exports.parseMessage(message)
         .then(matches => module.exports.parseArguments(matches))
-        .then(
-            searchParam => module.exports.findCharacterByName(searchParam),
-            searchParam => module.exports.findCharacterById(searchParam)
-        )
+        .then(searchParam => {
+            return (typeof searchParam === 'number')
+                ? module.exports.findCharacterById(searchParam)
+                : module.exports.findCharacterByName(searchParam);
+        })
         .then(character => module.exports.setCharacter(character, message))
         .catch(error => message.channel.send(error.message));
 };
@@ -52,13 +53,9 @@ module.exports.parseMessage = (message) => {
 };
 
 module.exports.parseArguments = (matches) => {
-    return new Promise((resolve, reject) => {
-        /*
-        Resolve: Text search for campaign
-        Reject: Lookup campaign by id
-         */
-        const characterId = Number(matches[1]).valueOf();
-        isNaN(characterId) ? resolve(matches[1]) : reject(characterId);
+    return new Promise(resolve => {
+        const searchParam = Number(matches[1]).valueOf();
+        resolve(isNaN(searchParam) ? matches[1] : searchParam);
     });
 };
 
