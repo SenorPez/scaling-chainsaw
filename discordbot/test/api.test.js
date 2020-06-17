@@ -7,15 +7,22 @@ suite('Mock API', function() {
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
             'https://www.loot.senorpez.com/',
-            {hello: 'world'}
+            {
+                _links: {
+                    'loot-api:campaigns': {href: 'http://mockserver/campaigns/'},
+                    'loot-api:lootitems': {href: 'http://mockserver/items/'}
+                }
+            }
         );
         const api = proxyquire('../service/api', {'node-fetch': fetchMock});
 
         return api.get(url)
             .then(response => response.json())
             .then(data => {
-                assert.hasAllKeys(data, ['hello']);
-                assert.isOk(fetchMock.done());
+                assert.containsAllKeys(data, '_links');
+                assert.containsAllKeys(data._links, ['loot-api:campaigns', 'loot-api:lootitems']);
+                assert.containsAllKeys(data._links['loot-api:campaigns'], 'href');
+                assert.containsAllKeys(data._links['loot-api:lootitems'], 'href');
             });
     });
 });
@@ -28,19 +35,10 @@ suite('Local API', function () {
         return api.get('https://localhost:9090')
             .then(response => response.json())
             .then(data => {
-                assert.hasAllKeys(data, ['_links']);
-                assert.hasAllKeys(data._links, [
-                    'self',
-                    'index',
-                    'loot-api:campaigns',
-                    'loot-api:lootitems',
-                    'curies'
-                ]);
-                assert.hasAllKeys(data._links.self, 'href');
-                assert.hasAllKeys(data._links.index, 'href');
-                assert.hasAllKeys(data._links["loot-api:campaigns"], 'href');
-                assert.hasAllKeys(data._links["loot-api:lootitems"], 'href');
-                assert.hasAllKeys(data._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(data, '_links');
+                assert.containsAllKeys(data._links, ['loot-api:campaigns', 'loot-api:lootitems']);
+                assert.containsAllKeys(data._links['loot-api:campaigns'], 'href');
+                assert.containsAllKeys(data._links['loot-api:lootitems'], 'href');
             });
     });
 });

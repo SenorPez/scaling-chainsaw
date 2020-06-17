@@ -8,9 +8,7 @@ const mockCampaign = {
     id: 1,
     name: 'Test Campaign',
     _links: {
-        'loot-api:characters': {
-            href: 'http://mockserver/campaigns/1/characters/'
-        }
+        'loot-api:characters': {href: 'http://mockserver/campaigns/1/characters/'}
     }
 };
 const mockCharacters = {
@@ -39,7 +37,13 @@ const mockCharacters = {
 };
 const mockCharacter = {
     id: 1,
-    name: 'Vorgansharanx'
+    name: 'Vorgansharanx',
+    inventory: [
+        {
+            name: 'Gold Piece',
+            quantity: 420
+        }
+    ]
 };
 
 suite('Mock API', function () {
@@ -110,9 +114,14 @@ suite('Mock API', function () {
 
         return getCharacters()
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['_embedded']);
-                assert.isOk(fetchMock.done())
+            .then(characters => {
+                assert.containsAllKeys(characters, '_embedded');
+                assert.containsAllKeys(characters._embedded, 'loot-api:character');
+                characters._embedded['loot-api:character'].forEach(character => {
+                    assert.containsAllKeys(character, ['id', 'name', '_links']);
+                    assert.containsAllKeys(character._links, 'self');
+                    assert.containsAllKeys(character._links.self, 'href');
+                });
             });
     });
 
@@ -142,9 +151,11 @@ suite('Mock API', function () {
 
         return findCharacterByName('Vorgansharanx')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+            .then(character => {
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                });
             });
     });
 
@@ -174,9 +185,11 @@ suite('Mock API', function () {
 
         return findCharacterByName('VoRGAnsHaRAnx')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+            .then(character => {
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                })
             });
     });
 
@@ -206,9 +219,11 @@ suite('Mock API', function () {
 
         return findCharacterByName('Vorg')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+            .then(character => {
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                })
             });
     });
 
@@ -299,9 +314,11 @@ suite('Mock API', function () {
 
         return findCharacterById(1)
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+            .then(character => {
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                })
             });
     });
 
@@ -405,17 +422,13 @@ suite('Local API', function () {
         return getCharacters()
             .then(response => response.json())
             .then(characters => {
-                assert.hasAllKeys(characters, ['_embedded', '_links']);
-                assert.hasAllKeys(characters._embedded, 'loot-api:character');
-                characters._embedded["loot-api:character"].forEach(character => {
-                    assert.hasAllKeys(character, ['id', 'name', 'inventory', '_links']);
-                    assert.hasAllKeys(character._links, 'self');
-                    assert.hasAllKeys(character._links.self, 'href');
+                assert.containsAllKeys(characters, '_embedded');
+                assert.containsAllKeys(characters._embedded, 'loot-api:character');
+                characters._embedded['loot-api:character'].forEach(character => {
+                    assert.containsAllKeys(character, ['id', 'name', '_links']);
+                    assert.containsAllKeys(character._links, 'self');
+                    assert.containsAllKeys(character._links.self, 'href');
                 });
-                assert.hasAllKeys(characters._links, ['self', 'index', 'loot-api:campaign', 'curies']);
-                assert.hasAllKeys(characters._links.self, 'href');
-                assert.hasAllKeys(characters._links.index, 'href');
-                assert.hasAllKeys(characters._links.curies[0], ['href', 'name', 'templated']);
             });
     });
 
@@ -428,17 +441,10 @@ suite('Local API', function () {
         return findCharacterByName('Aethelwuf')
             .then(response => response.json())
             .then(character => {
-                assert.hasAllKeys(character, ['id', 'name', 'inventory', '_links']);
-                assert.hasAllKeys(character._links, [
-                    'self',
-                    'loot-api:characters',
-                    'index',
-                    'curies'
-                ]);
-                assert.hasAllKeys(character._links.self, 'href');
-                assert.hasAllKeys(character._links.index, 'href');
-                assert.hasAllKeys(character._links["loot-api:characters"], 'href');
-                assert.hasAllKeys(character._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                })
             });
     });
 
@@ -451,17 +457,10 @@ suite('Local API', function () {
         return findCharacterByName('aETHElWuF')
             .then(response => response.json())
             .then(character => {
-                assert.hasAllKeys(character, ['id', 'name', 'inventory', '_links']);
-                assert.hasAllKeys(character._links, [
-                    'self',
-                    'loot-api:characters',
-                    'index',
-                    'curies'
-                ]);
-                assert.hasAllKeys(character._links.self, 'href');
-                assert.hasAllKeys(character._links.index, 'href');
-                assert.hasAllKeys(character._links["loot-api:characters"], 'href');
-                assert.hasAllKeys(character._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                })
             });
     });
 
@@ -474,17 +473,10 @@ suite('Local API', function () {
         return findCharacterByName('Aethel')
             .then(response => response.json())
             .then(character => {
-                assert.hasAllKeys(character, ['id', 'name', 'inventory', '_links']);
-                assert.hasAllKeys(character._links, [
-                    'self',
-                    'loot-api:characters',
-                    'index',
-                    'curies'
-                ]);
-                assert.hasAllKeys(character._links.self, 'href');
-                assert.hasAllKeys(character._links.index, 'href');
-                assert.hasAllKeys(character._links["loot-api:characters"], 'href');
-                assert.hasAllKeys(character._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                })
             });
     });
 
@@ -519,17 +511,10 @@ suite('Local API', function () {
         return findCharacterById(1)
             .then(response => response.json())
             .then(character => {
-                assert.hasAllKeys(character, ['id', 'name', 'inventory', '_links']);
-                assert.hasAllKeys(character._links, [
-                    'self',
-                    'loot-api:characters',
-                    'index',
-                    'curies'
-                ]);
-                assert.hasAllKeys(character._links.self, 'href');
-                assert.hasAllKeys(character._links.index, 'href');
-                assert.hasAllKeys(character._links["loot-api:characters"], 'href');
-                assert.hasAllKeys(character._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                })
             });
     });
 

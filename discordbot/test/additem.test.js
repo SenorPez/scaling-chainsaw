@@ -6,9 +6,8 @@ const state = require('../service/state');
 
 const mockIndex = {
     _links: {
-        'loot-api:lootitems': {
-            href: 'http://mockserver/items/'
-        }
+        'loot-api:campaigns': {href: 'http://mockserver/campaigns/'},
+        'loot-api:lootitems': {href: 'http://mockserver/items/'}
     }
 };
 const mockItems = {
@@ -39,13 +38,13 @@ const mockItem = {
     id: 1,
     name: 'Gold Piece'
 };
-const mockItemTransactions = {
+const mockCharacter = {
     id: 1,
     name: 'Vorgansharanx',
     inventory: [
         {
             name: 'Gold Piece',
-            quantity: 12
+            quantity: 420
         }
     ]
 };
@@ -195,9 +194,14 @@ suite('Mock API', function () {
 
         return getItems()
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['_embedded']);
-                assert.isOk(fetchMock.done());
+            .then(items => {
+                assert.containsAllKeys(items, '_embedded');
+                assert.containsAllKeys(items._embedded, 'loot-api:lootitem');
+                items._embedded['loot-api:lootitem'].forEach(item => {
+                    assert.containsAllKeys(item, ['id', 'name', '_links']);
+                    assert.containsAllKeys(item._links, 'self');
+                    assert.containsAllKeys(item._links.self, 'href');
+                });
             });
     });
 
@@ -221,8 +225,8 @@ suite('Mock API', function () {
 
         return findItemByName('Gold Piece')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
+            .then(item => {
+                assert.hasAllKeys(item, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
     });
@@ -247,8 +251,8 @@ suite('Mock API', function () {
 
         return findItemByName('gOLd PiECe')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
+            .then(item => {
+                assert.hasAllKeys(item, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
     });
@@ -273,8 +277,8 @@ suite('Mock API', function () {
 
         return findItemByName('Gold')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
+            .then(item => {
+                assert.hasAllKeys(item, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
     });
@@ -348,8 +352,8 @@ suite('Mock API', function () {
 
         return findItemById(1)
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
+            .then(item => {
+                assert.hasAllKeys(item, ['id', 'name']);
                 assert.isOk(fetchMock.done());
             });
     });
@@ -394,11 +398,16 @@ suite('Mock API', function () {
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
             'https://www.loot.senorpez.com/campaigns/6/characters/6/itemtransactions/',
-            mockItemTransactions
+            mockCharacter
         );
         const {postTransaction} = proxyquire('../commands/additem', {'node-fetch': fetchMock});
 
         return postTransaction(mockMessage, mockItem, mockArgs, '12345')
-            .then(character => assert.strictEqual(character.inventory[0].quantity, 12));
+            .then(character => {
+                assert.containsAllKeys(character, ['id', 'name', 'inventory']);
+                character.inventory.forEach(item => {
+                    assert.containsAllKeys(item, ['name', 'quantity']);
+                })
+            });
     });
 });

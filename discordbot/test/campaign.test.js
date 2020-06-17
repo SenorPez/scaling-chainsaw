@@ -5,9 +5,8 @@ const state = require('../service/state');
 
 const mockIndex = {
     _links: {
-        'loot-api:campaigns': {
-            href: 'http://mockserver/campaigns/'
-        }
+        'loot-api:campaigns': {href: 'http://mockserver/campaigns/'},
+        'loot-api:lootitems': {href: 'http://mockserver/items/'}
     }
 };
 const mockCampaigns = {
@@ -36,7 +35,10 @@ const mockCampaigns = {
 };
 const mockCampaign = {
     id: 1,
-    name: 'Test Campaign'
+    name: 'Test Campaign',
+    _links: {
+        'loot-api:characters': {href: 'http://mockserver/campaigns/1/characters/'}
+    }
 };
 
 suite('Mock API', function () {
@@ -92,9 +94,14 @@ suite('Mock API', function () {
 
         return getCampaigns()
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['_embedded']);
-                assert.isOk(fetchMock.done());
+            .then(campaigns => {
+                assert.containsAllKeys(campaigns, '_embedded');
+                assert.containsAllKeys(campaigns._embedded, 'loot-api:campaign');
+                campaigns._embedded['loot-api:campaign'].forEach(campaign => {
+                    assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                    assert.containsAllKeys(campaign._links, 'self');
+                    assert.containsAllKeys(campaign._links.self, 'href');
+                });
             });
     });
 
@@ -118,9 +125,10 @@ suite('Mock API', function () {
 
         return findCampaignByName('Test Campaign')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+            .then(campaign => {
+                assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                assert.containsAllKeys(campaign._links, 'loot-api:characters');
+                assert.containsAllKeys(campaign._links['loot-api:characters'], 'href');
             });
     });
 
@@ -144,9 +152,10 @@ suite('Mock API', function () {
 
         return findCampaignByName('tESt CAmpaIGn')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+            .then(campaign => {
+                assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                assert.containsAllKeys(campaign._links, 'loot-api:characters');
+                assert.containsAllKeys(campaign._links['loot-api:characters'], 'href');
             });
     });
 
@@ -170,9 +179,10 @@ suite('Mock API', function () {
 
         return findCampaignByName('test')
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+            .then(campaign => {
+                assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                assert.containsAllKeys(campaign._links, 'loot-api:characters');
+                assert.containsAllKeys(campaign._links['loot-api:characters'], 'href');
             });
     });
 
@@ -245,9 +255,10 @@ suite('Mock API', function () {
 
         return findCampaignById(1)
             .then(response => response.json())
-            .then(data => {
-                assert.hasAllKeys(data, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+            .then(campaign => {
+                assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                assert.containsAllKeys(campaign._links, 'loot-api:characters');
+                assert.containsAllKeys(campaign._links['loot-api:characters'], 'href');
             });
     });
 
@@ -365,17 +376,13 @@ suite('Local API', function () {
         return getCampaigns()
             .then(response => response.json())
             .then(campaigns => {
-                assert.hasAllKeys(campaigns, ['_embedded', '_links']);
-                assert.hasAllKeys(campaigns._embedded, 'loot-api:campaign');
-                campaigns._embedded["loot-api:campaign"].forEach(campaign => {
-                    assert.hasAllKeys(campaign, ['id', 'name', '_links']);
-                    assert.hasAllKeys(campaign._links, 'self');
-                    assert.hasAllKeys(campaign._links.self, 'href');
+                assert.containsAllKeys(campaigns, '_embedded');
+                assert.containsAllKeys(campaigns._embedded, 'loot-api:campaign');
+                campaigns._embedded['loot-api:campaign'].forEach(campaign => {
+                    assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                    assert.containsAllKeys(campaign._links, 'self');
+                    assert.containsAllKeys(campaign._links.self, 'href');
                 });
-                assert.hasAllKeys(campaigns._links, ['self', 'index', 'curies']);
-                assert.hasAllKeys(campaigns._links.self, 'href');
-                assert.hasAllKeys(campaigns._links.index, 'href');
-                assert.hasAllKeys(campaigns._links.curies[0], ['href', 'name', 'templated']);
             });
     });
 
@@ -387,19 +394,9 @@ suite('Local API', function () {
         return findCampaignByName('Defiance in Phlan')
             .then(response => response.json())
             .then(campaign => {
-                assert.hasAllKeys(campaign, ['id', 'name', '_links']);
-                assert.hasAllKeys(campaign._links, [
-                    'self',
-                    'loot-api:campaigns',
-                    'loot-api:characters',
-                    'index',
-                    'curies'
-                ]);
-                assert.hasAllKeys(campaign._links.self, 'href');
-                assert.hasAllKeys(campaign._links.index, 'href');
-                assert.hasAllKeys(campaign._links["loot-api:campaigns"], 'href');
-                assert.hasAllKeys(campaign._links["loot-api:characters"], 'href');
-                assert.hasAllKeys(campaign._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                assert.containsAllKeys(campaign._links, 'loot-api:characters');
+                assert.containsAllKeys(campaign._links['loot-api:characters'], 'href');
             });
     });
 
@@ -411,19 +408,9 @@ suite('Local API', function () {
         return findCampaignByName('dEFiAnCE iN pHLAn')
             .then(response => response.json())
             .then(campaign => {
-                assert.hasAllKeys(campaign, ['id', 'name', '_links']);
-                assert.hasAllKeys(campaign._links, [
-                    'self',
-                    'loot-api:campaigns',
-                    'loot-api:characters',
-                    'index',
-                    'curies'
-                ]);
-                assert.hasAllKeys(campaign._links.self, 'href');
-                assert.hasAllKeys(campaign._links.index, 'href');
-                assert.hasAllKeys(campaign._links["loot-api:campaigns"], 'href');
-                assert.hasAllKeys(campaign._links["loot-api:characters"], 'href');
-                assert.hasAllKeys(campaign._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                assert.containsAllKeys(campaign._links, 'loot-api:characters');
+                assert.containsAllKeys(campaign._links['loot-api:characters'], 'href');
             });
     });
 
@@ -435,19 +422,9 @@ suite('Local API', function () {
         return findCampaignByName('Phlan')
             .then(response => response.json())
             .then(campaign => {
-                assert.hasAllKeys(campaign, ['id', 'name', '_links']);
-                assert.hasAllKeys(campaign._links, [
-                    'self',
-                    'loot-api:campaigns',
-                    'loot-api:characters',
-                    'index',
-                    'curies'
-                ]);
-                assert.hasAllKeys(campaign._links.self, 'href');
-                assert.hasAllKeys(campaign._links.index, 'href');
-                assert.hasAllKeys(campaign._links["loot-api:campaigns"], 'href');
-                assert.hasAllKeys(campaign._links["loot-api:characters"], 'href');
-                assert.hasAllKeys(campaign._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                assert.containsAllKeys(campaign._links, 'loot-api:characters');
+                assert.containsAllKeys(campaign._links['loot-api:characters'], 'href');
             });
     });
 
@@ -479,19 +456,9 @@ suite('Local API', function () {
         return findCampaignById(1)
             .then(response => response.json())
             .then(campaign => {
-                assert.hasAllKeys(campaign, ['id', 'name', '_links']);
-                assert.hasAllKeys(campaign._links, [
-                    'self',
-                    'loot-api:campaigns',
-                    'loot-api:characters',
-                    'index',
-                    'curies'
-                ]);
-                assert.hasAllKeys(campaign._links.self, 'href');
-                assert.hasAllKeys(campaign._links.index, 'href');
-                assert.hasAllKeys(campaign._links["loot-api:campaigns"], 'href');
-                assert.hasAllKeys(campaign._links["loot-api:characters"], 'href');
-                assert.hasAllKeys(campaign._links.curies[0], ['href', 'name', 'templated']);
+                assert.containsAllKeys(campaign, ['id', 'name', '_links']);
+                assert.containsAllKeys(campaign._links, 'loot-api:characters');
+                assert.containsAllKeys(campaign._links['loot-api:characters'], 'href');
             });
     });
 
