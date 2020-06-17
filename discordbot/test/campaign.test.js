@@ -45,6 +45,7 @@ suite('Mock API', function () {
     setup(function () {
         state.setCampaignId(null);
         state.setCharacterId(null);
+        process.env.API_URL = 'http://mockserver/';
     });
 
     teardown(function () {
@@ -82,7 +83,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -109,7 +110,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -136,7 +137,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -163,7 +164,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -190,7 +191,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -213,7 +214,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -239,7 +240,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -266,7 +267,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(

@@ -63,9 +63,9 @@ module.exports = (message) => {
             const item = values[1];
             const arguments = values[2];
             const token = values[0];
-            module.exports.postTransaction(message, item, arguments, token);
+            return module.exports.postTransaction(message, item, arguments, token);
         })
-        .catch(error => console.log(error));
+        .catch(error => error);
 };
 
 module.exports.parseMessage = (message) => {

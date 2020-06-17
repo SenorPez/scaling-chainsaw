@@ -30,7 +30,7 @@ module.exports = (message) => {
             const token = values[0];
             module.exports.postCharges(message, item, arguments, token);
         })
-        .catch(error => console.log(error));
+        .catch(error => error);
 };
 
 module.exports.postCharges = (message, item, arguments, token) => {

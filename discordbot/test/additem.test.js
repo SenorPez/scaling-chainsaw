@@ -53,6 +53,7 @@ suite('Mock API', function () {
     setup(function () {
         state.setCampaignId(null);
         state.setCharacterId(null);
+        process.env.API_URL = 'http://mockserver/';
     });
 
     teardown(function () {
@@ -180,7 +181,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire');
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -207,7 +208,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -233,7 +234,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -259,7 +260,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -285,7 +286,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -308,7 +309,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -334,7 +335,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -360,7 +361,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://mockserver/',
             mockIndex
         );
         fetchMock.mock(
@@ -395,7 +396,7 @@ suite('Mock API', function () {
         const proxyquire = require('proxyquire');
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/campaigns/6/characters/6/itemtransactions/',
+            'http://mockserver/campaigns/6/characters/6/itemtransactions/',
             mockCharacter
         );
         const {postTransaction} = proxyquire('../commands/additem', {'node-fetch': fetchMock});
@@ -809,7 +810,6 @@ suite('Local API', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         process.env.API_URL = 'https://localhost:9090/';
 
-        const additem = require('../commands/additem');
         const mockSend = sinon.stub();
         const mockMessage = {
             content: '$additem Item of Testing',
@@ -819,18 +819,15 @@ suite('Local API', function () {
         state.setCharacterId(1);
 
         const {findCharacterByName} = require('../commands/character');
+        const addItem = require('../commands/additem');
         return findCharacterByName('Aethelwuf')
             .then(response => response.json())
-            .then(character => {
-                return character.inventory.filter(item => item.name === 'Item of Testing').pop();
-            })
-            .then(originalItem => {
-                additem(mockMessage)
-                    .finally(() => {
-                        sinon.assert.calledWIth(mockSend,
-                            `Added 1 Item of Testing to Aethelwuf\n` +
-                            `Now has ${originalItem.quantity + 1} Item of Testing`);
-                    });
+            .then(character => character.inventory.filter(item => item.name === 'Item of Testing').pop())
+            .then(item => {
+                return addItem(mockMessage)
+                    .finally(() => sinon.assert.calledWith(mockSend,
+                        'Added 1 Item of Testing to Aethelwuf\n' +
+                        `Now has ${item.quantity + 1} Item of Testing`));
             });
     });
 
@@ -838,7 +835,6 @@ suite('Local API', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         process.env.API_URL = 'https://localhost:9090/';
 
-        const additem = require('../commands/additem');
         const mockSend = sinon.stub();
         const mockMessage = {
             content: '$additem 8377302',
@@ -848,26 +844,22 @@ suite('Local API', function () {
         state.setCharacterId(1);
 
         const {findCharacterByName} = require('../commands/character');
+        const addItem = require('../commands/additem');
         return findCharacterByName('Aethelwuf')
             .then(response => response.json())
-            .then(character => {
-                return character.inventory.filter(item => item.name === 'Item of Testing').pop();
-            })
-            .then(originalItem => {
-                additem(mockMessage)
-                    .finally(() => {
-                        sinon.assert.calledWIth(mockSend,
-                            `Added 1 Item of Testing to Aethelwuf\n` +
-                            `Now has ${originalItem.quantity + 1} Item of Testing`);
-                    });
+            .then(character => character.inventory.filter(item => item.name === 'Item of Testing').pop())
+            .then(item => {
+                return addItem(mockMessage)
+                    .finally(() => sinon.assert.calledWith(mockSend,
+                        'Added 1 Item of Testing to Aethelwuf\n' +
+                        `Now has ${item.quantity + 1} Item of Testing`));
             });
     });
 
-    test('Add item integration test: Success with text, default quantity', function () {
+    test('Add item integration test: Success with text, set quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         process.env.API_URL = 'https://localhost:9090/';
 
-        const additem = require('../commands/additem');
         const mockSend = sinon.stub();
         const mockMessage = {
             content: '$additem 11 Item of Testing',
@@ -877,18 +869,15 @@ suite('Local API', function () {
         state.setCharacterId(1);
 
         const {findCharacterByName} = require('../commands/character');
+        const addItem = require('../commands/additem');
         return findCharacterByName('Aethelwuf')
             .then(response => response.json())
-            .then(character => {
-                return character.inventory.filter(item => item.name === 'Item of Testing').pop();
-            })
-            .then(originalItem => {
-                additem(mockMessage)
-                    .finally(() => {
-                        sinon.assert.calledWIth(mockSend,
-                            `Added 1 Item of Testing to Aethelwuf\n` +
-                            `Now has ${originalItem.quantity + 11} Item of Testing`);
-                    });
+            .then(character => character.inventory.filter(item => item.name === 'Item of Testing').pop())
+            .then(item => {
+                return addItem(mockMessage)
+                    .finally(() => sinon.assert.calledWith(mockSend,
+                        'Added 11 Item of Testing to Aethelwuf\n' +
+                        `Now has ${item.quantity + 11} Item of Testing`));
             });
     });
 
@@ -896,7 +885,6 @@ suite('Local API', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         process.env.API_URL = 'https://localhost:9090/';
 
-        const additem = require('../commands/additem');
         const mockSend = sinon.stub();
         const mockMessage = {
             content: '$additem 11 8377302',
@@ -906,18 +894,15 @@ suite('Local API', function () {
         state.setCharacterId(1);
 
         const {findCharacterByName} = require('../commands/character');
+        const addItem = require('../commands/additem');
         return findCharacterByName('Aethelwuf')
             .then(response => response.json())
-            .then(character => {
-                return character.inventory.filter(item => item.name === 'Item of Testing').pop();
-            })
-            .then(originalItem => {
-                additem(mockMessage)
-                    .finally(() => {
-                        sinon.assert.calledWIth(mockSend,
-                            `Added 1 Item of Testing to Aethelwuf\n` +
-                            `Now has ${originalItem.quantity + 11} Item of Testing`);
-                    });
+            .then(character => character.inventory.filter(item => item.name === 'Item of Testing').pop())
+            .then(item => {
+                return addItem(mockMessage)
+                    .finally(() => sinon.assert.calledWith(mockSend,
+                        'Added 11 Item of Testing to Aethelwuf\n' +
+                        `Now has ${item.quantity + 11} Item of Testing`));
             });
     });
 })

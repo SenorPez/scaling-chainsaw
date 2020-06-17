@@ -28,6 +28,5 @@ module.exports = (message) => {
             arguments.quantity = -arguments.quantity;
             const token = values[0];
             postTransaction(message, item, arguments, token);
-        })
-        .catch(error => console.log(error));
+        });
 };
