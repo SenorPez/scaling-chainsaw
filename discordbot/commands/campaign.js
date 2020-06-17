@@ -22,12 +22,13 @@ function CampaignIdNotFoundError(campaignId) {
 }
 
 module.exports = (message) => {
-    module.exports.parseMessage(message)
+    return module.exports.parseMessage(message)
         .then(matches => module.exports.parseArguments(matches))
-        .then(
-            searchParam => module.exports.findCampaignByName(searchParam),
-            searchParam => module.exports.findCampaignById(searchParam)
-        )
+        .then(searchParam => {
+            return (typeof searchParam === 'number')
+                ? module.exports.findCampaignById(searchParam)
+                : module.exports.findCampaignByName(searchParam);
+        })
         .then(campaign => module.exports.setCampaign(campaign, message))
         .catch(error => message.channel.send(error.message));
 };
@@ -44,13 +45,9 @@ module.exports.parseMessage = (message) => {
 };
 
 module.exports.parseArguments = (matches) => {
-    return new Promise((resolve, reject) => {
-        /*
-        Resolve: Text search for campaign
-        Reject: Lookup campaign by id
-         */
-        const campaignId = Number(matches[1]).valueOf();
-        isNaN(campaignId) ? resolve(matches[1]) : reject(campaignId);
+    return new Promise(resolve => {
+        const searchParam = Number(matches[1]).valueOf();
+        resolve(isNaN(searchParam) ? matches[1] : searchParam);
     });
 };
 

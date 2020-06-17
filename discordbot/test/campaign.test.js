@@ -73,8 +73,7 @@ suite('Mock API', function () {
     test('parseArguments: Search argument is number', function () {
         const mockMatches = [null, '8675309'];
         return parseArguments(mockMatches)
-            .then(() => assert.fail(),
-                (numberId) => assert.strictEqual(numberId, 8675309));
+            .then(numberId => assert.strictEqual(numberId, 8675309));
     });
 
     test('getCampaigns: Valid Campaigns JSON', function () {
@@ -349,15 +348,13 @@ suite('Local API', function () {
     test('parseArguments: Search argument is text', function () {
         const mockMatches = [null, 'Search'];
         return parseArguments(mockMatches)
-            .then(textId => assert.strictEqual(textId, 'Search'),
-                () => assert.fail());
+            .then(textId => assert.strictEqual(textId, 'Search'));
     });
 
     test('parseArguments: Search argument is number', function () {
         const mockMatches = [null, '8675309'];
         return parseArguments(mockMatches)
-            .then(() => assert.fail(),
-                (numberId) => assert.strictEqual(numberId, 8675309));
+            .then(numberId => assert.strictEqual(numberId, 8675309));
     });
 
     test('getCampaign: Valid Campaigns JSON', function () {
@@ -539,6 +536,7 @@ suite('Local API', function () {
 
         return setCampaign(mockResponse, mockMessage)
             .then(() => {
+                sinon.assert.calledWith(mockSend, 'Campaign set to Defiance in Phlan');
                 assert.strictEqual(state.getCampaignId(), mockCampaign.id);
                 assert.strictEqual(state.getCharacterId(), 8675309);
             });
@@ -575,125 +573,115 @@ suite('Local API', function () {
 
         return setCampaign(mockResponse, mockMessage)
             .then(() => {
+                sinon.assert.calledWith(mockSend, 'Campaign set to Defiance in Phlan');
                 assert.strictEqual(state.getCampaignId(), mockCampaign.id);
                 assert.isNull(state.getCharacterId());
             });
     });
+
+    test('Campaign integration test: Malformed command', function () {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        process.env.API_URL = 'https://localhost:9090';
+
+        const campaign = require('../commands/campaign');
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            content: '$asdfasdfadsf',
+            channel: {send: mockSend}
+        };
+
+        return campaign(mockMessage)
+            .finally(() => {
+                sinon.assert.calledWith(mockSend, 'Usage: $campaign <campaign name>');
+            });
+    });
+
+    test('Campaign integration test: Text not found', function () {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        process.env.API_URL = 'https://localhost:9090';
+
+        const campaign = require('../commands/campaign');
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            content: '$campaign leeadamaisfat',
+            channel: {send: mockSend}
+        };
+
+        return campaign(mockMessage)
+            .finally(() => {
+                sinon.assert.calledWith(mockSend, 'Campaign containing \'leeadamaisfat\' not found');
+            });
+    });
+
+    test('Campaign integration test: Multiple text matches found', function () {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        process.env.API_URL = 'https://localhost:9090';
+
+        const campaign = require('../commands/campaign');
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            content: '$campaign p',
+            channel: {send: mockSend}
+        };
+
+        return campaign(mockMessage)
+            .finally(() => {
+                sinon.assert.calledWith(mockSend, 'Multiple campaigns containing \'p\' found:\nID: 1 Name: Defiance in Phlan\nID: 3 Name: New Campaign');
+            });
+    });
+
+    test('Campaign integration test: ID not found', function () {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        process.env.API_URL = 'https://localhost:9090';
+
+        const campaign = require('../commands/campaign');
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            content: '$campaign 8675309',
+            channel: {send: mockSend}
+        };
+
+        return campaign(mockMessage)
+            .finally(() => {
+                sinon.assert.calledWith(mockSend, 'Campaign with ID of 8675309 not found');
+            });
+    });
+
+    test('Campaign integration test: Success with text', function () {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        process.env.API_URL = 'https://localhost:9090';
+
+        const campaign = require('../commands/campaign');
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            content: '$campaign Defiance in Phlan',
+            channel: {send: mockSend}
+        };
+
+        return campaign(mockMessage)
+            .finally(() => {
+                sinon.assert.calledWith(mockSend, 'Campaign set to Defiance in Phlan');
+                assert.strictEqual(state.getCampaignId(), 1);
+                assert.isNull(state.getCharacterId());
+            });
+    });
+
+    test('Campaign integration test: Success with ID', function () {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        process.env.API_URL = 'https://localhost:9090';
+
+        const campaign = require('../commands/campaign');
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            content: '$campaign 1',
+            channel: {send: mockSend}
+        };
+
+        return campaign(mockMessage)
+            .finally(() => {
+                sinon.assert.calledWith(mockSend, 'Campaign set to Defiance in Phlan');
+                assert.strictEqual(state.getCampaignId(), 1);
+                assert.isNull(state.getCharacterId());
+            });
+    });
 })
-
-
-
-// suite('Reference API', function () {
-//     test('Should return valid Campaigns JSON', function () {
-//         return getCampaigns()
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(data => {
-//                 assert.hasAllKeys(data, ['_embedded', '_links']);
-//                 assert.hasAllKeys(data._embedded, ['loot-api:campaign']);
-//                 data._embedded['loot-api:campaign'].forEach(campaign => {
-//                     assert.hasAllKeys(campaign, ['id', 'name', '_links']);
-//                     assert.hasAllKeys(campaign._links, ['self']);
-//                     assert.hasAllKeys(campaign._links['self'], ['href']);
-//                     assert.isString(campaign._links['self'].href);
-//                 })
-//             });
-//     });
-//
-//     test('Should return valid Campaign JSON, matched by ID', function () {
-//         return findCampaignById(1)
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(data => {
-//                 assert.hasAllKeys(data, ['id', 'name', '_links']);
-//                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-//             });
-//     })
-//
-//     test('Rejection, ID not found', function () {
-//         return findCampaignById(8675309)
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(() => {
-//                     assert.fail();
-//                 },
-//                 rejection => {
-//                     assert.isOk(rejection.constructor.name, "CampaignIdNotFoundError");
-//                     assert.hasAllKeys(rejection, ['campaignId']);
-//                     assert.isOk(rejection.campaignId, 8675309);
-//                 });
-//     });
-//
-//     test('Should return valid Campaign JSON, matched by exact name', function () {
-//         return findCampaignByName('Defiance in Phlan')
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(data => {
-//                 assert.hasAllKeys(data, ['id', 'name', '_links']);
-//                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-//             })
-//     });
-//
-//     test('Should return valid Campaign JSON, matched by differently cased name', function () {
-//         return findCampaignByName('dEFianCe iN pHLan')
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(data => {
-//                 assert.hasAllKeys(data, ['id', 'name', '_links']);
-//                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-//             });
-//     });
-//
-//     test('Should return valid Campaign JSON, matched by partial name', function () {
-//         return findCampaignByName('phlan')
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(data => {
-//                 assert.hasAllKeys(data, ['id', 'name', '_links']);
-//                 assert.hasAllKeys(data._links, ['self', 'loot-api:campaigns', 'loot-api:characters', 'index', 'curies']);
-//             });
-//     });
-//
-//     test('Rejection, no matches', function () {
-//         return findCampaignByName('erewqasdfadsger')
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(() => {
-//                     assert.fail();
-//                 },
-//                 rejection => {
-//                     assert.isOk(rejection.constructor.name, "CampaignNotFoundError");
-//                     assert.hasAllKeys(rejection, ['campaignName']);
-//                 });
-//     });
-//
-//     test('Rejection, multiple matches', function () {
-//         return findCampaignByName('e')
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(() => {
-//                     assert.fail();
-//                 },
-//                 rejection => {
-//                     assert.isOk(rejection.constructor.name, "MultipleMatchError");
-//                     assert.hasAllKeys(rejection, ['data']);
-//                     rejection.data.forEach(val => assert.hasAllKeys(val, ['id', 'name', '_links']))
-//                 });
-//     });
-// });
