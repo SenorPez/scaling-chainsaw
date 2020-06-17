@@ -381,7 +381,7 @@ suite('Local API', function () {
 
     test('parseMessage: Regex match, valid command', function () {
         state.setCampaignId(1);
-        const mockMessage = {content: 'character Aethelwuf'};
+        const mockMessage = {content: '$character Aethelwuf'};
         return parseMessage(mockMessage)
             .then(response => assert.isArray(response));
     });

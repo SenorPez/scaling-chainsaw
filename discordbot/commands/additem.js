@@ -41,10 +41,11 @@ module.exports = (message) => {
     const tokenPromise = getToken();
     const itemPromise = module.exports.parseMessage(message)
         .then(matches => module.exports.parseCommand(matches))
-        .then(
-            searchParam => module.exports.findItemByName(searchParam),
-            searchParam => module.exports.findItemById(searchParam)
-        )
+        .then(searchParam => {
+            return (typeof searchParam === 'number')
+                ? module.exports.findItemById(searchParam)
+                : module.exports.findItemByName(searchParam);
+        })
         .then(result => result.json())
         .catch(error => {
             message.channel.send(error.message);
@@ -57,9 +58,8 @@ module.exports = (message) => {
             throw error;
         });
 
-    Promise.all([tokenPromise, itemPromise, argsPromise])
+    return Promise.all([tokenPromise, itemPromise, argsPromise])
         .then(values => {
-            console.log(values);
             const item = values[1];
             const arguments = values[2];
             const token = values[0];
@@ -88,14 +88,10 @@ module.exports.parseMessage = (message) => {
 };
 
 module.exports.parseCommand = (matches) => {
-    return new Promise((resolve, reject) => {
-        /*
-        Resolve: Text search for item
-        Reject: Lookup item by id
-         */
-        const itemId = Number(matches[2]).valueOf();
-        isNaN(itemId) ? resolve(matches[2]) : reject(itemId);
-    });
+    return new Promise(resolve => {
+        const searchParam = Number(matches[2]).valueOf();
+        resolve(isNaN(searchParam) ? matches[2] : searchParam);
+    })
 };
 
 module.exports.parseArguments = (matches) => {
@@ -166,7 +162,7 @@ module.exports.postTransaction = (message, item, arguments, token) => {
     const authHeader = `bearer ${token.access_token}`;
 
     return new Promise(resolve => {
-        fetch(`https://www.loot.senorpez.com/campaigns/${state.getCampaignId()}/characters/${state.getCharacterId()}/itemtransactions/`, {
+        fetch(`${process.env.API_URL}campaigns/${state.getCampaignId()}/characters/${state.getCharacterId()}/itemtransactions/`, {
             method: "post",
             body: JSON.stringify(newTransaction),
             headers: {
