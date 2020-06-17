@@ -412,6 +412,8 @@ suite('Mock API', function () {
 });
 
 suite('Local API', function () {
+    this.timeout(5000); // Slow auth server
+
     setup(function () {
         state.setCampaignId(null);
         state.setCharacterId(null);
@@ -644,7 +646,6 @@ suite('Local API', function () {
     test('postTransaction: Valid updated JSON', function () {
         const {postTransaction} = require('../commands/additem');
 
-        this.timeout(5000); // Slow auth server
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         process.env.API_URL = 'https://localhost:9090/';
         state.setCampaignId(1);
