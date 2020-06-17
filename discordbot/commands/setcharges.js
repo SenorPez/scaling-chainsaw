@@ -23,12 +23,12 @@ module.exports = (message) => {
             throw error;
         });
 
-    Promise.all([tokenPromise, itemPromise, argsPromise])
+    return Promise.all([tokenPromise, itemPromise, argsPromise])
         .then(values => {
             const item = values[1];
             const arguments = values[2];
             const token = values[0];
-            module.exports.postCharges(message, item, arguments, token);
+            return module.exports.postCharges(message, item, arguments, token);
         })
         .catch(error => error);
 };
@@ -63,7 +63,7 @@ module.exports.postCharges = (message, item, arguments, token) => {
         }
     });
 
-    Promise.all([transactionPromise, putPromise])
+    return Promise.all([transactionPromise, putPromise])
         .then(responses => Promise.all(responses.map(r => r.json())))
         .then(data => {
             updatedItem = data[1];
