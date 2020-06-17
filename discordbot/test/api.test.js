@@ -20,17 +20,27 @@ suite('Mock API', function() {
     });
 });
 
-// suite('Reference API', function() {
-//     test('Should return valid Index JSON', function () {
-//         return api.get(url)
-//             .then(response => {
-//                 assert.strictEqual(response.status, 200);
-//                 return response.json();
-//             })
-//             .then(data => {
-//                 assert.hasAllKeys(data, ['_links']);
-//                 assert.hasAllKeys(data._links, ['self', 'index', 'loot-api:campaigns', 'loot-api:lootitems', 'curies']);
-//                 assert.hasAllKeys(data._links['loot-api:campaigns'], "href");
-//             });
-//     });
-// });
+suite('Local API', function () {
+    test('Should return valid index JSON', function () {
+        const api = require('../service/api');
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+        return api.get('https://localhost:9090')
+            .then(response => response.json())
+            .then(data => {
+                assert.hasAllKeys(data, ['_links']);
+                assert.hasAllKeys(data._links, [
+                    'self',
+                    'index',
+                    'loot-api:campaigns',
+                    'loot-api:lootitems',
+                    'curies'
+                ]);
+                assert.hasAllKeys(data._links.self, 'href');
+                assert.hasAllKeys(data._links.index, 'href');
+                assert.hasAllKeys(data._links["loot-api:campaigns"], 'href');
+                assert.hasAllKeys(data._links["loot-api:lootitems"], 'href');
+                assert.hasAllKeys(data._links.curies[0], ['href', 'name', 'templated']);
+            });
+    });
+});
