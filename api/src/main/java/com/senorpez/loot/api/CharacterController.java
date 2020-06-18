@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,17 +30,15 @@ public class CharacterController {
     @Autowired
     private ItemTransactionRepository itemTransactionRepository;
 
+    private final EmbeddedCharacterModelAssembler collectionAssembler = new EmbeddedCharacterModelAssembler();
     private final CharacterModelAssembler assembler = new CharacterModelAssembler(CharacterController.class, CharacterModel.class);
 
     @GetMapping
-    ResponseEntity<CollectionModel<CharacterModel>> characters(@PathVariable final int campaignId) {
+    ResponseEntity<CollectionModel<EmbeddedCharacterModel>> characters(@PathVariable final int campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        CollectionModel<CharacterModel> characterModels = new CollectionModel<>(
-                characterRepository.findByCampaign(campaign).stream()
-                        .map(assembler::toModel)
-                        .collect(Collectors.toList())
+        CollectionModel<EmbeddedCharacterModel> characterModels = new CollectionModel<>(
+                collectionAssembler.toCollectionModel(characterRepository.findByCampaign(campaign))
         );
-
         characterModels.add(linkTo(CharacterController.class, campaignId).withSelfRel());
         characterModels.add(linkTo(RootController.class).withRel("index"));
         characterModels.add(linkTo(methodOn(CampaignController.class).campaigns(campaignId)).withRel("campaign"));

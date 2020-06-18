@@ -137,10 +137,8 @@ public class CharacterControllerTest {
                                 fieldWithPath("_embedded.loot-api:character").description("Character resource."),
                                 fieldWithPath("_embedded.loot-api:character[].id").description("Character ID number."),
                                 fieldWithPath("_embedded.loot-api:character[].name").description("Character name."),
-                                fieldWithPath("_embedded.loot-api:character[].inventory").description("Inventory."),
                                 subsectionWithPath("_links").ignored(),
-                                subsectionWithPath("_embedded.loot-api:character[]._links").ignored(),
-                                subsectionWithPath("_embedded.loot-api:character[].inventory[]").ignored()
+                                subsectionWithPath("_embedded.loot-api:character[]._links").ignored()
                         ),
                         commonLinks.and(
                                 linkWithRel("loot-api:campaign").description("Campaign resource.")
