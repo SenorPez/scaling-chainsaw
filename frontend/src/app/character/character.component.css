@@ -1,0 +1,31 @@
+div.character {
+  float: left;
+}
+
+li {
+  border: solid 3px #F5B895;
+  list-style: none;
+  text-align: left;
+  background-color: #0F4C81;
+  line-height: 30px;
+  margin-bottom: 15px;
+  padding-left: 0;
+}
+
+li .quantity {
+  display: inline-block;
+  background-color: #B5C7D3;
+  color: #0F4C81;
+  min-width: 30px;
+  text-align: center;
+}
+
+li .charges {
+  display: inline-block;
+  background-color: #B5C7D3;
+  color: #0F4C81;
+  text-align: center;
+  position: relative;
+  right: -10px;
+  padding: 0 10px;
+}

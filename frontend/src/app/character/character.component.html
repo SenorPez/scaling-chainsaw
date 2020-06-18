@@ -1,0 +1,9 @@
+<div class="character">
+<ul>
+  <li *ngFor="let inventoryitem of character.inventory" class="popup">
+    <span class="quantity">{{inventoryitem.quantity}}</span>
+    {{inventoryitem.name}}
+    <span class="charges" *ngIf="inventoryitem.charges">{{inventoryitem.charges}} charges</span>
+  </li>
+</ul>
+</div>

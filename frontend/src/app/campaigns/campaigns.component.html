@@ -1,0 +1,12 @@
+<h2 id="campaigns">Campaigns</h2>
+<ul>
+  <li *ngFor="let embeddedCampaign of campaigns"
+      [class.selected]="selectedCampaign && embeddedCampaign.name === selectedCampaign.name"
+      (click)="onClick(embeddedCampaign)">
+    {{embeddedCampaign.name}}
+  </li>
+</ul>
+
+<div *ngIf="selectedCampaign">
+  <app-characters [campaign]="selectedCampaign" [characters]="selectedCampaignCharacters"></app-characters>
+</div>

@@ -1,0 +1,14 @@
+<h2>{{campaign.name}}</h2>
+<div class="characters">
+<ul>
+  <li *ngFor="let embeddedCharacter of characters"
+      [class.selected]="selectedCharacter && embeddedCharacter.name === selectedCharacter.name"
+      (click)="onClick(embeddedCharacter)">
+    {{embeddedCharacter.name}}
+  </li>
+</ul>
+</div>
+
+<div *ngIf="selectedCharacter">
+  <app-character [character]="selectedCharacter"></app-character>
+</div>
