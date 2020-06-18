@@ -53,10 +53,9 @@ public class CharacterController {
     ResponseEntity<CharacterModel> characters(@PathVariable final int campaignId, @PathVariable final int characterId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
 
-        CharacterModel characterModel = assembler.toModel(
-                character.setInventory(itemTransactionRepository.getInventory(characterId, campaignId))
-        );
+        CharacterModel characterModel = assembler.toModel(character, inventory);
         characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
         characterModel.add(linkTo(RootController.class).withRel("index"));
 
@@ -68,9 +67,9 @@ public class CharacterController {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
-        character.setInventory(inventory);
 
-        model.addAttribute(character);
+        CharacterTemplate characterTemplate = new CharacterTemplate(character, inventory);
+        model.addAttribute("character", characterTemplate);
         return "character";
     }
 
@@ -79,6 +78,7 @@ public class CharacterController {
     ResponseEntity<CharacterModel> addCharacter(@RequestHeader String Authorization, @RequestBody Character newCharacter, @PathVariable final int campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Character character = characterRepository.save(newCharacter.setCampaign(campaign));
+
         CharacterModel characterModel = assembler.toModel(character);
         characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
         characterModel.add(linkTo(RootController.class).withRel("index"));

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="loot" uuid="85133ebd-6446-47fa-b2d0-4fa5091f64de">
+      <driver-ref>h2.unified</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.h2.Driver</jdbc-driver>
+      <jdbc-url>jdbc:h2:mem:loot;MODE=MySQL;DATABASE_TO_LOWER=TRUE</jdbc-url>
+    </data-source>
+  </component>
+</project>

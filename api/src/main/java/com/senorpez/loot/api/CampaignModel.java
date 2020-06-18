@@ -7,12 +7,9 @@ import org.springframework.hateoas.server.core.Relation;
 @Relation(value = "campaign", collectionRelation = "campaign")
 class CampaignModel extends RepresentationModel<CampaignModel> {
     @JsonProperty
-    int id;
+    private int id;
     @JsonProperty
-    String name;
-
-    CampaignModel() {
-    }
+    private String name;
 
     CampaignModel setId(int id) {
         this.id = id;
