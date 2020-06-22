@@ -1,20 +1,30 @@
-language: java
-dist: trusty
-sudo: required
+jobs:
+  include:
+    - language: java
+      dist: trusty
+      jdk: openjdk11
+      cache:
+        directories:
+          - $HOME/.gradle/caches
+          - $HOME/.gradle/wrapper
+      before_install: "chmod +x gradlew"
+      install: "./gradlew --configure-on-demand :api:assemble --console=plain"
+      script: "./gradlew --configure-on-demand :api:check --console=plain"
+      before_cache:
+        - "rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock"
+        - "rm -fr $HOME/.gradle/caches/*/plugin-resolution/"
+      after_success:
+        - "if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :api:jacocoTestReport; else gradle :api:jacocoTestReport; fi"
+        - "bash <(curl -s https://codecov.io/bash)"
 
-jdk:
-  - openjdk11
-cache:
-  directories:
-    - $HOME/.gradle/caches
-    - $HOME/.gradle/wrapper
-before_install:
-  - "chmod +x gradlew"
-install: "./gradlew --configure-on-demand :api:assemble --console=plain"
-script: "./gradlew --configure-on-demand :api:check --console=plain"
-before_cache:
-  - "rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock"
-  - "rm -fr $HOME/.gradle/caches/*/plugin-resolution/"
-after_success:
-  - "if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :api:jacocoTestReport; else gradle :api:jacocoTestReport; fi"
-  - "bash <(curl -s https://codecov.io/bash)"
+    - language: node_js
+      before_install: "chmod +x gradlew"
+      before_script: "./gradlew --configure-on-demand :api:bootRun --console=plain"
+      script:
+        - "cd ./discordbot"
+        - "./discordbot/npm test"
+      after_success: "bash <(curl -s https://codecov.io/bash)"
+
+env:
+  global:
+    secure: ZWgoVv5R4Zh053679BebOw3H6ROnjS7nvjmLqWQyhdPzzzBivPkLHvRkXDT8EYy+I7xUAQ7xnHjp4dNomof9i/j5LDxghaKeqemMFtXT9eB7ltz9O2yelxKcoDGuP0w3E0bcJqXoAGolyc8SzZh53Nc0pnFA/FRSdd6G429zOO7dwd1Bv9DkApL1WmimYgwagY00HTew78rnU29GzGK0nISAD+SLj2qgXunqvvYNbkXLPliShMFACNYdtjBEb2GpMSSgc9m5WUb4ekRYb52X1pPKIFVVQMnUQDRJRblKLVXONMDkBGST0NN1dNniew6wpK3rgmAUkpbkwiVWJF0MdIqDPcp0NnR6MeoxisyBLGk0qnTgdXn7p3MI1flSZ80J0QPWXltI4HrMk2P+S5fn3cjDqFmXiibo6X8sMqcj19hxKcsXSYvaNhblygngzZAHtuD9dbEKKwRZoNU35uo99cGHsF+6SG5B1+T6HleVjVT9Zz8/uwmTAO1a01r50/aqbe6ScUkgTBk0t4r0CnfhiUI1UKnREK3Z46xSXcyuRQKqU+QjyOGhx7U9TLXSwW7nBSMbwgrD0E4QimPGcV2bIy0wiV5hlQJdIyN9nPS+fKK7Ds3OGh9lkSzOEwdjpoqRsXjHp7NcW7b7aUz461PmCXIHI35sER4f4hCe8rP/5lY=
