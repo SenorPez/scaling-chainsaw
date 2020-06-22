@@ -387,61 +387,45 @@ suite('Mock API', function() {
 
     test('findItemOnCharacter: Item found, sufficient quantity', function () {
         const proxyquire = require('proxyquire');
-        const fetchMock = require('fetch-mock').sandbox();
-        fetchMock.mock(
-            'http://mockserver/',
-            mockIndex
-        );
-        fetchMock.mock(
-            'http://mockserver/campaigns/6/characters/6/',
-            mockCharacter
-        );
-        const api = proxyquire('..service/api', {'node-fetch': fetchMock});
-        const {findItemOnCharacter} = proxyquire('../commands/dropitem', {'../service/api': api});
+        const mockFindCharacterById = sinon.stub().resolves(mockCharacter);
+        const {findItemOnCharacter} = proxyquire('../commands/dropitem', {
+            '../commands/character': {
+                findCharacterById: mockFindCharacterById
+            }
+        });
 
         return findItemOnCharacter(mockItem, 1)
             .then(item => {
-                assert.hasAllKeys(item, ['id', 'name']);
-                assert.isOk(fetchMock.done());
+                assert.hasAllKeys(item, ['id', 'name'])
             });
     });
 
     test('findItemOnCharacter: Item found, insufficient quantity', function () {
         const proxyquire = require('proxyquire');
-        const fetchMock = require('fetch-mock').sandbox();
-        fetchMock.mock(
-            'http://mockserver/',
-            mockIndex
-        );
-        fetchMock.mock(
-            'http://mockserver/campaigns/6/characters/6/',
-            mockCharacter
-        );
-        const api = proxyquire('..service/api', {'node-fetch': fetchMock});
-        const {findItemOnCharacter} = proxyquire('../commands/dropitem', {'../service/api': api});
+        const mockFindCharacterById = sinon.stub().resolves(mockCharacter);
+        const {findItemOnCharacter} = proxyquire('../commands/dropitem', {
+            '../commands/character': {
+                findCharacterById: mockFindCharacterById
+            }
+        });
 
         return findItemOnCharacter(mockItem, 1000000)
             .then(() => assert.fail())
-            .catch(error => assert.strictEqual(error.message, "Cannot drop 1000000 Gold Piece; Aethelwuf has 420 Gold Piece"));
+            .catch(error => assert.strictEqual(error.message, "Cannot drop 1000000 Gold Piece; Vorgansharanx has 420 Gold Piece"));
     });
 
     test('findItemOnCharacter: Item not found', function () {
         const proxyquire = require('proxyquire');
-        const fetchMock = require('fetch-mock').sandbox();
-        fetchMock.mock(
-            'http://mockserver/',
-            mockIndex
-        );
-        fetchMock.mock(
-            'http://mockserver/campaigns/6/characters/6/',
-            mockCharacter
-        );
-        const api = proxyquire('..service/api', {'node-fetch': fetchMock});
-        const {findItemOnCharacter} = proxyquire('../commands/dropitem', {'../service/api': api});
+        const mockFindCharacterById = sinon.stub().resolves(mockCharacter);
+        const {findItemOnCharacter} = proxyquire('../commands/dropitem', {
+            '../commands/character': {
+                findCharacterById: mockFindCharacterById
+            }
+        });
 
         return findItemOnCharacter({id: 8675039, name: 'Jenny'}, 1)
             .then(() => assert.fail())
-            .catch(error => assert.strictEqual(error.message, "Cannot drop 1 Jenny; Aethelwuf has 0 Jenny"));
+            .catch(error => assert.strictEqual(error.message, "Cannot drop 1 Jenny; Vorgansharanx has 0 Jenny"));
     });
 
     test('postTransaction: Valid updated JSON', function () {

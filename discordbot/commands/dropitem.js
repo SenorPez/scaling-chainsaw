@@ -1,5 +1,8 @@
 const getToken = require('../service/authtoken');
+const state = require('../service/state');
+
 const {parseMessage, parseArguments, parseCommand, findItemByName, findItemById, postTransaction} = require('../commands/additem');
+const {findCharacterById} = require('../commands/character');
 
 function ParseError() {
     this.message = "Usage: $dropitem <item name> [--r <remark>]";
@@ -36,3 +39,22 @@ module.exports = (message) => {
         })
         .catch(error => error);
 };
+
+function DropItemError(character, item, hasQuantity, dropQuantity) {
+    this.message = `Cannot drop ${dropQuantity} ${item.name}; ${character.name} has ${hasQuantity} ${item.name}`;
+}
+
+module.exports.findItemOnCharacter = (item, quantity) => {
+    return findCharacterById(state.getCharacterId())
+        .then(character => {
+            const filteredItem = character.inventory.filter(inventoryItem => inventoryItem.id === item.id);
+            if (filteredItem.length === 1) {
+                const hasQuantity = filteredItem.pop().quantity;
+                if (hasQuantity >= quantity) {
+                    return item;
+                }
+                throw new DropItemError(character, item, hasQuantity, quantity);
+            }
+            throw new DropItemError(character, item, 0, quantity);
+        })
+}
