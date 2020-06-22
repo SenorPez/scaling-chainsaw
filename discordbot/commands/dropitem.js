@@ -35,7 +35,13 @@ module.exports = (message) => {
             const arguments = values[2];
             arguments.quantity = -arguments.quantity;
             const token = values[0];
-            return postTransaction(message, item, arguments, token);
+
+            return module.exports.findItemOnCharacter(item, -arguments.quantity)
+                .then(() => postTransaction(message, item, arguments, token))
+                .catch(error => {
+                    message.channel.send(error.message);
+                    throw error
+                });
         })
         .catch(error => error);
 };
@@ -46,6 +52,7 @@ function DropItemError(character, item, hasQuantity, dropQuantity) {
 
 module.exports.findItemOnCharacter = (item, quantity) => {
     return findCharacterById(state.getCharacterId())
+        .then(response => response.json())
         .then(character => {
             const filteredItem = character.inventory.filter(inventoryItem => inventoryItem.id === item.id);
             if (filteredItem.length === 1) {
@@ -56,5 +63,5 @@ module.exports.findItemOnCharacter = (item, quantity) => {
                 throw new DropItemError(character, item, hasQuantity, quantity);
             }
             throw new DropItemError(character, item, 0, quantity);
-        })
+        });
 }

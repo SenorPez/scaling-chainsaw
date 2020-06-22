@@ -387,7 +387,9 @@ suite('Mock API', function() {
 
     test('findItemOnCharacter: Item found, sufficient quantity', function () {
         const proxyquire = require('proxyquire');
-        const mockFindCharacterById = sinon.stub().resolves(mockCharacter);
+        const mockCharacterJson = sinon.stub().resolves(mockCharacter);
+        const mockCharacterResponse = {json: mockCharacterJson}
+        const mockFindCharacterById = sinon.stub().resolves(mockCharacterResponse);
         const {findItemOnCharacter} = proxyquire('../commands/dropitem', {
             '../commands/character': {
                 findCharacterById: mockFindCharacterById
@@ -402,7 +404,9 @@ suite('Mock API', function() {
 
     test('findItemOnCharacter: Item found, insufficient quantity', function () {
         const proxyquire = require('proxyquire');
-        const mockFindCharacterById = sinon.stub().resolves(mockCharacter);
+        const mockCharacterJson = sinon.stub().resolves(mockCharacter);
+        const mockCharacterResponse = {json: mockCharacterJson}
+        const mockFindCharacterById = sinon.stub().resolves(mockCharacterResponse);
         const {findItemOnCharacter} = proxyquire('../commands/dropitem', {
             '../commands/character': {
                 findCharacterById: mockFindCharacterById
@@ -416,7 +420,9 @@ suite('Mock API', function() {
 
     test('findItemOnCharacter: Item not found', function () {
         const proxyquire = require('proxyquire');
-        const mockFindCharacterById = sinon.stub().resolves(mockCharacter);
+        const mockCharacterJson = sinon.stub().resolves(mockCharacter);
+        const mockCharacterResponse = {json: mockCharacterJson}
+        const mockFindCharacterById = sinon.stub().resolves(mockCharacterResponse);
         const {findItemOnCharacter} = proxyquire('../commands/dropitem', {
             '../commands/character': {
                 findCharacterById: mockFindCharacterById
@@ -709,7 +715,7 @@ suite('Local API', function () {
             .then(item => {
                 return dropitem(mockMessage)
                     .finally(() => sinon.assert.calledWith(mockSend,
-                        `Unable to drop 1000000 Item of Testing; Aethelwuf has ${item.quantity} Item of Testing`));
+                        `Cannot drop 1000000 Item of Testing; Aethelwuf has ${item.quantity} Item of Testing`));
             });
     });
 
@@ -733,7 +739,7 @@ suite('Local API', function () {
             .then(() => {
                 return dropitem(mockMessage)
                     .finally(() => sinon.assert.calledWith(mockSend,
-                        `Unable to drop 1000000 Item of Failure; Aethelwuf has 0 Item of Failure`));
+                        `Cannot drop 1 Item of Failure; Aethelwuf has 0 Item of Failure`));
             });
     });
 })
