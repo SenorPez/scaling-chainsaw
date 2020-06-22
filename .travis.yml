@@ -21,6 +21,8 @@ jobs:
       before_install: "chmod +x gradlew"
       before_script: "./gradlew --configure-on-demand :api:bootRun --console=plain &"
       script:
+        - "pwd"
+        - "sleep 60"
         - "cd ./discordbot"
         - "./discordbot/npm test"
       after_success: "bash <(curl -s https://codecov.io/bash)"
