@@ -7,6 +7,7 @@ class InventoryItemModelAssembler {
         return new InventoryItemModel()
                 .setCharges(entity.getCharges())
                 .setDetails(entity.getDetails())
+                .setId(entity.getId())
                 .setName(entity.getName())
                 .setQuantity(entity.getQuantity())
                 .setWeight(entity.getWeight());

@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 
 class InventoryItemModel {
     @JsonProperty
+    private int id;
+    @JsonProperty
     private int quantity;
     @JsonProperty
     private String name;
@@ -15,6 +17,11 @@ class InventoryItemModel {
     private String details;
     @JsonProperty
     private Integer charges;
+
+    public InventoryItemModel setId(int id) {
+        this.id = id;
+        return this;
+    }
 
     InventoryItemModel setQuantity(int quantity) {
         this.quantity = quantity;
