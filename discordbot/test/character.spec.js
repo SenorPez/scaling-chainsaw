@@ -417,7 +417,7 @@ suite('Local API', function () {
         state.setCampaignId(1);
         const {getCharacters} = require('../commands/character');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return getCharacters()
             .then(response => response.json())
@@ -436,7 +436,7 @@ suite('Local API', function () {
         state.setCampaignId(1);
         const {findCharacterByName} = require('../commands/character');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCharacterByName('Aethelwuf')
             .then(response => response.json())
@@ -452,7 +452,7 @@ suite('Local API', function () {
         state.setCampaignId(1);
         const {findCharacterByName} = require('../commands/character');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCharacterByName('aETHElWuF')
             .then(response => response.json())
@@ -468,7 +468,7 @@ suite('Local API', function () {
         state.setCampaignId(1);
         const {findCharacterByName} = require('../commands/character');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCharacterByName('Aethel')
             .then(response => response.json())
@@ -484,7 +484,7 @@ suite('Local API', function () {
         state.setCampaignId(1);
         const {findCharacterByName} = require('../commands/character');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCharacterByName('leeadamaisfat')
             .then(() => assert.fail())
@@ -495,7 +495,7 @@ suite('Local API', function () {
         state.setCampaignId(1);
         const {findCharacterByName} = require('../commands/character');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCharacterByName('h')
             .then(() => assert.fail())
@@ -506,7 +506,7 @@ suite('Local API', function () {
         state.setCampaignId(1);
         const {findCharacterById} = require('../commands/character');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCharacterById(1)
             .then(response => response.json())
@@ -522,7 +522,7 @@ suite('Local API', function () {
         state.setCampaignId(1);
         const {findCharacterById} = require('../commands/character');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCharacterById(8675309)
             .then(() => assert.fail())
@@ -542,17 +542,17 @@ suite('Local API', function () {
             ],
             "_links": {
                 "self": {
-                    "href": "https://localhost:9090/campaigns/1/characters/1"
+                    "href": "http://localhost:9090/campaigns/1/characters/1"
                 },
                 "loot-api:characters": {
-                    "href": "https://localhost:9090/campaigns/1/characters"
+                    "href": "http://localhost:9090/campaigns/1/characters"
                 },
                 "index": {
-                    "href": "https://localhost:9090"
+                    "href": "http://localhost:9090"
                 },
                 "curies": [
                     {
-                        "href": "https://localhost:9090/docs/reference.html#resources-loot-{rel}",
+                        "href": "http://localhost:9090/docs/reference.html#resources-loot-{rel}",
                         "name": "loot-api",
                         "templated": true
                     }
@@ -580,7 +580,7 @@ suite('Local API', function () {
 
     test('Character integration test: Malformed command', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const character = require('../commands/character');
         const mockSend = sinon.stub();
@@ -598,7 +598,7 @@ suite('Local API', function () {
 
     test('Character integration test: Campaign not set', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const character = require('../commands/character');
         const mockSend = sinon.stub();
@@ -615,7 +615,7 @@ suite('Local API', function () {
 
     test('Character integration test: Text not found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const character = require('../commands/character');
         const mockSend = sinon.stub();
@@ -633,7 +633,7 @@ suite('Local API', function () {
 
     test('Character integration test: Multiple text matches found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const character = require('../commands/character');
         const mockSend = sinon.stub();
@@ -651,7 +651,7 @@ suite('Local API', function () {
 
     test('Character integration test: ID not found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const character = require('../commands/character');
         const mockSend = sinon.stub();
@@ -669,7 +669,7 @@ suite('Local API', function () {
 
     test('Character integration test: Success with text', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const character = require('../commands/character');
         const mockSend = sinon.stub();
@@ -690,7 +690,7 @@ suite('Local API', function () {
 
     test('Character integration test: Success with ID', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const character = require('../commands/character');
         const mockSend = sinon.stub();

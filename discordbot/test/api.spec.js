@@ -1,12 +1,12 @@
 const assert = require('chai').assert;
-const url = 'https://www.loot.senorpez.com/'
+const url = 'http://www.loot.senorpez.com/'
 
 suite('Mock API', function() {
     test('Should return valid mock JSON', function() {
         const proxyquire = require('proxyquire')
         const fetchMock = require('fetch-mock').sandbox();
         fetchMock.mock(
-            'https://www.loot.senorpez.com/',
+            'http://www.loot.senorpez.com/',
             {
                 _links: {
                     'loot-api:campaigns': {href: 'http://mockserver/campaigns/'},
@@ -32,7 +32,7 @@ suite('Local API', function () {
         const api = require('../service/api');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-        return api.get('https://localhost:9090')
+        return api.get('http://localhost:9090')
             .then(response => response.json())
             .then(data => {
                 assert.containsAllKeys(data, '_links');

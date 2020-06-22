@@ -543,7 +543,7 @@ suite('Local API', function () {
     test('getItems: Valid Items JSON', function () {
         const {getItems} = require('../commands/additem');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         return getItems()
             .then(response => response.json())
@@ -561,7 +561,7 @@ suite('Local API', function () {
     test('findItemByName: Valid Item JSON, matched by exact name', function () {
         const {findItemByName} = require('../commands/additem');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         return findItemByName('Gold Piece')
             .then(response => response.json())
@@ -573,7 +573,7 @@ suite('Local API', function () {
     test('findItemByName: Valid Item JSON, matched by differently cased name', function () {
         const {findItemByName} = require('../commands/additem');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         return findItemByName('gOLd PiECe')
             .then(response => response.json())
@@ -585,7 +585,7 @@ suite('Local API', function () {
     test('findItemByName: Valid Item JSON, matched by partial name', function () {
         const {findItemByName} = require('../commands/additem');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         return findItemByName('Gold P')
             .then(response => response.json())
@@ -597,7 +597,7 @@ suite('Local API', function () {
     test('findItemByName: No text match', function () {
         const {findItemByName} = require('../commands/additem');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         return findItemByName('leeadamaisfat')
             .then(() => assert.fail())
@@ -607,7 +607,7 @@ suite('Local API', function () {
     test('findItemByName: Multiple text matches', function () {
         const {findItemByName} = require('../commands/additem');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         return findItemByName('piece')
             .then(() => assert.fail())
@@ -624,7 +624,7 @@ suite('Local API', function () {
     test('findItemById: Valid Item JSON, matched by ID', function () {
         const {findItemById} = require('../commands/additem');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         return findItemById(1)
             .then(response => response.json())
@@ -636,7 +636,7 @@ suite('Local API', function () {
     test('findItemById: No ID match', function () {
         const {findItemById} = require('../commands/additem');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         return findItemById(8675309)
             .then(() => assert.fail())
@@ -647,7 +647,7 @@ suite('Local API', function () {
         const {postTransaction} = require('../commands/additem');
 
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
         state.setCampaignId(1);
         state.setCharacterId(1);
 
@@ -692,7 +692,7 @@ suite('Local API', function () {
 
     test('Add Item integration test: Malformed command', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const additem = require('../commands/additem');
         const mockSend = sinon.stub();
@@ -711,7 +711,7 @@ suite('Local API', function () {
 
     test('Add Item integration test: Campaign not set', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const additem = require('../commands/additem');
         const mockSend = sinon.stub();
@@ -728,7 +728,7 @@ suite('Local API', function () {
 
     test('Add item integration test: Character not set', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const additem = require('../commands/additem');
         const mockSend = sinon.stub();
@@ -746,7 +746,7 @@ suite('Local API', function () {
 
     test('Add item integration test: Text not found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const additem = require('../commands/additem');
         const mockSend = sinon.stub();
@@ -765,7 +765,7 @@ suite('Local API', function () {
 
     test('Add item integration test: Multiple text matches found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const additem = require('../commands/additem');
         const mockSend = sinon.stub();
@@ -790,7 +790,7 @@ suite('Local API', function () {
 
     test('Add item integration test: ID not found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const additem = require('../commands/additem');
         const mockSend = sinon.stub();
@@ -809,7 +809,7 @@ suite('Local API', function () {
 
     test('Add item integration test: Success with text, default quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
@@ -834,7 +834,7 @@ suite('Local API', function () {
 
     test('Add item integration test: Success with ID, default quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
@@ -859,7 +859,7 @@ suite('Local API', function () {
 
     test('Add item integration test: Success with text, set quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
@@ -884,7 +884,7 @@ suite('Local API', function () {
 
     test('Add item integration test: Success with ID, set quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {

@@ -372,7 +372,7 @@ suite('Local API', function () {
     test('getCampaign: Valid Campaigns JSON', function () {
         const {getCampaigns} = require('../commands/campaign');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return getCampaigns()
             .then(response => response.json())
@@ -390,7 +390,7 @@ suite('Local API', function () {
     test('findCampaignByName: Valid Campaign JSON, matched by exact name', function () {
         const {findCampaignByName} = require('../commands/campaign');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCampaignByName('Defiance in Phlan')
             .then(response => response.json())
@@ -404,7 +404,7 @@ suite('Local API', function () {
     test('findCampaignByName: Valid Campaign JSON, matched by differently cased name', function () {
         const {findCampaignByName} = require('../commands/campaign');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCampaignByName('dEFiAnCE iN pHLAn')
             .then(response => response.json())
@@ -418,7 +418,7 @@ suite('Local API', function () {
     test('findCampaignByName: Valid Campaign JSON, matched by partial name', function () {
         const {findCampaignByName} = require('../commands/campaign');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCampaignByName('Phlan')
             .then(response => response.json())
@@ -432,7 +432,7 @@ suite('Local API', function () {
     test('findCampaignByName: No text match', function () {
         const {findCampaignByName} = require('../commands/campaign');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCampaignByName('leeadamaisfat')
             .then(() => assert.fail())
@@ -442,7 +442,7 @@ suite('Local API', function () {
     test('findCampaignByName: Multiple text matches', function () {
         const {findCampaignByName} = require('../commands/campaign');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCampaignByName('p')
             .then(() => assert.fail())
@@ -452,7 +452,7 @@ suite('Local API', function () {
     test('findCampaignById: Valid Campaign JSON, matched by ID', function () {
         const {findCampaignById} = require('../commands/campaign');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCampaignById(1)
             .then(response => response.json())
@@ -466,7 +466,7 @@ suite('Local API', function () {
     test('findCampaignById: No ID match', function () {
         const {findCampaignById} = require('../commands/campaign');
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         return findCampaignById(8675309)
             .then(() => assert.fail())
@@ -478,13 +478,13 @@ suite('Local API', function () {
             id: 1,
             name: "Defiance in Phlan",
             _links: {
-                self: {href: "https://localhost:9090/campaigns/1"},
-                'loot-api:campaigns': {href: "https://localhost:9090/campaigns"},
-                'loot-api:characters': {href: "https://localhost:9090/campaigns/1/characters"},
-                index: {href: "https://localhost:9090"},
+                self: {href: "http://localhost:9090/campaigns/1"},
+                'loot-api:campaigns': {href: "http://localhost:9090/campaigns"},
+                'loot-api:characters': {href: "http://localhost:9090/campaigns/1/characters"},
+                index: {href: "http://localhost:9090"},
                 curies: [
                     {
-                        href: "https://localhost:9090/docs/reference.html#resources-loot-{rel}",
+                        href: "http://localhost:9090/docs/reference.html#resources-loot-{rel}",
                         name: "loot-api",
                         templated: true
                     }
@@ -515,13 +515,13 @@ suite('Local API', function () {
             id: 1,
             name: "Defiance in Phlan",
             _links: {
-                self: {href: "https://localhost:9090/campaigns/1"},
-                'loot-api:campaigns': {href: "https://localhost:9090/campaigns"},
-                'loot-api:characters': {href: "https://localhost:9090/campaigns/1/characters"},
-                index: {href: "https://localhost:9090"},
+                self: {href: "http://localhost:9090/campaigns/1"},
+                'loot-api:campaigns': {href: "http://localhost:9090/campaigns"},
+                'loot-api:characters': {href: "http://localhost:9090/campaigns/1/characters"},
+                index: {href: "http://localhost:9090"},
                 curies: [
                     {
-                        href: "https://localhost:9090/docs/reference.html#resources-loot-{rel}",
+                        href: "http://localhost:9090/docs/reference.html#resources-loot-{rel}",
                         name: "loot-api",
                         templated: true
                     }
@@ -549,7 +549,7 @@ suite('Local API', function () {
 
     test('Campaign integration test: Malformed command', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const campaign = require('../commands/campaign');
         const mockSend = sinon.stub();
@@ -566,7 +566,7 @@ suite('Local API', function () {
 
     test('Campaign integration test: Text not found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const campaign = require('../commands/campaign');
         const mockSend = sinon.stub();
@@ -583,7 +583,7 @@ suite('Local API', function () {
 
     test('Campaign integration test: Multiple text matches found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const campaign = require('../commands/campaign');
         const mockSend = sinon.stub();
@@ -600,7 +600,7 @@ suite('Local API', function () {
 
     test('Campaign integration test: ID not found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const campaign = require('../commands/campaign');
         const mockSend = sinon.stub();
@@ -617,7 +617,7 @@ suite('Local API', function () {
 
     test('Campaign integration test: Success with text', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const campaign = require('../commands/campaign');
         const mockSend = sinon.stub();
@@ -636,7 +636,7 @@ suite('Local API', function () {
 
     test('Campaign integration test: Success with ID', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090';
+        process.env.API_URL = 'http://localhost:9090';
 
         const campaign = require('../commands/campaign');
         const mockSend = sinon.stub();

@@ -480,7 +480,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Malformed command', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const dropitem = require('../commands/dropitem');
         const mockSend = sinon.stub();
@@ -499,7 +499,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Campaign not set', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const dropitem = require('../commands/dropitem');
         const mockSend = sinon.stub();
@@ -516,7 +516,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Character not set', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const dropitem = require('../commands/dropitem');
         const mockSend = sinon.stub();
@@ -534,7 +534,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Text not found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const dropitem = require('../commands/dropitem');
         const mockSend = sinon.stub();
@@ -553,7 +553,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Multiple text matches found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const dropitem = require('../commands/dropitem');
         const mockSend = sinon.stub();
@@ -578,7 +578,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: ID not found', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const dropitem = require('../commands/dropitem');
         const mockSend = sinon.stub();
@@ -597,7 +597,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Success with text, default quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
@@ -622,7 +622,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Success with ID, default quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
@@ -647,7 +647,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Success with text, set quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
@@ -672,7 +672,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Success with ID, set quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
@@ -697,7 +697,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Failure due to excessive drop quantity', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
@@ -721,7 +721,7 @@ suite('Local API', function () {
 
     test('Drop item integration test: Failure due to no item', function () {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        process.env.API_URL = 'https://localhost:9090/';
+        process.env.API_URL = 'http://localhost:9090/';
 
         const mockSend = sinon.stub();
         const mockMessage = {
