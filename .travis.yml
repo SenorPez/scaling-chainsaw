@@ -23,7 +23,8 @@ jobs:
       script:
         - "pwd"
         - "sleep 120"
-        - "./discordbot/npm test"
+        - "cd ./discordbot"
+        - "npm test"
       after_success: "bash <(curl -s https://codecov.io/bash)"
 
 env:
