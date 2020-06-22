@@ -22,8 +22,7 @@ jobs:
       before_script: "./gradlew --configure-on-demand :api:bootRun --console=plain &"
       script:
         - "pwd"
-        - "sleep 60"
-        - "cd ./discordbot"
+        - "sleep 120"
         - "./discordbot/npm test"
       after_success: "bash <(curl -s https://codecov.io/bash)"
 
