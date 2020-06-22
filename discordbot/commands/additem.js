@@ -68,7 +68,7 @@ module.exports = (message) => {
         .catch(error => error);
 };
 
-module.exports.parseMessage = (message) => {
+module.exports.parseMessage = (message, error) => {
     return new Promise(resolve => {
         if (state.getCampaignId() === null) {
             throw new CampaignNotSetError();
@@ -83,7 +83,8 @@ module.exports.parseMessage = (message) => {
         if (matches[0]) {
             resolve(matches[0]);
         }
-        throw new ParseError();
+
+        throw error ? error : new ParseError();
     });
 };
 

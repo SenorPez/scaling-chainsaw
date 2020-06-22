@@ -1,9 +1,13 @@
 const getToken = require('../service/authtoken');
 const {parseMessage, parseArguments, parseCommand, findItemByName, findItemById, postTransaction} = require('../commands/additem');
 
+function ParseError() {
+    this.message = "Usage: $dropitem <item name> [--r <remark>]";
+}
+
 module.exports = (message) => {
     const tokenPromise = getToken();
-    const itemPromise = parseMessage(message)
+    const itemPromise = parseMessage(message, new ParseError())
         .then(matches => parseCommand(matches))
         .then(searchParam => {
             return (typeof searchParam === 'number')
@@ -15,7 +19,7 @@ module.exports = (message) => {
             message.channel.send(error.message);
             throw error;
         });
-    const argsPromise = parseMessage(message)
+    const argsPromise = parseMessage(message, new ParseError())
         .then(matches => parseArguments(matches))
         .catch(error => {
             message.channel.send(error.message);
