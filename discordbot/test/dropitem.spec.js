@@ -689,4 +689,51 @@ suite('Local API', function () {
             });
     });
 
+    test('Drop item integration test: Failure due to excessive drop quantity', function () {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        process.env.API_URL = 'https://localhost:9090/';
+
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            content: '$dropitem 1000000 8377302',
+            channel: {send: mockSend}
+        };
+        state.setCampaignId(1);
+        state.setCharacterId(1);
+
+        const {findCharacterByName} = require('../commands/character');
+        const dropitem = require('../commands/dropitem');
+        return findCharacterByName('Aethelwuf')
+            .then(response => response.json())
+            .then(character => character.inventory.filter(item => item.name === 'Item of Testing').pop())
+            .then(item => {
+                return dropitem(mockMessage)
+                    .finally(() => sinon.assert.calledWith(mockSend,
+                        `Unable to drop 1000000 Item of Testing; Aethelwuf has ${item.quantity} Item of Testing`));
+            });
+    });
+
+    test('Drop item integration test: Failure due to no item', function () {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        process.env.API_URL = 'https://localhost:9090/';
+
+        const mockSend = sinon.stub();
+        const mockMessage = {
+            content: '$dropitem 7942588',
+            channel: {send: mockSend}
+        };
+        state.setCampaignId(1);
+        state.setCharacterId(1);
+
+        const {findCharacterByName} = require('../commands/character');
+        const dropitem = require('../commands/dropitem');
+        return findCharacterByName('Aethelwuf')
+            .then(response => response.json())
+            .then(character => character.inventory.filter(item => item.name === 'Item of Testing').pop())
+            .then(() => {
+                return dropitem(mockMessage)
+                    .finally(() => sinon.assert.calledWith(mockSend,
+                        `Unable to drop 1000000 Item of Failure; Aethelwuf has 0 Item of Failure`));
+            });
+    });
 })
