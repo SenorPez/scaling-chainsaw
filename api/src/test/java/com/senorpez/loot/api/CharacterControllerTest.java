@@ -51,8 +51,8 @@ public class CharacterControllerTest {
     private static final String OBJECT_SCHEMA = "character.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
-    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{new BigInteger(String.valueOf(329)), "Gold", null, null, null};
-    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{new BigInteger(String.valueOf(69)), "Likes", null, null, null};
+    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{1, new BigInteger(String.valueOf(329)), "Gold", null, null, null};
+    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{2, new BigInteger(String.valueOf(69)), "Likes", null, null, null};
 
     static final Character FIRST_CHARACTER = new Character(1, FIRST_CAMPAIGN, "First Character");
     private static final Character SECOND_CHARACTER = new Character(2, FIRST_CAMPAIGN, "Second Character");

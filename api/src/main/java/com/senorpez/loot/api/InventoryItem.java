@@ -3,21 +3,27 @@ package com.senorpez.loot.api;
 import java.math.BigDecimal;
 
 public class InventoryItem {
-    private final int quantity;
+    private final int id;
+    private final Integer quantity;
     private final String name;
     private final BigDecimal weight;
     private final String details;
     private final Integer charges;
 
     InventoryItem(Object[] databaseQueryResult) {
-        this.quantity = ((Number) databaseQueryResult[0]).intValue();
-        this.name = (String) databaseQueryResult[1];
-        this.weight = databaseQueryResult[2] == null ? null : BigDecimal.valueOf(((Number) databaseQueryResult[2]).doubleValue());
-        this.details = databaseQueryResult[3] == null ? null : (String) databaseQueryResult[3];
-        this.charges = databaseQueryResult[4] == null ? null : ((Number) databaseQueryResult[4]).intValue();
+        this.id = ((Number) databaseQueryResult[0]).intValue();
+        this.quantity = ((Number) databaseQueryResult[1]).intValue();
+        this.name = (String) databaseQueryResult[2];
+        this.weight = databaseQueryResult[3] == null ? null : BigDecimal.valueOf(((Number) databaseQueryResult[3]).doubleValue());
+        this.details = databaseQueryResult[4] == null ? null : (String) databaseQueryResult[4];
+        this.charges = databaseQueryResult[5] == null ? null : ((Number) databaseQueryResult[5]).intValue();
     }
 
-    int getQuantity() {
+    public int getId() {
+        return id;
+    }
+
+    Integer getQuantity() {
         return quantity;
     }
 
