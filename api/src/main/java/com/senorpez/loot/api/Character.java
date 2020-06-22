@@ -67,12 +67,14 @@ class Character {
     public Character setInventory(List<Object[]> inventory) {
         this.inventory = inventory
                 .stream()
-                .map(objects -> new InventoryItem((String) objects[0], ((Number) objects[1]).intValue(), (Integer) objects[2]))
+                .map(objects -> new InventoryItem(((Number) objects[0]).intValue(), (String) objects[1], ((Number) objects[2]).intValue(), (Integer) objects[3]))
                 .collect(Collectors.toList());
         return this;
     }
 
     static class InventoryItem {
+        @JsonProperty
+        private final Integer id;
         @JsonProperty
         private final String name;
         @JsonProperty
@@ -80,10 +82,15 @@ class Character {
         @JsonProperty
         private final Integer charges;
 
-        public InventoryItem(String name, Integer quantity, Integer charges) {
+        public InventoryItem(Integer id, String name, Integer quantity, Integer charges) {
+            this.id = id;
             this.name = name;
             this.quantity = quantity;
             this.charges = charges;
+        }
+
+        public Integer getId() {
+            return id;
         }
 
         public String getName() {

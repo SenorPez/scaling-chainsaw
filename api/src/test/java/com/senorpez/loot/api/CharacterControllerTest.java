@@ -54,8 +54,8 @@ public class CharacterControllerTest {
             .setId(1)
             .setName("First Campaign");
 
-    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{"Gold", new BigInteger(String.valueOf(329)), 1};
-    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{"Likes", new BigInteger(String.valueOf(69)), 2};
+    private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{1, "Gold", new BigInteger(String.valueOf(329)), null};
+    private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{2, "Likes", new BigInteger(String.valueOf(69)), 3};
 
     private static final com.senorpez.loot.api.Character FIRST_CHARACTER = new com.senorpez.loot.api.Character()
             .setId(1)
