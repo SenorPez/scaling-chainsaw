@@ -19,7 +19,10 @@ jobs:
 
     - language: node_js
       before_install: "chmod +x gradlew"
-      before_script: "./gradlew --configure-on-demand :api:bootRun --console=plain &"
+      before_script:
+        - "./gradlew --configure-on-demand :api:bootRun --console=plain &"
+        - "cd ./discordbot"
+        - "npm install --save-dev"
       script:
         - "pwd"
         - "sleep 120"
