@@ -27,7 +27,7 @@ jobs:
         - "npm ci"
         - "npm install -g codecov"
       script:
-        - "npm report-coverage"
+        - "npm run report-coverage"
       after_success: "bash <(curl -s https://codecov.io/bash)"
 
 env:
