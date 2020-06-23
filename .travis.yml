@@ -28,6 +28,7 @@ jobs:
         - "npm install -g codecov"
       script:
         - "mkdir .nyc_output"
+        - "npm run test"
         - "npm run report-coverage"
       after_success: "bash <(curl -s https://codecov.io/bash)"
 
