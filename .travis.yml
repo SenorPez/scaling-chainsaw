@@ -18,16 +18,8 @@ jobs:
         - "bash <(curl -s https://codecov.io/bash)"
 
     - language: node_js
-      before_install: "chmod +x gradlew"
-      before_script:
-        - "./gradlew --configure-on-demand :api:bootRun --console=plain &"
-        - "cd ./discordbot"
-        - "npm install --save-dev"
-      script:
-        - "pwd"
-        - "sleep 120"
-        - "cd ./discordbot"
-        - "npm test"
+      before_install: "cd ./discordbot"
+      before_script: "cd ./discordbot"
       after_success: "bash <(curl -s https://codecov.io/bash)"
 
 env:

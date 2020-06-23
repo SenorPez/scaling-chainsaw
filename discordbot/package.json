@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "nyc --all mocha --ui tdd"
+    "test": "nyc --all mocha --ui tdd --grep \"Mock API\"",
+    "integration": "nyc --all mocha --ui tdd"
   },
   "keywords": [],
   "author": "SenorPez",
