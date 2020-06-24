@@ -1,3 +1,6 @@
+# db creation script
+create.sql
+
 # Compiled class file
 *.class
 
