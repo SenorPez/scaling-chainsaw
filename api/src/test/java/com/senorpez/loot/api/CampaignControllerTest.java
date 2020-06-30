@@ -1,7 +1,5 @@
 package com.senorpez.loot.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,10 +17,12 @@ import org.springframework.web.client.HttpServerErrorException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.senorpez.loot.api.RootControllerTest.commonLinks;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -51,12 +51,10 @@ public class CampaignControllerTest {
     private static final String OBJECT_SCHEMA = "campaign.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
-    private static final Campaign FIRST_CAMPAIGN = new Campaign()
-            .setId(1)
-            .setName("First Campaign");
-    private static final Campaign SECOND_CAMPAIGN = new Campaign()
-            .setId(2)
-            .setName("Second Campaign");
+    static final Campaign FIRST_CAMPAIGN = new Campaign(1, "First Campaign");
+    private static final Campaign SECOND_CAMPAIGN = new Campaign(2, "Second Campaign");
+    private static final String NEW_CAMPAIGN_JSON = "{\"name\": \"New Campaign\"}";
+    private static final Campaign NEW_CAMPAIGN = new Campaign(new Random().nextInt(), "New Campaign");
 
     @InjectMocks
     CampaignController campaignController;
@@ -295,26 +293,24 @@ public class CampaignControllerTest {
     }
 
     @Test
-    @WithMockUser(roles="user")
-    public void postCampaign() throws Exception {
-        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+    @WithMockUser(roles = "user")
+    public void postCampaign_ValidContent() throws Exception {
+        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(NEW_CAMPAIGN);
 
         mockMvc
                 .perform(
                         post("/campaigns")
-                        .contentType(HAL_JSON)
-                        .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
-                        .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                                .contentType(HAL_JSON)
+                                .content(NEW_CAMPAIGN_JSON)
+                                .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(HAL_JSON))
                 .andExpect(content().string(matchesJsonSchemaInClasspath(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$.id", is(FIRST_CAMPAIGN.getId())))
-                .andExpect(jsonPath("$.name", is(FIRST_CAMPAIGN.getName())))
+                .andExpect(jsonPath("$.id", is(NEW_CAMPAIGN.getId())))
+                .andExpect(jsonPath("$.name", is(NEW_CAMPAIGN.getName())))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d", FIRST_CAMPAIGN.getId()))))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/campaigns/%d", NEW_CAMPAIGN.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-loot-{rel}"),
@@ -350,15 +346,14 @@ public class CampaignControllerTest {
 
     @Test
     public void postCampaign_InvalidContentType() throws Exception {
-        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(NEW_CAMPAIGN);
 
         mockMvc
                 .perform(
                         post("/campaigns")
                                 .contentType(INVALID_MEDIA_TYPE)
-                                .content(objectMapper.writeValueAsString(FIRST_CAMPAIGN))
+                                .content(NEW_CAMPAIGN_JSON)
+                                .header(AUTHORIZATION, "bearer 12345")
                 )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -375,7 +370,7 @@ public class CampaignControllerTest {
 
     @Test
     public void postCampaign_InvalidSyntax() throws Exception {
-        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(FIRST_CAMPAIGN);
+        when(campaignRepository.save(ArgumentMatchers.any(Campaign.class))).thenReturn(NEW_CAMPAIGN);
 
         String invalidJson = "{\"name\": \"}";
 
@@ -383,7 +378,7 @@ public class CampaignControllerTest {
                 post("/campaigns")
                         .contentType(HAL_JSON)
                         .content(invalidJson)
-                        .header(HttpHeaders.AUTHORIZATION, "bearer 12345")
+                        .header(AUTHORIZATION, "bearer 12345")
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))

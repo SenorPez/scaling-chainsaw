@@ -24,53 +24,50 @@ class ItemTransaction {
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    Date datetime = new Date();
+    private final Date datetime = new Date();
 
     @Column
     private String remark;
 
-    public int getId() {
-        return id;
+    public ItemTransaction() {
     }
 
-    public ItemTransaction setId(int id) {
+    public ItemTransaction(Character character, Item item, int quantity, String remark) {
+        this.character = character;
+        this.item = item;
+        this.quantity = quantity;
+        this.remark = remark;
+    }
+
+    public ItemTransaction(int id, Character character, Item item, int quantity, String remark) {
         this.id = id;
-        return this;
+        this.character = character;
+        this.item = item;
+        this.quantity = quantity;
+        this.remark = remark;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Character getCharacter() {
         return character;
     }
 
-    public ItemTransaction setCharacter(Character character) {
-        this.character = character;
-        return this;
-    }
-
     public Item getItem() {
         return item;
-    }
-
-    public ItemTransaction setItem(Item item) {
-        this.item = item;
-        return this;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public ItemTransaction setQuantity(int quantity) {
-        this.quantity = quantity;
-        return this;
+    public Date getDatetime() {
+        return datetime;
     }
 
     public String getRemark() {
         return remark;
-    }
-
-    public ItemTransaction setRemark(String remark) {
-        this.remark = remark;
-        return this;
     }
 }

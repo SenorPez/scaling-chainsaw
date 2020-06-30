@@ -5,8 +5,8 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.lang.NonNull;
 
 class EmbeddedItemModelAssembler extends RepresentationModelAssemblerSupport<Item, EmbeddedItemModel> {
-    EmbeddedItemModelAssembler(Class<?> controllerClass, Class<EmbeddedItemModel> resourceType) {
-        super(controllerClass, resourceType);
+    EmbeddedItemModelAssembler() {
+        super(ItemController.class, EmbeddedItemModel.class);
     }
 
     @Override

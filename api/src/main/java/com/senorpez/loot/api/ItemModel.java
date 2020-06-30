@@ -9,40 +9,37 @@ import java.math.BigDecimal;
 @Relation(value = "lootitem", collectionRelation = "lootitem")
 class ItemModel extends RepresentationModel<ItemModel> {
     @JsonProperty
-    int id;
+    private int id;
     @JsonProperty
-    String name;
+    private String name;
     @JsonProperty
-    BigDecimal weight;
+    private BigDecimal weight;
     @JsonProperty
-    String details;
+    private String details;
     @JsonProperty
-    Integer charges;
+    private Integer charges;
 
-    public ItemModel() {
-    }
-
-    ItemModel setId(final int id) {
+    ItemModel setId(int id) {
         this.id = id;
         return this;
     }
 
-    ItemModel setName(final String name) {
+    ItemModel setName(String name) {
         this.name = name;
         return this;
     }
 
-    ItemModel setWeight(final BigDecimal weight) {
+    ItemModel setWeight(BigDecimal weight) {
         this.weight = weight;
         return this;
     }
 
-    ItemModel setDetails(final String details) {
+    ItemModel setDetails(String details) {
         this.details = details;
         return this;
     }
 
-    ItemModel setCharges(final Integer charges) {
+    ItemModel setCharges(Integer charges) {
         this.charges = charges;
         return this;
     }

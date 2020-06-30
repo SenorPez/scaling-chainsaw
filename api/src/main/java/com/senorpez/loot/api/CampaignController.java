@@ -11,11 +11,9 @@ import java.util.stream.StreamSupport;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RequestMapping(
         value = "/campaigns",
-        method = GET,
         produces = {HAL_JSON_VALUE}
 )
 @RestController

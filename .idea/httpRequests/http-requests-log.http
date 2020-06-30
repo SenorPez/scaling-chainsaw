@@ -1,0 +1,20 @@
+GET https://localhost:9090/campaigns/1/characters
+
+###
+
+GET https://localhost/campaigns/1/characters
+
+###
+
+GET https://localhost/campaigns/{{campaignId}}/characters
+
+###
+
+GET http://localhost/campaigns/1/characters
+
+###
+
+GET http://localhost/campaigns/{{campaignId}}/characters
+
+###
+

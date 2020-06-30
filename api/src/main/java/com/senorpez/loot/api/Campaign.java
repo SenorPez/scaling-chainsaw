@@ -7,26 +7,24 @@ import javax.persistence.*;
 class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(nullable = false)
     private String name;
 
-    Integer getId() {
+    public Campaign() {
+    }
+
+    Campaign(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
         return id;
     }
 
-    Campaign setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    String getName() {
+    public String getName() {
         return name;
-    }
-
-    Campaign setName(String name) {
-        this.name = name;
-        return this;
     }
 }

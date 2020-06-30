@@ -13,7 +13,7 @@ class Item {
     @Column(nullable = false)
     private String name;
 
-    @Column(precision = 19, scale=3)
+    @Column(precision = 19, scale = 3)
     private BigDecimal weight;
 
     @Column
@@ -22,48 +22,38 @@ class Item {
     @Column
     private Integer charges;
 
-    Integer getId() {
+    public Item() {
+    }
+
+    public Item(Integer id) {
+        this.id = id;
+    }
+
+    public Item(Integer id, String name, BigDecimal weight, String details, Integer charges) {
+        this.id = id;
+        this.name = name;
+        this.weight = weight;
+        this.details = details;
+        this.charges = charges;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    Item setId(final Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    Item setName(final String name) {
-        this.name = name;
-        return this;
-    }
-
-    BigDecimal getWeight() {
+    public BigDecimal getWeight() {
         return weight;
     }
 
-    Item setWeight(final BigDecimal weight) {
-        this.weight = weight;
-        return this;
-    }
-
-    String getDetails() {
+    public String getDetails() {
         return details;
     }
 
-    Item setDetails(final String details) {
-        this.details = details;
-        return this;
-    }
-
-    Integer getCharges() {
+    public Integer getCharges() {
         return charges;
-    }
-
-    Item setCharges(final Integer charges) {
-        this.charges = charges;
-        return this;
     }
 }
