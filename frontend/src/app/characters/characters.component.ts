@@ -39,19 +39,27 @@ export class CharactersComponent implements OnInit, OnChanges {
           return -1;
         }
 
+        if (a.name === 'Electrum Piece' &&
+          !(b.name === 'Silver Piece' || b.name === 'Copper Piece')) {
+          return 1;
+        } else if (b.name === 'Electrum Piece' &&
+          !(a.name === 'Silver Piece' || a.name === 'Copper Piece')) {
+          return -1;
+        }
+
         if (a.name === 'Gold Piece' &&
-        !(b.name === 'Silver Piece' || b.name === 'Copper Piece')) {
+          !(b.name === 'Electrum Piece' || b.name === 'Silver Piece' || b.name === 'Copper Piece')) {
           return 1;
         } else if (b.name === 'Gold Piece' &&
-        !(a.name === 'Silver Piece' || a.name === 'Copper Piece')) {
+          !(a.name === 'Electrum Piece' || a.name === 'Silver Piece' || a.name === 'Copper Piece')) {
           return -1;
         }
 
         if (a.name === 'Platinium Piece' &&
-          !(b.name === 'Gold Piece' || b.name === 'Silver Piece' || b.name === 'Copper Piece')) {
+          !(b.name === 'Gold Piece' || b.name === 'Electrum Piece' || b.name === 'Silver Piece' || b.name === 'Copper Piece')) {
           return 1;
         } else if (b.name === 'Platinum Piece' &&
-          !(a.name === 'Gold Piece' || a.name === 'Silver Piece' || a.name === 'Copper Piece')) {
+          !(a.name === 'Gold Piece' || a.name === 'Electrum Piece' || a.name === 'Silver Piece' || a.name === 'Copper Piece')) {
           return -1;
         }
 
