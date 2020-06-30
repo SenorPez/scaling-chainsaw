@@ -174,9 +174,13 @@ module.exports.postTransaction = (message, item, arguments, token) => {
             .then(response => response.json())
             .then(character => {
                 updatedItem = character.inventory.filter(inventoryItem => inventoryItem.name === item.name);
-                arguments.quantity > 0
-                    ? message.channel.send(`Added ${arguments.quantity} ${item.name} to ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`)
-                    : message.channel.send(`Dropped ${-arguments.quantity} ${item.name} from ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
+                if (updatedItem[0]) {
+                    arguments.quantity > 0
+                        ? message.channel.send(`Added ${arguments.quantity} ${item.name} to ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`)
+                        : message.channel.send(`Dropped ${-arguments.quantity} ${item.name} from ${character.name}\nNow has ${updatedItem[0].quantity} ${updatedItem[0].name}`);
+                } else {
+                    message.channel.send(`Dropped ${-arguments.quantity} ${item.name} from ${character.name}\nNow has 0 ${item.name}`);
+                }
                 resolve(character);
             });
     });
