@@ -2,6 +2,8 @@ package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.entity.Character;
+import com.senorpez.loot.api.model.CharacterModel;
+import com.senorpez.loot.api.model.EmbeddedCharacterModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;

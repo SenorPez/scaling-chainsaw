@@ -1,4 +1,4 @@
-package com.senorpez.loot.api;
+package com.senorpez.loot.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.RepresentationModel;
@@ -7,7 +7,7 @@ import org.springframework.hateoas.server.core.Relation;
 import java.util.List;
 
 @Relation(value = "character", collectionRelation = "character")
-class CharacterModel extends RepresentationModel<CharacterModel> {
+public class CharacterModel extends RepresentationModel<CharacterModel> {
     @JsonProperty
     private int id;
     @JsonProperty

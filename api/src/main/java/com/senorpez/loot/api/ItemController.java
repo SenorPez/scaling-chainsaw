@@ -1,6 +1,8 @@
 package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.entity.Item;
+import com.senorpez.loot.api.model.EmbeddedItemModel;
+import com.senorpez.loot.api.model.ItemModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;

@@ -1,25 +1,25 @@
-package com.senorpez.loot.api;
+package com.senorpez.loot.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-@Relation(value = "character", collectionRelation = "character")
-class EmbeddedCharacterModel extends RepresentationModel<EmbeddedCharacterModel> {
+@Relation(value = "lootitem", collectionRelation = "lootitem")
+public class EmbeddedItemModel extends RepresentationModel<EmbeddedItemModel> {
     @JsonProperty
     int id;
     @JsonProperty
     String name;
 
-    EmbeddedCharacterModel() {
+    EmbeddedItemModel() {
     }
 
-    EmbeddedCharacterModel setId(final int id) {
+    public EmbeddedItemModel setId(final int id) {
         this.id = id;
         return this;
     }
 
-    EmbeddedCharacterModel setName(final String name) {
+    public EmbeddedItemModel setName(final String name) {
         this.name = name;
         return this;
     }

@@ -1,10 +1,10 @@
-package com.senorpez.loot.api;
+package com.senorpez.loot.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
-class InventoryItemModel {
+public class InventoryItemModel {
     @JsonProperty
     private int id;
     @JsonProperty
@@ -23,27 +23,27 @@ class InventoryItemModel {
         return this;
     }
 
-    InventoryItemModel setQuantity(int quantity) {
+    public InventoryItemModel setQuantity(int quantity) {
         this.quantity = quantity;
         return this;
     }
 
-    InventoryItemModel setName(String name) {
+    public InventoryItemModel setName(String name) {
         this.name = name;
         return this;
     }
 
-    InventoryItemModel setWeight(BigDecimal weight) {
+    public InventoryItemModel setWeight(BigDecimal weight) {
         this.weight = weight;
         return this;
     }
 
-    InventoryItemModel setDetails(String details) {
+    public InventoryItemModel setDetails(String details) {
         this.details = details;
         return this;
     }
 
-    InventoryItemModel setCharges(Integer charges) {
+    public InventoryItemModel setCharges(Integer charges) {
         this.charges = charges;
         return this;
     }

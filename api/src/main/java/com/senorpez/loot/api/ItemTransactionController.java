@@ -4,6 +4,7 @@ import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.entity.Character;
 import com.senorpez.loot.api.entity.Item;
 import com.senorpez.loot.api.entity.ItemTransaction;
+import com.senorpez.loot.api.model.CharacterModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

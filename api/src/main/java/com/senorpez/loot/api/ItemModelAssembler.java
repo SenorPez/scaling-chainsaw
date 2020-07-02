@@ -1,6 +1,7 @@
 package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.entity.Item;
+import com.senorpez.loot.api.model.ItemModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
 
