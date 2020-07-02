@@ -26,8 +26,8 @@ public class CampaignModelAssembler extends RepresentationModelAssemblerSupport<
     @NonNull
     public CampaignModel toSingleModel(@NonNull Campaign entity) {
         return toModel(entity)
-                .add(linkTo(CampaignController.class).withRel("campaigns"))
                 .add(linkTo(CharacterController.class, entity.getId()).withRel("characters"))
+                .add(linkTo(CampaignController.class).withRel("campaigns"))
                 .add(linkTo(RootController.class).withRel("index"));
     }
 

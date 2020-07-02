@@ -11,16 +11,11 @@ public class EmbeddedCharacterModel extends RepresentationModel<EmbeddedCharacte
     @JsonProperty
     String name;
 
-    public EmbeddedCharacterModel() {
-    }
-
-    EmbeddedCharacterModel setId(final int id) {
+    void setId(int id) {
         this.id = id;
-        return this;
     }
 
-    EmbeddedCharacterModel setName(final String name) {
+    void setName(String name) {
         this.name = name;
-        return this;
     }
 }

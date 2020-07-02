@@ -30,7 +30,7 @@ public class CampaignController {
     }
 
     @GetMapping("/{campaignId}")
-    ResponseEntity<CampaignModel> campaigns(@PathVariable final int campaignId) {
+    public ResponseEntity<CampaignModel> campaigns(@PathVariable final int campaignId) {
         final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         final CampaignModel campaignModel = assembler.toSingleModel(campaign);
         return ResponseEntity.ok(campaignModel);
