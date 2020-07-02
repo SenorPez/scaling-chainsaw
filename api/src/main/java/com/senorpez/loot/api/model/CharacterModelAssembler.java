@@ -27,11 +27,15 @@ public class CharacterModelAssembler<M extends EmbeddedCharacterModel> extends R
 
     @NonNull
     public CharacterModel toSingleModel(@NonNull Character entity) {
+        return ((CharacterModel) toModel(entity))
+                .setInventory(null)
+                .add(linkTo(CharacterController.class, entity.getCampaign().getId()).withRel("characters"))
+                .add(linkTo(RootController.class).withRel("index"));
+
 //        return ((CharacterModel) toModel(entity))
 //                .setInventory(null)
 //                .add(linkTo(CharacterController.class, entity.getCampaign().getId()).withRel("characters"))
 //                .add(linkTo(RootController.class).withRel("index"));
-        return null;
     }
 
     @NonNull

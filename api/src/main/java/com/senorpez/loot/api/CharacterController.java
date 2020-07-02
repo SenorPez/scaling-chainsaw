@@ -42,17 +42,10 @@ public class CharacterController {
 
     @GetMapping(value = "/{characterId}", produces = {HAL_JSON_VALUE})
     ResponseEntity<CharacterModel> characters(@PathVariable final int campaignId, @PathVariable final int characterId) {
-//        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-//        Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-////        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
-//        List<Object[]> inventory = Collections.emptyList();
-//
-//        CharacterModel characterModel = assembler.toModel(character, inventory);
-//        characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
-//        characterModel.add(linkTo(RootController.class).withRel("index"));
-//
-//        return ResponseEntity.ok(characterModel);
-        return null;
+        final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        final Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        final CharacterModel characterModel = assembler.toSingleModel(character);
+        return ResponseEntity.ok(characterModel);
     }
 
 //    @GetMapping(value = "/{characterId}", produces = {TEXT_HTML_VALUE})

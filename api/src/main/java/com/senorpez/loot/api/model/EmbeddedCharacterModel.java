@@ -5,7 +5,7 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 @Relation(value = "character", collectionRelation = "character")
-public class EmbeddedCharacterModel extends RepresentationModel<EmbeddedCharacterModel> {
+public class EmbeddedCharacterModel extends RepresentationModel<CharacterModel> {
     @JsonProperty
     int id;
     @JsonProperty
