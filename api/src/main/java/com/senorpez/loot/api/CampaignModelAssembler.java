@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.Campaign;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
 

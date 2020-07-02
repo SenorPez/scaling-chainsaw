@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.ItemTransaction;
 import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,7 +43,6 @@ public class ItemTransactionControllerTest {
     private static final Integer newQuantity = new Random().nextInt();
     private static final ItemTransaction NEW_TRANSACTION = new ItemTransaction(
             new Random().nextInt(),
-            FIRST_CHARACTER,
             FIRST_ITEM,
             newQuantity,
             "New Transaction"

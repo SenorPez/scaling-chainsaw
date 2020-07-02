@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.Character;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
@@ -12,9 +13,10 @@ class EmbeddedCharacterModelAssembler extends RepresentationModelAssemblerSuppor
     @Override
     @NonNull
     public EmbeddedCharacterModel toModel(@NonNull final Character entity) {
-        return createModelWithId(entity.getId(), entity, entity.getCampaign().getId())
-                .setId(entity.getId())
-                .setName(entity.getName());
+        return new EmbeddedCharacterModel();
+//        return createModelWithId(entity.getId(), entity, entity.getCampaign().getId())
+//                .setId(entity.getId())
+//                .setName(entity.getName());
     }
 
     @Override

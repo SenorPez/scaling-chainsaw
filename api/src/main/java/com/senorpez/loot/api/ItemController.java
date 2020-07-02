@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -62,9 +63,9 @@ public class ItemController {
         Item updatedItem = new Item(
                 item.getId(),
                 Optional.ofNullable(incomingItem.getName()).orElseGet(item::getName),
-                Optional.ofNullable(incomingItem.getWeight()).orElseGet(item::getWeight),
-                Optional.ofNullable(incomingItem.getDetails()).orElseGet(item::getDetails),
-                Optional.ofNullable(incomingItem.getCharges()).orElseGet(item::getCharges)
+                Optional.ofNullable(incomingItem.getWeight()).orElseGet(item::getWeight)
+//                Optional.ofNullable(incomingItem.getDetails()).orElseGet(item::getDetails),
+//                Optional.ofNullable(incomingItem.getCharges()).orElseGet(item::getCharges)
         );
 
         ItemModel itemModel = assembler.toModel(itemRepository.save(updatedItem));

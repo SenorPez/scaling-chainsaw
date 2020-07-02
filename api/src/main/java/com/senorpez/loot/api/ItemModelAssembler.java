@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.Item;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
 
@@ -14,8 +15,8 @@ public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item
         return createModelWithId(entity.getId(), entity)
                 .setId(entity.getId())
                 .setName(entity.getName())
-                .setWeight(entity.getWeight())
-                .setDetails(entity.getDetails())
-                .setCharges(entity.getCharges());
+                .setWeight(entity.getWeight());
+//                .setDetails(entity.getDetails())
+//                .setCharges(entity.getCharges());
     }
 }

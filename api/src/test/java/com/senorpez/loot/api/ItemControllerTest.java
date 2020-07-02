@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.Item;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -47,15 +48,11 @@ public class ItemControllerTest {
     static final Item FIRST_ITEM = new Item(
             1,
             "First Item",
-            BigDecimal.valueOf(3.5),
-            "An item to test with",
-            1
+            BigDecimal.valueOf(3.5)
     );
     private static final Item SECOND_ITEM = new Item(
             2,
             "Second Item",
-            null,
-            null,
             null
     );
     private static final BigDecimal newWeight = BigDecimal.valueOf(new Random().nextDouble());
@@ -63,9 +60,8 @@ public class ItemControllerTest {
     private static final Item NEW_ITEM = new Item(
             new Random().nextInt(),
             "New Item",
-            newWeight,
-            "Adding a new item",
-            newCharges);
+            newWeight
+    );
     private static final String NEW_ITEM_JSON = String.format(
             "{\"name\": \"New Item\", \"weight\": %.2f, \"details\": \"Adding a new item\", \"charges\": %d}",
             newWeight, newCharges
@@ -74,8 +70,6 @@ public class ItemControllerTest {
     private static final Item NEW_MINIMAL_ITEM = new Item(
             new Random().nextInt(),
             "Minimal Item",
-            null,
-            null,
             null
     );
     private static final String NEW_MINIMAL_ITEM_JSON = "{\"name\": \"Minimal Item\"}";
@@ -207,8 +201,8 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(FIRST_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_ITEM.getName())))
                 .andExpect(jsonPath("$.weight", is(FIRST_ITEM.getWeight().doubleValue())))
-                .andExpect(jsonPath("$.details", is(FIRST_ITEM.getDetails())))
-                .andExpect(jsonPath("$.charges", is(FIRST_ITEM.getCharges())))
+//                .andExpect(jsonPath("$.details", is(FIRST_ITEM.getDetails())))
+//                .andExpect(jsonPath("$.charges", is(FIRST_ITEM.getCharges())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -370,8 +364,8 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(NEW_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(NEW_ITEM.getName())))
                 .andExpect(jsonPath("$.weight", is(closeTo(NEW_ITEM.getWeight().doubleValue(), 0.01))))
-                .andExpect(jsonPath("$.details", is(NEW_ITEM.getDetails())))
-                .andExpect(jsonPath("$.charges", is(NEW_ITEM.getCharges())))
+//                .andExpect(jsonPath("$.details", is(NEW_ITEM.getDetails())))
+//                .andExpect(jsonPath("$.charges", is(NEW_ITEM.getCharges())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", NEW_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -513,8 +507,8 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(NEW_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(NEW_ITEM.getName())))
                 .andExpect(jsonPath("$.weight", is(closeTo(NEW_ITEM.getWeight().doubleValue(), 0.01))))
-                .andExpect(jsonPath("$.details", is(NEW_ITEM.getDetails())))
-                .andExpect(jsonPath("$.charges", is(NEW_ITEM.getCharges())))
+//                .andExpect(jsonPath("$.details", is(NEW_ITEM.getDetails())))
+//                .andExpect(jsonPath("$.charges", is(NEW_ITEM.getCharges())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", NEW_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(

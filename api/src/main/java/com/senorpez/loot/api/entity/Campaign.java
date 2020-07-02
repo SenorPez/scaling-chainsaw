@@ -1,10 +1,11 @@
-package com.senorpez.loot.api;
+package com.senorpez.loot.api.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "campaigns")
-class Campaign {
+public class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -12,10 +13,14 @@ class Campaign {
     @Column(nullable = false)
     private String name;
 
+    @JoinColumn(name = "campaign_id")
+    @OneToMany
+    private List<Character> characters;
+
     public Campaign() {
     }
 
-    Campaign(int id, String name) {
+    public Campaign(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -26,5 +31,9 @@ class Campaign {
 
     public String getName() {
         return name;
+    }
+
+    public List<Character> getCharacters() {
+        return characters;
     }
 }

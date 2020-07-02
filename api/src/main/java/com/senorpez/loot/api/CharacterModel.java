@@ -5,7 +5,6 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Relation(value = "character", collectionRelation = "character")
 class CharacterModel extends RepresentationModel<CharacterModel> {
@@ -31,12 +30,12 @@ class CharacterModel extends RepresentationModel<CharacterModel> {
         return this;
     }
 
-    CharacterModel setInventoryFromDatabase(List<Object[]> inventory) {
-        this.inventory = inventory
-                .stream()
-                .map(InventoryItem::new)
-                .map(InventoryItemModelAssembler::toModel)
-                .collect(Collectors.toList());
-        return this;
-    }
+//    CharacterModel setInventoryFromDatabase(List<Object[]> inventory) {
+//        this.inventory = inventory
+//                .stream()
+//                .map(InventoryItem::new)
+//                .map(InventoryItemModelAssembler::toModel)
+//                .collect(Collectors.toList());
+//        return this;
+//    }
 }

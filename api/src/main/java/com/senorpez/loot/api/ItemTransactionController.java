@@ -1,10 +1,15 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.Campaign;
+import com.senorpez.loot.api.entity.Character;
+import com.senorpez.loot.api.entity.Item;
+import com.senorpez.loot.api.entity.ItemTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -38,15 +43,16 @@ public class ItemTransactionController {
         Item item = itemRepository.findById(incomingValue.getItem().getId()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem().getId()));
 
         ItemTransaction newItemTransaction = new ItemTransaction(
-                character,
-                item,
-                incomingValue.getQuantity(),
-                incomingValue.getRemark()
+                //                item,
+//                null,
+//                incomingValue.getQuantity(),
+//                incomingValue.getRemark()
         );
         itemTransactionRepository.save(newItemTransaction);
 
         Character updatedCharacter = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
+//        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
+        List<Object[]> inventory = Collections.emptyList();
 
         CharacterModel characterModel = assembler.toModel(updatedCharacter, inventory);
         characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));

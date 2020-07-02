@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.InventoryItem;
 import org.springframework.lang.NonNull;
 
 class InventoryItemModelAssembler {
@@ -8,9 +9,9 @@ class InventoryItemModelAssembler {
                 .setCharges(entity.getCharges())
                 .setDetails(entity.getDetails())
                 .setId(entity.getId())
-                .setName(entity.getName())
+                .setName(entity.getItem().getName())
                 .setQuantity(entity.getQuantity())
-                .setWeight(entity.getWeight());
+                .setWeight(entity.getItem().getWeight());
     }
 }
 

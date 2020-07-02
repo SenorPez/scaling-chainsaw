@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.InventoryItem;
 import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
@@ -13,8 +14,8 @@ class InventoryItemTemplate implements Comparable<InventoryItemTemplate> {
 
     InventoryItemTemplate(InventoryItem inventoryItem) {
         this.quantity = inventoryItem.getQuantity();
-        this.name = inventoryItem.getName();
-        this.weight = inventoryItem.getWeight();
+        this.name = inventoryItem.getItem().getName();
+        this.weight = inventoryItem.getItem().getWeight();
         this.details = inventoryItem.getDetails();
         this.charges = inventoryItem.getCharges();
     }

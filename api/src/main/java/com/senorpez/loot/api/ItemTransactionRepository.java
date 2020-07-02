@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.ItemTransaction;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -7,11 +8,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 interface ItemTransactionRepository extends CrudRepository<ItemTransaction, Integer> {
-    @Query(value = "SELECT `item_id`, SUM(`quantity`) AS quantity, `name`, `weight`, `details`, `charges` " +
+    @Query(value = "SELECT `itemtransactions`.`item_id`, `name`, `weight`, SUM(`quantity`) AS quantity, `details`, `charges` " +
             "FROM `itemtransactions` " +
-            "LEFT JOIN `items` ON `items`.`id` = `itemtransactions`.`item_id` " +
-            "WHERE `character_id` = :characterId AND `campaign_id` = :campaignId " +
-            "GROUP BY `item_id` " +
+            "LEFT JOIN `inventoryitems` ON `inventoryitems`.`id` = `itemtransactions`.`item_id` " +
+            "LEFT JOIN `items` ON `items`.`id` = `inventoryitems`.`item_id` " +
+            "WHERE `itemtransactions`.`character_id` = :characterId " +
+            "GROUP BY `itemtransactions`.`item_id` " +
             "HAVING SUM(`quantity`) <> 0", nativeQuery = true)
-    List<Object[]> getInventory(@Param("characterId") int characterId, @Param("campaignId") int campaignId);
+    List<Object[]> getInventory(@Param("campaignId") int campaignId, @Param("characterId") int characterId);
 }

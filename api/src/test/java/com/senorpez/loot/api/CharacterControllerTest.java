@@ -428,7 +428,7 @@ public class CharacterControllerTest {
     @Test
     public void postCharacter_ValidCampaign_ValidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(NEW_CHARACTER);
+        when(characterRepository.save(any(Character.class))).thenReturn(NEW_CHARACTER);
 
         mockMvc
                 .perform(
@@ -477,14 +477,14 @@ public class CharacterControllerTest {
                 ));
 
         verify(campaignRepository, times(1)).findById(anyInt());
-        verify(characterRepository, times(1)).save(any(com.senorpez.loot.api.Character.class));
+        verify(characterRepository, times(1)).save(any(Character.class));
         verifyNoMoreInteractions(campaignRepository, characterRepository);
     }
 
     @Test
     public void postCharacter_ValidCampaign_InvalidContentType() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(NEW_CHARACTER);
+        when(characterRepository.save(any(Character.class))).thenReturn(NEW_CHARACTER);
 
         mockMvc
                 .perform(
@@ -508,7 +508,7 @@ public class CharacterControllerTest {
     @Test
     public void postCharacter_ValidCampaign_InvalidSyntax() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.save(any(com.senorpez.loot.api.Character.class))).thenReturn(NEW_CHARACTER);
+        when(characterRepository.save(any(Character.class))).thenReturn(NEW_CHARACTER);
         String invalidJson = "{\"name\": \"}";
 
         mockMvc

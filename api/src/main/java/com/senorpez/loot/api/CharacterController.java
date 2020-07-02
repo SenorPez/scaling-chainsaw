@@ -1,5 +1,7 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.entity.Campaign;
+import com.senorpez.loot.api.entity.Character;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -50,7 +53,8 @@ public class CharacterController {
     ResponseEntity<CharacterModel> characters(@PathVariable final int campaignId, @PathVariable final int characterId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
+//        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
+        List<Object[]> inventory = Collections.emptyList();
 
         CharacterModel characterModel = assembler.toModel(character, inventory);
         characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
@@ -63,7 +67,8 @@ public class CharacterController {
     String characters(@PathVariable final int campaignId, @PathVariable final int characterId, Model model) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
+//        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
+        List<Object[]> inventory = Collections.emptyList();
 
         CharacterTemplate characterTemplate = new CharacterTemplate(character, inventory);
         model.addAttribute("character", characterTemplate);
@@ -74,7 +79,8 @@ public class CharacterController {
     @RolesAllowed("user")
     ResponseEntity<CharacterModel> addCharacter(@RequestHeader String Authorization, @RequestBody Character newCharacter, @PathVariable final int campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        Character character = characterRepository.save(newCharacter.setCampaign(campaign));
+//        Character character = characterRepository.save(newCharacter.setCampaign(campaign));
+        Character character = new Character();
 
         CharacterModel characterModel = assembler.toModel(character);
         characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
