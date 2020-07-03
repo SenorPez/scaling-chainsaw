@@ -46,7 +46,7 @@ public class CharacterController {
     ResponseEntity<CharacterModel> characters(@PathVariable final int campaignId, @PathVariable final int characterId) {
         final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         final Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        final CharacterModel characterModel = assembler.toModel(character);
+        final CharacterModel characterModel = assembler.toModel(character, itemTransactionRepository);
         return ResponseEntity.ok(characterModel);
     }
 
@@ -55,7 +55,7 @@ public class CharacterController {
     ResponseEntity<CharacterModel> addCharacter(@RequestHeader String Authorization, @RequestBody Character newCharacter, @PathVariable final int campaignId) {
         final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         final Character character = characterRepository.save(newCharacter.setCampaign(campaign));
-        final CharacterModel characterModel = assembler.toModel(character);
+        final CharacterModel characterModel = assembler.toModel(character, itemTransactionRepository);
         return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
     }
 }

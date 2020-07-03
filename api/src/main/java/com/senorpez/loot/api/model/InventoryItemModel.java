@@ -8,8 +8,6 @@ public class InventoryItemModel {
     @JsonProperty
     private int id;
     @JsonProperty
-    private int quantity;
-    @JsonProperty
     private String name;
     @JsonProperty
     private BigDecimal weight;
@@ -17,14 +15,11 @@ public class InventoryItemModel {
     private String details;
     @JsonProperty
     private Integer charges;
+    @JsonProperty
+    private Integer quantity;
 
     public InventoryItemModel setId(int id) {
         this.id = id;
-        return this;
-    }
-
-    public InventoryItemModel setQuantity(int quantity) {
-        this.quantity = quantity;
         return this;
     }
 
@@ -45,6 +40,11 @@ public class InventoryItemModel {
 
     public InventoryItemModel setCharges(Integer charges) {
         this.charges = charges;
+        return this;
+    }
+
+    public InventoryItemModel setQuantity(Integer quantity) {
+        this.quantity = quantity;
         return this;
     }
 }
