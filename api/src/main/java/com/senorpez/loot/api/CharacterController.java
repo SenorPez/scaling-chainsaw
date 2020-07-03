@@ -5,8 +5,10 @@ import com.senorpez.loot.api.entity.Character;
 import com.senorpez.loot.api.model.CharacterModel;
 import com.senorpez.loot.api.model.CharacterModelAssembler;
 import com.senorpez.loot.api.model.EmbeddedCharacterModel;
+import com.senorpez.loot.api.model.EmbeddedCharacterModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +32,8 @@ public class CharacterController {
     @Autowired
     private ItemTransactionRepository itemTransactionRepository;
 
-    private final CharacterModelAssembler<EmbeddedCharacterModel> collectionAssembler = new CharacterModelAssembler<>(CharacterController.class, EmbeddedCharacterModel.class);
-    private final CharacterModelAssembler<CharacterModel> assembler = new CharacterModelAssembler<>(CharacterController.class, CharacterModel.class);
+    private final EmbeddedCharacterModelAssembler collectionAssembler = new EmbeddedCharacterModelAssembler(CharacterController.class, EmbeddedCharacterModel.class);
+    private final CharacterModelAssembler assembler = new CharacterModelAssembler(CharacterController.class, CharacterModel.class);
 
     @GetMapping
     ResponseEntity<CollectionModel<EmbeddedCharacterModel>> characters(@PathVariable final int campaignId) {
@@ -44,35 +46,16 @@ public class CharacterController {
     ResponseEntity<CharacterModel> characters(@PathVariable final int campaignId, @PathVariable final int characterId) {
         final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         final Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        final CharacterModel characterModel = assembler.toSingleModel(character);
+        final CharacterModel characterModel = assembler.toModel(character);
         return ResponseEntity.ok(characterModel);
     }
-
-//    @GetMapping(value = "/{characterId}", produces = {TEXT_HTML_VALUE})
-//    String characters(@PathVariable final int campaignId, @PathVariable final int characterId, Model model) {
-////        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-////        Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-//////        List<Object[]> inventory = itemTransactionRepository.getInventory(characterId, campaignId);
-////        List<Object[]> inventory = Collections.emptyList();
-////
-////        CharacterTemplate characterTemplate = new CharacterTemplate(character, inventory);
-////        model.addAttribute("character", characterTemplate);
-////        return "character";
-//        return null;
-//    }
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
     ResponseEntity<CharacterModel> addCharacter(@RequestHeader String Authorization, @RequestBody Character newCharacter, @PathVariable final int campaignId) {
-//        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-////        Character character = characterRepository.save(newCharacter.setCampaign(campaign));
-//        Character character = new Character();
-//
-//        CharacterModel characterModel = assembler.toModel(character);
-//        characterModel.add(linkTo(CharacterController.class, campaignId).withRel("characters"));
-//        characterModel.add(linkTo(RootController.class).withRel("index"));
-//
-//        return ResponseEntity.created(characterModel.getRequiredLink("self").toUri()).body(characterModel);
-        return  null;
+        final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        final Character character = characterRepository.save(newCharacter.setCampaign(campaign));
+        final CharacterModel characterModel = assembler.toModel(character);
+        return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
     }
 }

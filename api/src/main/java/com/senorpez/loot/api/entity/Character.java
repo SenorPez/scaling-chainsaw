@@ -45,4 +45,9 @@ public class Character {
     public List<InventoryItem> getItems() {
         return items;
     }
+
+    public Character setCampaign(Campaign campaign) {
+        this.campaign = campaign;
+        return this;
+    }
 }

@@ -5,6 +5,7 @@ import com.senorpez.loot.api.CharacterController;
 import com.senorpez.loot.api.RootController;
 import com.senorpez.loot.api.entity.Campaign;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
 
@@ -28,7 +29,7 @@ public class CampaignModelAssembler extends RepresentationModelAssemblerSupport<
         return toModel(entity)
                 .add(linkTo(CharacterController.class, entity.getId()).withRel("characters"))
                 .add(linkTo(CampaignController.class).withRel("campaigns"))
-                .add(linkTo(RootController.class).withRel("index"));
+                .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX));
     }
 
     @Override
@@ -36,6 +37,6 @@ public class CampaignModelAssembler extends RepresentationModelAssemblerSupport<
     public CollectionModel<CampaignModel> toCollectionModel(@NonNull Iterable<? extends Campaign> entities) {
         return super.toCollectionModel(entities)
                 .add(linkTo(CampaignController.class).withSelfRel())
-                .add(linkTo(RootController.class).withRel("index"));
+                .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX));
     }
 }
