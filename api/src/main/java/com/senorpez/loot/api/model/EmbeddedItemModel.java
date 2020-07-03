@@ -11,9 +11,6 @@ public class EmbeddedItemModel extends RepresentationModel<EmbeddedItemModel> {
     @JsonProperty
     String name;
 
-    EmbeddedItemModel() {
-    }
-
     public EmbeddedItemModel setId(final int id) {
         this.id = id;
         return this;

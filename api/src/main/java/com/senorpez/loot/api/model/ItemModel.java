@@ -14,10 +14,6 @@ public class ItemModel extends RepresentationModel<ItemModel> {
     private String name;
     @JsonProperty
     private BigDecimal weight;
-    @JsonProperty
-    private String details;
-    @JsonProperty
-    private Integer charges;
 
     public ItemModel setId(int id) {
         this.id = id;
@@ -31,16 +27,6 @@ public class ItemModel extends RepresentationModel<ItemModel> {
 
     public ItemModel setWeight(BigDecimal weight) {
         this.weight = weight;
-        return this;
-    }
-
-    ItemModel setDetails(String details) {
-        this.details = details;
-        return this;
-    }
-
-    ItemModel setCharges(Integer charges) {
-        this.charges = charges;
         return this;
     }
 }

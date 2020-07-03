@@ -25,7 +25,8 @@ public class EmbeddedCharacterModelAssembler extends RepresentationModelAssemble
                 .setName(entity.getName());
     }
 
-    public CollectionModel<EmbeddedCharacterModel> toCollectionModel(Iterable<? extends Character> entities, final int campaignId) {
+    @NonNull
+    public CollectionModel<EmbeddedCharacterModel> toCollectionModel(@NonNull Iterable<? extends Character> entities, final int campaignId) {
         return super.toCollectionModel(entities)
                 .add(linkTo(CharacterController.class, campaignId).withRel("character"))
                 .add(linkTo(methodOn(CampaignController.class).campaigns(campaignId)).withRel("campaign"))
