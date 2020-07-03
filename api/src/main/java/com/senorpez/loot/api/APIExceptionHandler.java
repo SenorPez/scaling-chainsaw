@@ -1,6 +1,9 @@
 package com.senorpez.loot.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.senorpez.loot.api.exception.CampaignNotFoundException;
+import com.senorpez.loot.api.exception.CharacterNotFoundException;
+import com.senorpez.loot.api.exception.ItemNotFoundException;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

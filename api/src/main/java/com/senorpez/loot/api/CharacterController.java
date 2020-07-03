@@ -2,6 +2,8 @@ package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.entity.Character;
+import com.senorpez.loot.api.exception.CampaignNotFoundException;
+import com.senorpez.loot.api.exception.CharacterNotFoundException;
 import com.senorpez.loot.api.model.CharacterModel;
 import com.senorpez.loot.api.model.CharacterModelAssembler;
 import com.senorpez.loot.api.model.EmbeddedCharacterModel;

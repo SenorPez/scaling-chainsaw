@@ -1,7 +1,7 @@
-package com.senorpez.loot.api;
+package com.senorpez.loot.api.exception;
 
 public class CharacterNotFoundException extends RuntimeException {
-    CharacterNotFoundException(final int id) {
+    public CharacterNotFoundException(final int id) {
         super(String.format("Character with ID of %d not found", id));
     }
 }

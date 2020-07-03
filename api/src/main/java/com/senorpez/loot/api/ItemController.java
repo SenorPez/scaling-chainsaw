@@ -1,6 +1,7 @@
 package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.entity.Item;
+import com.senorpez.loot.api.exception.ItemNotFoundException;
 import com.senorpez.loot.api.model.EmbeddedItemModel;
 import com.senorpez.loot.api.model.EmbeddedItemModelAssembler;
 import com.senorpez.loot.api.model.ItemModel;

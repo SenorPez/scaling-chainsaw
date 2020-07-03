@@ -1,6 +1,7 @@
 package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.entity.Campaign;
+import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.model.CampaignModel;
 import com.senorpez.loot.api.model.CampaignModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;

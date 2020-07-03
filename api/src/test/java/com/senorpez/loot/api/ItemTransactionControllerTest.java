@@ -1,6 +1,8 @@
 package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.entity.ItemTransaction;
+import com.senorpez.loot.api.exception.CampaignNotFoundException;
+import com.senorpez.loot.api.exception.CharacterNotFoundException;
 import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Rule;
