@@ -59,15 +59,14 @@ public class ItemControllerTest {
             null
     );
     private static final BigDecimal newWeight = BigDecimal.valueOf(new Random().nextDouble());
-    private static final Integer newCharges = new Random().nextInt();
     private static final Item NEW_ITEM = new Item(
             new Random().nextInt(),
             "New Item",
             newWeight
     );
     private static final String NEW_ITEM_JSON = String.format(
-            "{\"name\": \"New Item\", \"weight\": %.2f, \"details\": \"Adding a new item\", \"charges\": %d}",
-            newWeight, newCharges
+            "{\"name\": \"New Item\", \"weight\": %.2f}",
+            newWeight
     );
 
     private static final Item NEW_MINIMAL_ITEM = new Item(
@@ -204,8 +203,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(FIRST_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_ITEM.getName())))
                 .andExpect(jsonPath("$.weight", is(FIRST_ITEM.getWeight().doubleValue())))
-//                .andExpect(jsonPath("$.details", is(FIRST_ITEM.getDetails())))
-//                .andExpect(jsonPath("$.charges", is(FIRST_ITEM.getCharges())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", FIRST_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -230,8 +227,6 @@ public class ItemControllerTest {
                                 fieldWithPath("id").description("Item ID"),
                                 fieldWithPath("name").description("Item name"),
                                 fieldWithPath("weight").description("Item weight (lbs.); may be null"),
-                                fieldWithPath("details").description("Item details; may be null"),
-                                fieldWithPath("charges").description("Item charges; may be null"),
                                 subsectionWithPath("_links").description("Links to other resources")
                         ),
                         links(
@@ -258,8 +253,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(SECOND_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(SECOND_ITEM.getName())))
                 .andExpect(jsonPath("$.weight", is(nullValue())))
-                .andExpect(jsonPath("$.details", is(nullValue())))
-                .andExpect(jsonPath("$.charges", is(nullValue())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", SECOND_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -388,9 +381,7 @@ public class ItemControllerTest {
                         ),
                         requestFields(
                                 fieldWithPath("name").description("Item name"),
-                                fieldWithPath("weight").description("Item weight (lbs.); may be null").optional(),
-                                fieldWithPath("details").description("Item details; may be null").optional(),
-                                fieldWithPath("charges").description("Item charges; may be null").optional()
+                                fieldWithPath("weight").description("Item weight (lbs.); may be null").optional()
                         ),
                         responseHeaders(
                                 headerWithName("Content-Type").description("Content type of response"),
@@ -400,8 +391,6 @@ public class ItemControllerTest {
                                 fieldWithPath("id").description("Item ID"),
                                 fieldWithPath("name").description("Item name"),
                                 fieldWithPath("weight").description("Item weight (lbs.); may be null"),
-                                fieldWithPath("details").description("Item details; may be null"),
-                                fieldWithPath("charges").description("Item charges; may be null"),
                                 subsectionWithPath("_links").description("Links to other resources")
                         ),
                         links(
@@ -434,8 +423,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(NEW_MINIMAL_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(NEW_MINIMAL_ITEM.getName())))
                 .andExpect(jsonPath("$.weight", is(nullValue())))
-                .andExpect(jsonPath("$.details", is(nullValue())))
-                .andExpect(jsonPath("$.charges", is(nullValue())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", NEW_MINIMAL_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -510,8 +497,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(NEW_ITEM.getId())))
                 .andExpect(jsonPath("$.name", is(NEW_ITEM.getName())))
                 .andExpect(jsonPath("$.weight", is(closeTo(NEW_ITEM.getWeight().doubleValue(), 0.01))))
-//                .andExpect(jsonPath("$.details", is(NEW_ITEM.getDetails())))
-//                .andExpect(jsonPath("$.charges", is(NEW_ITEM.getCharges())))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/items/%d", NEW_ITEM.getId()))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -531,9 +516,7 @@ public class ItemControllerTest {
                         ),
                         requestFields(
                                 fieldWithPath("name").description("Item name; may be null to leave value unchanged"),
-                                fieldWithPath("weight").description("Item weight (lbs.); may be null to leave value unchanged").optional(),
-                                fieldWithPath("details").description("Item details; may be null to leave value unchanged").optional(),
-                                fieldWithPath("charges").description("Item charges; may be null to leave value unchanged").optional()
+                                fieldWithPath("weight").description("Item weight (lbs.); may be null to leave value unchanged").optional()
                         ),
                         responseHeaders(
                                 headerWithName("Content-Type").description("Content type of response"),
@@ -543,8 +526,6 @@ public class ItemControllerTest {
                                 fieldWithPath("id").description("Item ID"),
                                 fieldWithPath("name").description("Item name"),
                                 fieldWithPath("weight").description("Item weight (lbs.); may be null"),
-                                fieldWithPath("details").description("Item details; may be null"),
-                                fieldWithPath("charges").description("Item charges; may be null"),
                                 subsectionWithPath("_links").description("Links to other resources")
                         ),
                         links(

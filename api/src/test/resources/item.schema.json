@@ -50,12 +50,6 @@
     "weight": {
       "type": ["null", "number"]
     },
-    "details": {
-      "type": ["string", "null"]
-    },
-    "charges": {
-      "type": ["null", "number"]
-    },
     "_links": {
       "type": "object",
       "properties": {
@@ -86,8 +80,6 @@
     "id",
     "name",
     "weight",
-    "details",
-    "charges",
     "_links"
   ]
 }
