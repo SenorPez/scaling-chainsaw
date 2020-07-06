@@ -1,6 +1,7 @@
 package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.controller.ItemTransactionController;
+import com.senorpez.loot.api.entity.InventoryItem;
 import com.senorpez.loot.api.entity.ItemTransaction;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.exception.CharacterNotFoundException;
@@ -47,10 +48,11 @@ public class ItemTransactionControllerTest {
     private static final String OBJECT_SCHEMA = "character.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
+    private static final InventoryItem FIRST_INV_ITEM = new InventoryItem(FIRST_ITEM);
+
     private static final Integer newQuantity = new Random().nextInt();
     private static final ItemTransaction NEW_TRANSACTION = new ItemTransaction(
-            new Random().nextInt(),
-            FIRST_ITEM,
+            FIRST_INV_ITEM,
             newQuantity,
             "New Transaction"
     );
@@ -119,7 +121,7 @@ public class ItemTransactionControllerTest {
                 .andExpect(jsonPath("$._links.loot-api:characters", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))));
 
         verify(itemTransactionRepository, times(1)).save(any(ItemTransaction.class));
-        verify(itemTransactionRepository, times(1)).getInventory(anyInt(), anyInt());
+        verify(itemTransactionRepository, times(1)).getQuantity(anyInt());
         verifyNoMoreInteractions(itemTransactionRepository);
     }
 

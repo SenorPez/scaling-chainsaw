@@ -26,6 +26,10 @@ public class InventoryItem {
     public InventoryItem() {
     }
 
+    public InventoryItem(Item item) {
+        this.item = item;
+    }
+
     InventoryItem(Object[] databaseQueryResult) {
         this.id = ((Number) databaseQueryResult[0]).intValue();
         this.item.name = (String) databaseQueryResult[1];

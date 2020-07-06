@@ -50,7 +50,6 @@ public class ItemTransactionController {
         final ItemTransaction newItemTransaction = new ItemTransaction(
                 incomingValue.getItem(),
                 incomingValue.getQuantity(),
-                incomingValue.getDatetime(),
                 incomingValue.getRemark()
         );
         itemTransactionRepository.save(newItemTransaction);

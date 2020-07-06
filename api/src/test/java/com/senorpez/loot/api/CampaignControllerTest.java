@@ -55,10 +55,10 @@ public class CampaignControllerTest {
     private static final String OBJECT_SCHEMA = "campaign.schema.json";
     private static final String ERROR_SCHEMA = "error.schema.json";
 
-    static final Campaign FIRST_CAMPAIGN = new Campaign(1, "First Campaign");
-    private static final Campaign SECOND_CAMPAIGN = new Campaign(2, "Second Campaign");
-    private static final String NEW_CAMPAIGN_JSON = "{\"name\": \"New Campaign\"}";
-    private static final Campaign NEW_CAMPAIGN = new Campaign(new Random().nextInt(), "New Campaign");
+    static Campaign FIRST_CAMPAIGN = new Campaign(1, "First Campaign");
+    static final Campaign SECOND_CAMPAIGN = new Campaign(2, "Second Campaign");
+    static final String NEW_CAMPAIGN_JSON = "{\"name\": \"New Campaign\"}";
+    static final Campaign NEW_CAMPAIGN = new Campaign(new Random().nextInt(), "New Campaign");
 
     @InjectMocks
     CampaignController campaignController;

@@ -36,4 +36,9 @@ public class Campaign {
     public List<Character> getCharacters() {
         return characters;
     }
+
+    public Campaign setCharacters(List<Character> characters) {
+        this.characters = characters;
+        return this;
+    }
 }

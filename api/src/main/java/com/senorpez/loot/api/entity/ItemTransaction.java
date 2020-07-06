@@ -19,7 +19,7 @@ public class ItemTransaction {
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date datetime;
+    private final Date datetime = new Date();
 
     @Column
     private String remark;
@@ -27,10 +27,9 @@ public class ItemTransaction {
     public ItemTransaction() {
     }
 
-    public ItemTransaction(InventoryItem item, int quantity, Date datetime, String remark) {
+    public ItemTransaction(InventoryItem item, int quantity, String remark) {
         this.item = item;
         this.quantity = quantity;
-        this.datetime = datetime;
         this.remark = remark;
     }
 

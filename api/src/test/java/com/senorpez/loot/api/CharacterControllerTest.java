@@ -1,6 +1,7 @@
 package com.senorpez.loot.api;
 
 import com.senorpez.loot.api.controller.CharacterController;
+import com.senorpez.loot.api.entity.Character;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.exception.CharacterNotFoundException;
 import com.senorpez.loot.api.repository.CampaignRepository;
@@ -60,10 +61,10 @@ public class CharacterControllerTest {
     private static final Object[] FIRST_INVENTORY_ARRAY = new Object[]{1, new BigInteger(String.valueOf(329)), "Gold", null, null, null};
     private static final Object[] SECOND_INVENTORY_ARRAY = new Object[]{2, new BigInteger(String.valueOf(69)), "Likes", null, null, null};
 
-    static final Character FIRST_CHARACTER = new Character(1, FIRST_CAMPAIGN, "First Character");
-    private static final Character SECOND_CHARACTER = new Character(2, FIRST_CAMPAIGN, "Second Character");
-    private static final Character NEW_CHARACTER = new Character(new Random().nextInt(), FIRST_CAMPAIGN, "New Character");
-    private static final String NEW_CHARACTER_JSON = "{\"name\": \"New Character\"}";
+    static final Character FIRST_CHARACTER = new Character(1, FIRST_CAMPAIGN, "First Character", Collections.emptyList());
+    static final Character SECOND_CHARACTER = new Character(2, FIRST_CAMPAIGN, "Second Character", Collections.emptyList());
+    static final Character NEW_CHARACTER = new Character(new Random().nextInt(), FIRST_CAMPAIGN, "New Character", Collections.emptyList());
+    static final String NEW_CHARACTER_JSON = "{\"name\": \"New Character\"}";
 
     @InjectMocks
     CharacterController characterController;
@@ -82,6 +83,8 @@ public class CharacterControllerTest {
 
     @Before
     public void setUp() {
+        FIRST_CAMPAIGN.setCharacters(Arrays.asList(FIRST_CHARACTER, SECOND_CHARACTER));
+
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(characterController)
@@ -94,7 +97,6 @@ public class CharacterControllerTest {
     @Test
     public void getAllCharacters_ValidCampaign_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_CHARACTER, SECOND_CHARACTER));
 
         mockMvc.perform(get(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
                 .andExpect(status().isOk())
@@ -154,14 +156,12 @@ public class CharacterControllerTest {
         verify(campaignRepository, times(1)).findById(anyInt());
         verifyNoMoreInteractions(campaignRepository);
 
-        verify(characterRepository, times(1)).findByCampaign(any());
-        verifyNoMoreInteractions(characterRepository);
+        verifyNoInteractions(characterRepository);
     }
 
     @Test
     public void getAllCharacters_ValidCampaign_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_CHARACTER, SECOND_CHARACTER));
 
         mockMvc.perform(get(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
@@ -178,7 +178,6 @@ public class CharacterControllerTest {
     @Test
     public void getAllCharacters_ValidCampaign_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
-        when(characterRepository.findByCampaign(any())).thenReturn(Arrays.asList(FIRST_CHARACTER, SECOND_CHARACTER));
 
         mockMvc.perform(put(String.format("/campaigns/%d/characters", FIRST_CAMPAIGN.getId())).accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
@@ -195,7 +194,6 @@ public class CharacterControllerTest {
     @Test
     public void getAllCharacters_InvalidCampaign_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(characterRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
         mockMvc.perform(get("/campaigns/8675309/characters").accept(HAL_JSON))
                 .andExpect(status().isNotFound())
@@ -214,7 +212,6 @@ public class CharacterControllerTest {
     @Test
     public void getAllCharacters_InvalidCampaign_InvalidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(characterRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
         mockMvc.perform(get("/campaigns/8675309/characters").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
@@ -231,7 +228,6 @@ public class CharacterControllerTest {
     @Test
     public void getAllCharacters_InvalidCampaign_InvalidMethod() throws Exception {
         when(campaignRepository.findById(anyInt())).thenThrow(new CampaignNotFoundException(8675309));
-        when(characterRepository.findByCampaign(any())).thenThrow(new CampaignNotFoundException(8675309));
 
         mockMvc.perform(put("/campaigns/8675309/characters").accept(HAL_JSON))
                 .andExpect(status().isMethodNotAllowed())
@@ -249,7 +245,7 @@ public class CharacterControllerTest {
     public void getSingleCharacter_ValidCampaign_ValidCharacter_ValidAcceptHeader() throws Exception {
         when(campaignRepository.findById(anyInt())).thenReturn(Optional.of(FIRST_CAMPAIGN));
         when(characterRepository.findByCampaignAndId(any(), anyInt())).thenReturn(Optional.of(FIRST_CHARACTER));
-        when(itemTransactionRepository.getInventory(anyInt(), anyInt())).thenReturn(Arrays.asList(FIRST_INVENTORY_ARRAY, SECOND_INVENTORY_ARRAY));
+        when(itemTransactionRepository.getQuantity(anyInt())).thenReturn(1);
 
         mockMvc.perform(get(String.format("/campaigns/%d/characters/%d", FIRST_CAMPAIGN.getId(), FIRST_CHARACTER.getId())).accept(HAL_JSON))
                 .andExpect(status().isOk())

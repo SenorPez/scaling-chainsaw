@@ -23,7 +23,7 @@ public class Character {
     public Character() {
     }
 
-    public Character(int id, String name, Campaign campaign, List<InventoryItem> items) {
+    public Character(int id, Campaign campaign, String name, List<InventoryItem> items) {
         this.id = id;
         this.name = name;
         this.campaign = campaign;
