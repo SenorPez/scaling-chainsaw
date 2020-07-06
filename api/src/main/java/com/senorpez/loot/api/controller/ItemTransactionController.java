@@ -1,9 +1,5 @@
 package com.senorpez.loot.api.controller;
 
-import com.senorpez.loot.api.CampaignRepository;
-import com.senorpez.loot.api.CharacterRepository;
-import com.senorpez.loot.api.ItemRepository;
-import com.senorpez.loot.api.ItemTransactionRepository;
 import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.entity.Character;
 import com.senorpez.loot.api.entity.Item;
@@ -13,6 +9,10 @@ import com.senorpez.loot.api.exception.CharacterNotFoundException;
 import com.senorpez.loot.api.exception.ItemNotFoundException;
 import com.senorpez.loot.api.model.CharacterModel;
 import com.senorpez.loot.api.model.CharacterModelAssembler;
+import com.senorpez.loot.api.repository.CampaignRepository;
+import com.senorpez.loot.api.repository.CharacterRepository;
+import com.senorpez.loot.api.repository.ItemRepository;
+import com.senorpez.loot.api.repository.ItemTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

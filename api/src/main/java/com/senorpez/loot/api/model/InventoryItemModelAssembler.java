@@ -1,7 +1,7 @@
 package com.senorpez.loot.api.model;
 
-import com.senorpez.loot.api.ItemTransactionRepository;
 import com.senorpez.loot.api.entity.InventoryItem;
+import com.senorpez.loot.api.repository.ItemTransactionRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 

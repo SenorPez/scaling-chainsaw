@@ -1,9 +1,9 @@
 package com.senorpez.loot.api.model;
 
-import com.senorpez.loot.api.ItemTransactionRepository;
 import com.senorpez.loot.api.controller.CharacterController;
 import com.senorpez.loot.api.controller.RootController;
 import com.senorpez.loot.api.entity.Character;
+import com.senorpez.loot.api.repository.ItemTransactionRepository;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;

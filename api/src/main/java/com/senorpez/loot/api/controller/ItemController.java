@@ -1,12 +1,12 @@
 package com.senorpez.loot.api.controller;
 
-import com.senorpez.loot.api.ItemRepository;
 import com.senorpez.loot.api.entity.Item;
 import com.senorpez.loot.api.exception.ItemNotFoundException;
 import com.senorpez.loot.api.model.EmbeddedItemModel;
 import com.senorpez.loot.api.model.EmbeddedItemModelAssembler;
 import com.senorpez.loot.api.model.ItemModel;
 import com.senorpez.loot.api.model.ItemModelAssembler;
+import com.senorpez.loot.api.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;

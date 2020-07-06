@@ -1,8 +1,5 @@
 package com.senorpez.loot.api.controller;
 
-import com.senorpez.loot.api.CampaignRepository;
-import com.senorpez.loot.api.CharacterRepository;
-import com.senorpez.loot.api.ItemTransactionRepository;
 import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.entity.Character;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
@@ -11,6 +8,9 @@ import com.senorpez.loot.api.model.CharacterModel;
 import com.senorpez.loot.api.model.CharacterModelAssembler;
 import com.senorpez.loot.api.model.EmbeddedCharacterModel;
 import com.senorpez.loot.api.model.EmbeddedCharacterModelAssembler;
+import com.senorpez.loot.api.repository.CampaignRepository;
+import com.senorpez.loot.api.repository.CharacterRepository;
+import com.senorpez.loot.api.repository.ItemTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;

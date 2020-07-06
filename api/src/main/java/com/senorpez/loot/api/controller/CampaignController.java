@@ -1,10 +1,10 @@
 package com.senorpez.loot.api.controller;
 
-import com.senorpez.loot.api.CampaignRepository;
 import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.model.CampaignModel;
 import com.senorpez.loot.api.model.CampaignModelAssembler;
+import com.senorpez.loot.api.repository.CampaignRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;

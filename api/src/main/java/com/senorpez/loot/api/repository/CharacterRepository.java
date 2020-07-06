@@ -1,4 +1,4 @@
-package com.senorpez.loot.api;
+package com.senorpez.loot.api.repository;
 
 import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.entity.Character;
