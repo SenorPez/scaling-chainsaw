@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.controller.ItemController;
 import com.senorpez.loot.api.entity.Item;
 import com.senorpez.loot.api.exception.ItemNotFoundException;
 import org.junit.Before;

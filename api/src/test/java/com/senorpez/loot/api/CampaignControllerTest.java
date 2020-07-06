@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.controller.CampaignController;
 import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import org.junit.Before;

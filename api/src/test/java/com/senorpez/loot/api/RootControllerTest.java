@@ -1,5 +1,6 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.controller.RootController;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

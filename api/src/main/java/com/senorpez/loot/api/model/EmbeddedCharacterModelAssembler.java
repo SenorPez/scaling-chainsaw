@@ -1,8 +1,8 @@
 package com.senorpez.loot.api.model;
 
-import com.senorpez.loot.api.CampaignController;
-import com.senorpez.loot.api.CharacterController;
-import com.senorpez.loot.api.RootController;
+import com.senorpez.loot.api.controller.CampaignController;
+import com.senorpez.loot.api.controller.CharacterController;
+import com.senorpez.loot.api.controller.RootController;
 import com.senorpez.loot.api.entity.Character;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;

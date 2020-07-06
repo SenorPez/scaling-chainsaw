@@ -19,12 +19,19 @@ public class ItemTransaction {
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private final Date datetime = new Date();
+    private Date datetime;
 
     @Column
     private String remark;
 
     public ItemTransaction() {
+    }
+
+    public ItemTransaction(InventoryItem item, int quantity, Date datetime, String remark) {
+        this.item = item;
+        this.quantity = quantity;
+        this.datetime = datetime;
+        this.remark = remark;
     }
 
     public int getId() {

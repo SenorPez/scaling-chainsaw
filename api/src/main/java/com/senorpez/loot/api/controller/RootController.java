@@ -1,4 +1,4 @@
-package com.senorpez.loot.api;
+package com.senorpez.loot.api.controller;
 
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;

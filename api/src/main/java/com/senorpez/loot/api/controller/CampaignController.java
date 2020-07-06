@@ -1,5 +1,6 @@
-package com.senorpez.loot.api;
+package com.senorpez.loot.api.controller;
 
+import com.senorpez.loot.api.CampaignRepository;
 import com.senorpez.loot.api.entity.Campaign;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.model.CampaignModel;

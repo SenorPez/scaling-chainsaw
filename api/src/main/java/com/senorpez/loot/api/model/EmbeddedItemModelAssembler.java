@@ -1,7 +1,7 @@
 package com.senorpez.loot.api.model;
 
-import com.senorpez.loot.api.ItemController;
-import com.senorpez.loot.api.RootController;
+import com.senorpez.loot.api.controller.ItemController;
+import com.senorpez.loot.api.controller.RootController;
 import com.senorpez.loot.api.entity.Item;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
