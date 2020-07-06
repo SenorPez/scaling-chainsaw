@@ -57,7 +57,7 @@ public class ItemTransactionControllerTest {
             "New Transaction"
     );
     private static final String NEW_TRANSACTION_JSON = String.format(
-            "{\"item\": %d, \"quantity\": %d, \"remark\": \"New Transaction\"}",
+            "{\"item_id\": %d, \"quantity\": %d, \"remark\": \"New Transaction\"}",
             FIRST_ITEM.getId(), newQuantity);
 
     @InjectMocks
@@ -121,7 +121,6 @@ public class ItemTransactionControllerTest {
                 .andExpect(jsonPath("$._links.loot-api:characters", hasEntry("href", String.format("http://localhost:8080/campaigns/%d/characters", FIRST_CAMPAIGN.getId()))));
 
         verify(itemTransactionRepository, times(1)).save(any(ItemTransaction.class));
-        verify(itemTransactionRepository, times(1)).getQuantity(anyInt());
         verifyNoMoreInteractions(itemTransactionRepository);
     }
 
