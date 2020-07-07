@@ -44,8 +44,8 @@ public class ItemTransactionController {
     @PostMapping(consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
     ResponseEntity<CharacterModel> addItemTransaction(@RequestHeader String Authorization, @RequestBody IncomingTransaction incomingValue, @PathVariable final int campaignId, @PathVariable final int characterId) {
-        final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        final Character character = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final Item item = itemRepository.findById(incomingValue.getItem_id()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem_id()));
         final ItemTransaction newItemTransaction = new ItemTransaction(
                 new InventoryItem(item),
@@ -54,7 +54,7 @@ public class ItemTransactionController {
         );
         itemTransactionRepository.save(newItemTransaction);
 
-        final Character updatedCharacter = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        final Character updatedCharacter = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final CharacterModel characterModel = assembler.toModel(updatedCharacter, itemTransactionRepository);
         return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
     }

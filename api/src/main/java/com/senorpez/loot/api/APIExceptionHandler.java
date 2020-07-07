@@ -23,6 +23,10 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 
 @RestControllerAdvice
 public class APIExceptionHandler {
+    // TODO: 7/6/2020 Handle JSON deserialization errors (as proper HTTP code).
+    // MismatchedInputException
+    // JsonParseException
+    
     @ExceptionHandler({
             CampaignNotFoundException.class,
             ItemNotFoundException.class,

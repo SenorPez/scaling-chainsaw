@@ -1,6 +1,6 @@
 package com.senorpez.loot.api.controller;
 
-import com.senorpez.loot.api.entity.Campaign;
+import com.senorpez.loot.api.entity.CampaignEntity;
 import com.senorpez.loot.api.entity.Character;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.exception.CharacterNotFoundException;
@@ -42,15 +42,15 @@ public class CharacterController {
 
     @GetMapping
     ResponseEntity<CollectionModel<EmbeddedCharacterModel>> characters(@PathVariable final int campaignId) {
-        final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final CollectionModel<EmbeddedCharacterModel> characterModels = collectionAssembler.toCollectionModel(campaign.getCharacters(), campaignId);
+        final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        final CollectionModel<EmbeddedCharacterModel> characterModels = collectionAssembler.toCollectionModel(campaignEntity.getCharacters(), campaignId);
         return ResponseEntity.ok(characterModels);
     }
 
     @GetMapping(value = "/{characterId}", produces = {HAL_JSON_VALUE})
     ResponseEntity<CharacterModel> characters(@PathVariable final int campaignId, @PathVariable final int characterId) {
-        final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final Character character = characterRepository.findByCampaignAndId(campaign, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        final Character character = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final CharacterModel characterModel = assembler.toModel(character, itemTransactionRepository);
         return ResponseEntity.ok(characterModel);
     }
@@ -58,8 +58,8 @@ public class CharacterController {
     @PostMapping(consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
     ResponseEntity<CharacterModel> addCharacter(@RequestHeader String Authorization, @RequestBody Character newCharacter, @PathVariable final int campaignId) {
-        final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final Character character = characterRepository.save(newCharacter.setCampaign(campaign));
+        final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        final Character character = characterRepository.save(newCharacter.setCampaignEntity(campaignEntity));
         final CharacterModel characterModel = assembler.toModel(character, itemTransactionRepository);
         return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
     }

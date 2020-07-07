@@ -20,7 +20,7 @@ public class EmbeddedCharacterModelAssembler extends RepresentationModelAssemble
     @Override
     @NonNull
     public EmbeddedCharacterModel toModel(@NonNull Character entity) {
-        return createModelWithId(entity.getId(), entity, entity.getCampaign().getId())
+        return createModelWithId(entity.getId(), entity, entity.getCampaignEntity().getId())
                 .setId(entity.getId())
                 .setName(entity.getName());
     }

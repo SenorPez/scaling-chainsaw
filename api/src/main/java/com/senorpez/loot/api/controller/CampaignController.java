@@ -1,6 +1,6 @@
 package com.senorpez.loot.api.controller;
 
-import com.senorpez.loot.api.entity.Campaign;
+import com.senorpez.loot.api.entity.CampaignEntity;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.model.CampaignModel;
 import com.senorpez.loot.api.model.CampaignModelAssembler;
@@ -33,16 +33,16 @@ public class CampaignController {
 
     @GetMapping("/{campaignId}")
     public ResponseEntity<CampaignModel> campaigns(@PathVariable final int campaignId) {
-        final Campaign campaign = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final CampaignModel campaignModel = assembler.toSingleModel(campaign);
+        final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        final CampaignModel campaignModel = assembler.toSingleModel(campaignEntity);
         return ResponseEntity.ok(campaignModel);
     }
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
-    ResponseEntity<CampaignModel> addCampaign(@RequestHeader String Authorization, @RequestBody Campaign newCampaign) {
-        final Campaign campaign = campaignRepository.save(newCampaign);
-        final CampaignModel campaignModel = assembler.toSingleModel(campaign);
+    ResponseEntity<CampaignModel> addCampaign(@RequestHeader String Authorization, @RequestBody CampaignEntity newCampaign) {
+        final CampaignEntity campaignEntity = campaignRepository.save(newCampaign);
+        final CampaignModel campaignModel = assembler.toSingleModel(campaignEntity);
         return ResponseEntity.created(campaignModel.getRequiredLink("self").toUri()).body(campaignModel);
     }
 }

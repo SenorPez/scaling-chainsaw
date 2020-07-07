@@ -14,7 +14,7 @@ public class Character {
     private String name;
 
     @ManyToOne
-    private Campaign campaign;
+    private CampaignEntity campaignEntity;
 
     @JoinColumn(name = "character_id")
     @OneToMany
@@ -23,10 +23,10 @@ public class Character {
     public Character() {
     }
 
-    public Character(int id, Campaign campaign, String name, List<InventoryItem> items) {
+    public Character(int id, CampaignEntity campaignEntity, String name, List<InventoryItem> items) {
         this.id = id;
         this.name = name;
-        this.campaign = campaign;
+        this.campaignEntity = campaignEntity;
         this.items = items;
     }
 
@@ -38,16 +38,16 @@ public class Character {
         return name;
     }
 
-    public Campaign getCampaign() {
-        return campaign;
+    public CampaignEntity getCampaignEntity() {
+        return campaignEntity;
     }
 
     public List<InventoryItem> getItems() {
         return items;
     }
 
-    public Character setCampaign(Campaign campaign) {
-        this.campaign = campaign;
+    public Character setCampaignEntity(CampaignEntity campaignEntity) {
+        this.campaignEntity = campaignEntity;
         return this;
     }
 }

@@ -20,10 +20,10 @@ public class CharacterModelAssembler extends RepresentationModelAssemblerSupport
     @Override
     @NonNull
     public CharacterModel toModel(@NonNull Character entity) {
-        return createModelWithId(entity.getId(), entity, entity.getCampaign().getId())
+        return createModelWithId(entity.getId(), entity, entity.getCampaignEntity().getId())
                 .setId(entity.getId())
                 .setName(entity.getName())
-                .add(linkTo(CharacterController.class, entity.getCampaign().getId()).withRel("characters"))
+                .add(linkTo(CharacterController.class, entity.getCampaignEntity().getId()).withRel("characters"))
                 .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX));
     }
 

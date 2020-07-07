@@ -5,7 +5,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "campaigns")
-public class Campaign {
+public class CampaignEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -17,10 +17,10 @@ public class Campaign {
     @OneToMany
     private List<Character> characters;
 
-    public Campaign() {
+    public CampaignEntity() {
     }
 
-    public Campaign(int id, String name) {
+    public CampaignEntity(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -37,7 +37,7 @@ public class Campaign {
         return characters;
     }
 
-    public Campaign setCharacters(List<Character> characters) {
+    public CampaignEntity setCharacters(List<Character> characters) {
         this.characters = characters;
         return this;
     }
