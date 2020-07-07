@@ -11,7 +11,7 @@ public class InventoryItem {
     private int id;
 
     @ManyToOne
-    private Item item;
+    private ItemEntity itemEntity;
 
     @ManyToOne
     private CharacterEntity characterEntity;
@@ -26,14 +26,14 @@ public class InventoryItem {
     public InventoryItem() {
     }
 
-    public InventoryItem(Item item) {
-        this.item = item;
+    public InventoryItem(ItemEntity itemEntity) {
+        this.itemEntity = itemEntity;
     }
 
     InventoryItem(Object[] databaseQueryResult) {
         this.id = ((Number) databaseQueryResult[0]).intValue();
-        this.item.name = (String) databaseQueryResult[1];
-        this.item.weight = databaseQueryResult[2] == null ? null : BigDecimal.valueOf(((Number) databaseQueryResult[2]).doubleValue());
+        this.itemEntity.name = (String) databaseQueryResult[1];
+        this.itemEntity.weight = databaseQueryResult[2] == null ? null : BigDecimal.valueOf(((Number) databaseQueryResult[2]).doubleValue());
         this.quantity = ((Number) databaseQueryResult[3]).intValue();
         this.details = databaseQueryResult[4] == null ? null : (String) databaseQueryResult[4];
         this.charges = databaseQueryResult[5] == null ? null : ((Number) databaseQueryResult[5]).intValue();
@@ -43,8 +43,8 @@ public class InventoryItem {
         return id;
     }
 
-    public Item getItem() {
-        return item;
+    public ItemEntity getItemEntity() {
+        return itemEntity;
     }
 
     public Integer getQuantity() {

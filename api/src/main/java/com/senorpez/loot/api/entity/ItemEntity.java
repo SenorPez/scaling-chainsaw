@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "items")
-public class Item {
+public class ItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected int id;
@@ -16,10 +16,10 @@ public class Item {
     @Column(precision = 19, scale = 3)
     protected BigDecimal weight;
 
-    public Item() {
+    public ItemEntity() {
     }
 
-    public Item(Integer id, String name, BigDecimal weight) {
+    public ItemEntity(Integer id, String name, BigDecimal weight) {
         this.id = id;
         this.name = name;
         this.weight = weight;

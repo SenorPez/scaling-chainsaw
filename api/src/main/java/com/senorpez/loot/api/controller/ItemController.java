@@ -1,6 +1,6 @@
 package com.senorpez.loot.api.controller;
 
-import com.senorpez.loot.api.entity.Item;
+import com.senorpez.loot.api.entity.ItemEntity;
 import com.senorpez.loot.api.exception.ItemNotFoundException;
 import com.senorpez.loot.api.model.EmbeddedItemModel;
 import com.senorpez.loot.api.model.EmbeddedItemModelAssembler;
@@ -38,29 +38,29 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     ResponseEntity<ItemModel> items(@PathVariable final int itemId) {
-        final Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
-        final ItemModel itemModel = assembler.toModel(item);
+        final ItemEntity itemEntity = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
+        final ItemModel itemModel = assembler.toModel(itemEntity);
         return ResponseEntity.ok(itemModel);
     }
 
     @PostMapping(consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
-    ResponseEntity<ItemModel> addItem(@RequestHeader String Authorization, @RequestBody final Item newItem) {
-        final Item item = itemRepository.save(newItem);
-        final ItemModel itemModel = assembler.toModel(item);
+    ResponseEntity<ItemModel> addItem(@RequestHeader String Authorization, @RequestBody final ItemEntity newItemEntity) {
+        final ItemEntity itemEntity = itemRepository.save(newItemEntity);
+        final ItemModel itemModel = assembler.toModel(itemEntity);
         return ResponseEntity.created(itemModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(itemModel);
     }
 
     @PutMapping(value = "/{itemId}", consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
-    ResponseEntity<ItemModel> updateItem(@RequestHeader String Authorization, @PathVariable final int itemId, @RequestBody final Item incomingItem) {
-        final Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
-        final Item updateItem = new Item(
-                item.getId(),
-                Optional.of(incomingItem.getName()).orElseGet(item::getName),
-                Optional.ofNullable(incomingItem.getWeight()).orElseGet(item::getWeight)
+    ResponseEntity<ItemModel> updateItem(@RequestHeader String Authorization, @PathVariable final int itemId, @RequestBody final ItemEntity incomingItemEntity) {
+        final ItemEntity itemEntity = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
+        final ItemEntity updateItemEntity = new ItemEntity(
+                itemEntity.getId(),
+                Optional.of(incomingItemEntity.getName()).orElseGet(itemEntity::getName),
+                Optional.ofNullable(incomingItemEntity.getWeight()).orElseGet(itemEntity::getWeight)
         );
-        final ItemModel itemModel = assembler.toModel(itemRepository.save(updateItem));
+        final ItemModel itemModel = assembler.toModel(itemRepository.save(updateItemEntity));
         return ResponseEntity.created(itemModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(itemModel);
     }
 }

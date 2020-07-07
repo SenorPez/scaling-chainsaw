@@ -14,8 +14,8 @@ public class InventoryItemModelAssembler {
         final Integer quantity = itemTransactionRepository.getQuantity(item.getId());
         return new InventoryItemModel()
                 .setId(item.getId())
-                .setName(item.getItem().getName())
-                .setWeight(item.getItem().getWeight())
+                .setName(item.getItemEntity().getName())
+                .setWeight(item.getItemEntity().getWeight())
                 .setDetails(item.getDetails())
                 .setCharges(item.getCharges())
                 .setQuantity(quantity);
