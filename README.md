@@ -49,7 +49,7 @@ Bot provides a Node.js Discord Bot for manipulation of inventory items.
 
 The current version of **Frontend** is **1.0.0**.
 
-Frontend provides an HTML interface for viewing characters and loot.
+Frontend provides an HTML interface for viewing characterEntities and loot.
 
 ### Changelog
 

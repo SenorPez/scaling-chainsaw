@@ -15,7 +15,7 @@ public class CampaignEntity {
 
     @JoinColumn(name = "campaign_id")
     @OneToMany
-    private List<Character> characters;
+    private List<CharacterEntity> characterEntities;
 
     public CampaignEntity() {
     }
@@ -33,12 +33,12 @@ public class CampaignEntity {
         return name;
     }
 
-    public List<Character> getCharacters() {
-        return characters;
+    public List<CharacterEntity> getCharacterEntities() {
+        return characterEntities;
     }
 
-    public CampaignEntity setCharacters(List<Character> characters) {
-        this.characters = characters;
+    public CampaignEntity setCharacterEntities(List<CharacterEntity> characterEntities) {
+        this.characterEntities = characterEntities;
         return this;
     }
 }

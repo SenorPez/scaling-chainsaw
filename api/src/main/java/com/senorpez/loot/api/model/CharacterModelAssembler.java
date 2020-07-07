@@ -2,7 +2,7 @@ package com.senorpez.loot.api.model;
 
 import com.senorpez.loot.api.controller.CharacterController;
 import com.senorpez.loot.api.controller.RootController;
-import com.senorpez.loot.api.entity.Character;
+import com.senorpez.loot.api.entity.CharacterEntity;
 import com.senorpez.loot.api.repository.ItemTransactionRepository;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
@@ -12,14 +12,14 @@ import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
-public class CharacterModelAssembler extends RepresentationModelAssemblerSupport<Character, CharacterModel> {
+public class CharacterModelAssembler extends RepresentationModelAssemblerSupport<CharacterEntity, CharacterModel> {
     public CharacterModelAssembler(Class<?> controllerClass, Class<CharacterModel> resourceType) {
         super(controllerClass, resourceType);
     }
 
     @Override
     @NonNull
-    public CharacterModel toModel(@NonNull Character entity) {
+    public CharacterModel toModel(@NonNull CharacterEntity entity) {
         return createModelWithId(entity.getId(), entity, entity.getCampaignEntity().getId())
                 .setId(entity.getId())
                 .setName(entity.getName())
@@ -27,7 +27,7 @@ public class CharacterModelAssembler extends RepresentationModelAssemblerSupport
                 .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX));
     }
 
-    public CharacterModel toModel(@NonNull Character entity, ItemTransactionRepository itemTransactionRepository) {
+    public CharacterModel toModel(@NonNull CharacterEntity entity, ItemTransactionRepository itemTransactionRepository) {
         List<InventoryItemModel> itemModels = InventoryItemModelAssembler.toModel(entity.getItems(), itemTransactionRepository);
         return toModel(entity).setInventory(itemModels);
     }

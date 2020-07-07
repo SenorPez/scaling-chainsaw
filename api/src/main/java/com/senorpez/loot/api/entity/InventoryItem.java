@@ -14,7 +14,7 @@ public class InventoryItem {
     private Item item;
 
     @ManyToOne
-    private Character character;
+    private CharacterEntity characterEntity;
 
     @Transient
     private Integer quantity;

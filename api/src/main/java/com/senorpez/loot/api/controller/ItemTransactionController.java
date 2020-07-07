@@ -1,7 +1,6 @@
 package com.senorpez.loot.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.senorpez.loot.api.entity.Character;
 import com.senorpez.loot.api.entity.*;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.exception.CharacterNotFoundException;
@@ -45,7 +44,7 @@ public class ItemTransactionController {
     @RolesAllowed("user")
     ResponseEntity<CharacterModel> addItemTransaction(@RequestHeader String Authorization, @RequestBody IncomingTransaction incomingValue, @PathVariable final int campaignId, @PathVariable final int characterId) {
         final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final Character character = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        final CharacterEntity characterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final Item item = itemRepository.findById(incomingValue.getItem_id()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem_id()));
         final ItemTransaction newItemTransaction = new ItemTransaction(
                 new InventoryItem(item),
@@ -54,8 +53,8 @@ public class ItemTransactionController {
         );
         itemTransactionRepository.save(newItemTransaction);
 
-        final Character updatedCharacter = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        final CharacterModel characterModel = assembler.toModel(updatedCharacter, itemTransactionRepository);
+        final CharacterEntity updatedCharacterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+        final CharacterModel characterModel = assembler.toModel(updatedCharacterEntity, itemTransactionRepository);
         return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
     }
 

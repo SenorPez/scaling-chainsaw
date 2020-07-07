@@ -5,7 +5,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "characters")
-public class Character {
+public class CharacterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -20,10 +20,10 @@ public class Character {
     @OneToMany
     private List<InventoryItem> items;
 
-    public Character() {
+    public CharacterEntity() {
     }
 
-    public Character(int id, CampaignEntity campaignEntity, String name, List<InventoryItem> items) {
+    public CharacterEntity(int id, CampaignEntity campaignEntity, String name, List<InventoryItem> items) {
         this.id = id;
         this.name = name;
         this.campaignEntity = campaignEntity;
@@ -46,7 +46,7 @@ public class Character {
         return items;
     }
 
-    public Character setCampaignEntity(CampaignEntity campaignEntity) {
+    public CharacterEntity setCampaignEntity(CampaignEntity campaignEntity) {
         this.campaignEntity = campaignEntity;
         return this;
     }
