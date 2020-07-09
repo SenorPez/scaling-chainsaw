@@ -46,12 +46,12 @@ public class ItemTransactionController {
         final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         final CharacterEntity characterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final ItemEntity itemEntity = itemRepository.findById(incomingValue.getItem_id()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem_id()));
-        final ItemTransaction newItemTransaction = new ItemTransaction(
+        final ItemTransactionEntity newItemTransactionEntity = new ItemTransactionEntity(
                 new InventoryItem(itemEntity),
                 incomingValue.getQuantity(),
                 incomingValue.getRemark()
         );
-        itemTransactionRepository.save(newItemTransaction);
+        itemTransactionRepository.save(newItemTransactionEntity);
 
         final CharacterEntity updatedCharacterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final CharacterModel characterModel = assembler.toModel(updatedCharacterEntity, itemTransactionRepository);

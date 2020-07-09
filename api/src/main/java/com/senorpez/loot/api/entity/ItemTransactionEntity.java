@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "itemtransactions")
-public class ItemTransaction {
+public class ItemTransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -24,10 +24,10 @@ public class ItemTransaction {
     @Column
     private String remark;
 
-    public ItemTransaction() {
+    public ItemTransactionEntity() {
     }
 
-    public ItemTransaction(InventoryItem item, int quantity, String remark) {
+    public ItemTransactionEntity(InventoryItem item, int quantity, String remark) {
         this.item = item;
         this.quantity = quantity;
         this.remark = remark;
