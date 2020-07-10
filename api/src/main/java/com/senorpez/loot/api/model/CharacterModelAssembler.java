@@ -8,8 +8,6 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
 
-import java.util.List;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 public class CharacterModelAssembler extends RepresentationModelAssemblerSupport<CharacterEntity, CharacterModel> {
@@ -28,7 +26,8 @@ public class CharacterModelAssembler extends RepresentationModelAssemblerSupport
     }
 
     public CharacterModel toModel(@NonNull CharacterEntity entity, ItemTransactionRepository itemTransactionRepository) {
-        List<InventoryItemModel> itemModels = InventoryItemModelAssembler.toModel(entity.getItems(), itemTransactionRepository);
-        return toModel(entity).setInventory(itemModels);
+//        List<InventoryItemModel> itemModels = InventoryItemModelAssembler.toModel(entity.getItems(), itemTransactionRepository);
+//        return toModel(entity).setInventory(itemModels);
+        return null;
     }
 }

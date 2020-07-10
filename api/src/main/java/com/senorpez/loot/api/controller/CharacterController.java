@@ -13,7 +13,6 @@ import com.senorpez.loot.api.repository.CharacterRepository;
 import com.senorpez.loot.api.repository.ItemTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -58,9 +57,10 @@ public class CharacterController {
     @PostMapping(consumes = {HAL_JSON_VALUE})
     @RolesAllowed("user")
     ResponseEntity<CharacterModel> addCharacter(@RequestHeader String Authorization, @RequestBody CharacterEntity newCharacterEntity, @PathVariable final int campaignId) {
-        final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final CharacterEntity characterEntity = characterRepository.save(newCharacterEntity.setCampaignEntity(campaignEntity));
-        final CharacterModel characterModel = assembler.toModel(characterEntity, itemTransactionRepository);
-        return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
+//        final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+//        final CharacterEntity characterEntity = characterRepository.save(newCharacterEntity.setCampaignEntity(campaignEntity));
+//        final CharacterModel characterModel = assembler.toModel(characterEntity, itemTransactionRepository);
+//        return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
+        return null;
     }
 }

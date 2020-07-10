@@ -1,14 +1,17 @@
 package com.senorpez.loot.api.entity;
 
+import com.senorpez.loot.api.pojo.Character;
+
 import javax.persistence.*;
-import java.util.List;
+import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity
 @Table(name = "characters")
 public class CharacterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
     private String name;
@@ -18,19 +21,26 @@ public class CharacterEntity {
 
     @JoinColumn(name = "character_id")
     @OneToMany
-    private List<InventoryItem> items;
+    private Set<InventoryItem> items;
 
     public CharacterEntity() {
     }
 
-    public CharacterEntity(int id, CampaignEntity campaignEntity, String name, List<InventoryItem> items) {
-        this.id = id;
-        this.name = name;
-        this.campaignEntity = campaignEntity;
-        this.items = items;
+    public CharacterEntity(final Character character, final CampaignEntity campaignEntity) {
+        setName(character.getName());
     }
 
-    public int getId() {
+    private void setName(@NotNull final String name) {
+        if (name == null) throw new IllegalArgumentException("Name must not be null");
+        this.name = name;
+    }
+
+    private void setCampaignEntity(CampaignEntity campaignEntity) {
+        if (campaignEntity == null) throw new IllegalArgumentException("Must provide campaign");
+        this.campaignEntity = campaignEntity;
+    }
+
+    public Integer getId() {
         return id;
     }
 
@@ -42,12 +52,7 @@ public class CharacterEntity {
         return campaignEntity;
     }
 
-    public List<InventoryItem> getItems() {
+    public Set<InventoryItem> getItems() {
         return items;
-    }
-
-    public CharacterEntity setCampaignEntity(CampaignEntity campaignEntity) {
-        this.campaignEntity = campaignEntity;
-        return this;
     }
 }

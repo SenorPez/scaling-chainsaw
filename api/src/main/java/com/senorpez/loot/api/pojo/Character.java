@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Character {
+public class Character {
     private final String name;
 
-    Character(
+    public Character(
             @JsonProperty("name") String name) {
         this.name = name;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 }
