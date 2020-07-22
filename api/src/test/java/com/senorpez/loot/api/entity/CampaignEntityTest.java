@@ -14,6 +14,7 @@ class CampaignEntityTest {
         final String expectedName = "Defiance in Phlan";
         final Campaign campaign = new Campaign(expectedName);
         final CampaignEntity campaignEntity = new CampaignEntity(campaign);
+
         assertThat(campaignEntity.getId(), nullValue());
         assertThat(campaignEntity.getName(), is(expectedName));
         assertThat(campaignEntity.getCharacterEntities(), nullValue());
@@ -24,7 +25,8 @@ class CampaignEntityTest {
         final Campaign campaign = new Campaign(null);
         Exception exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> new CampaignEntity(campaign));
+                () -> new CampaignEntity(campaign)
+        );
         final Class<IllegalArgumentException> expectedValue = IllegalArgumentException.class;
         assertThat(exception.getClass(), is(expectedValue));
     }

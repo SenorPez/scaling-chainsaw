@@ -3,7 +3,6 @@ package com.senorpez.loot.api.entity;
 import com.senorpez.loot.api.pojo.Campaign;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -27,7 +26,7 @@ public class CampaignEntity {
         setName(campaign.getName());
     }
 
-    private void setName(@NotNull final String name) {
+    private void setName(final String name) {
         if (name == null) throw new IllegalArgumentException("Name must not be null");
         this.name = name;
     }
