@@ -6,22 +6,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Item {
+public class Item {
     private final String name;
     private final BigDecimal weight;
 
-    Item(
+    public Item(
             @JsonProperty("name") String name,
             @JsonProperty("weight") BigDecimal weight) {
         this.name = name;
         this.weight = weight;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    BigDecimal getWeight() {
+    public BigDecimal getWeight() {
         return weight;
     }
 }

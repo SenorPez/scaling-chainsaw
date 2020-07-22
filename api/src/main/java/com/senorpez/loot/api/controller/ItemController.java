@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
-import java.util.Optional;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 
@@ -55,11 +54,12 @@ public class ItemController {
     @RolesAllowed("user")
     ResponseEntity<ItemModel> updateItem(@RequestHeader String Authorization, @PathVariable final int itemId, @RequestBody final ItemEntity incomingItemEntity) {
         final ItemEntity itemEntity = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(itemId));
-        final ItemEntity updateItemEntity = new ItemEntity(
-                itemEntity.getId(),
-                Optional.of(incomingItemEntity.getName()).orElseGet(itemEntity::getName),
-                Optional.ofNullable(incomingItemEntity.getWeight()).orElseGet(itemEntity::getWeight)
-        );
+//        final ItemEntity updateItemEntity = new ItemEntity(
+//                itemEntity.getId(),
+//                Optional.of(incomingItemEntity.getName()).orElseGet(itemEntity::getName),
+//                Optional.ofNullable(incomingItemEntity.getWeight()).orElseGet(itemEntity::getWeight)
+//        );
+        final ItemEntity updateItemEntity = null;
         final ItemModel itemModel = assembler.toModel(itemRepository.save(updateItemEntity));
         return ResponseEntity.created(itemModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(itemModel);
     }

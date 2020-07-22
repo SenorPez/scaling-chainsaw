@@ -1,7 +1,6 @@
 package com.senorpez.loot.api.entity;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "inventoryitems")
@@ -32,8 +31,8 @@ public class InventoryItem {
 
     InventoryItem(Object[] databaseQueryResult) {
         this.id = ((Number) databaseQueryResult[0]).intValue();
-        this.itemEntity.name = (String) databaseQueryResult[1];
-        this.itemEntity.weight = databaseQueryResult[2] == null ? null : BigDecimal.valueOf(((Number) databaseQueryResult[2]).doubleValue());
+//        this.itemEntity.name = (String) databaseQueryResult[1];
+//        this.itemEntity.weight = databaseQueryResult[2] == null ? null : BigDecimal.valueOf(((Number) databaseQueryResult[2]).doubleValue());
         this.quantity = ((Number) databaseQueryResult[3]).intValue();
         this.details = databaseQueryResult[4] == null ? null : (String) databaseQueryResult[4];
         this.charges = databaseQueryResult[5] == null ? null : ((Number) databaseQueryResult[5]).intValue();

@@ -1,5 +1,7 @@
 package com.senorpez.loot.api.entity;
 
+import com.senorpez.loot.api.pojo.Item;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -8,24 +10,32 @@ import java.math.BigDecimal;
 public class ItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected int id;
+    private Integer id;
 
     @Column(nullable = false)
-    protected String name;
+    private String name;
 
     @Column(precision = 19, scale = 3)
-    protected BigDecimal weight;
+    private BigDecimal weight;
 
     public ItemEntity() {
     }
 
-    public ItemEntity(Integer id, String name, BigDecimal weight) {
-        this.id = id;
+    public ItemEntity(final Item item) {
+        setName(item.getName());
+        setWeight(item.getWeight());
+    }
+
+    private void setName(final String name) {
+        if (name == null) throw new IllegalArgumentException("Name must not be null");
         this.name = name;
+    }
+
+    private void setWeight(final BigDecimal weight) {
         this.weight = weight;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
