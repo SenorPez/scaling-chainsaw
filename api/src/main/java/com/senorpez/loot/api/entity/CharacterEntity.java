@@ -3,7 +3,6 @@ package com.senorpez.loot.api.entity;
 import com.senorpez.loot.api.pojo.Character;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -16,6 +15,7 @@ public class CharacterEntity {
     @Column(nullable = false)
     private String name;
 
+    @JoinColumn(name = "campaign_id")
     @ManyToOne
     private CampaignEntity campaignEntity;
 
@@ -28,15 +28,16 @@ public class CharacterEntity {
 
     public CharacterEntity(final Character character, final CampaignEntity campaignEntity) {
         setName(character.getName());
+        setCampaignEntity(campaignEntity);
     }
 
-    private void setName(@NotNull final String name) {
+    private void setName(final String name) {
         if (name == null) throw new IllegalArgumentException("Name must not be null");
         this.name = name;
     }
 
-    private void setCampaignEntity(CampaignEntity campaignEntity) {
-        if (campaignEntity == null) throw new IllegalArgumentException("Must provide campaign");
+    private void setCampaignEntity(final CampaignEntity campaignEntity) {
+        if (campaignEntity == null) throw new IllegalArgumentException("Campaign must not be null");
         this.campaignEntity = campaignEntity;
     }
 
