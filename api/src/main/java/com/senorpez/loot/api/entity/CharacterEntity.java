@@ -21,7 +21,7 @@ public class CharacterEntity {
 
     @JoinColumn(name = "character_id")
     @OneToMany
-    private Set<InventoryItem> items;
+    private Set<InventoryItemEntity> items;
 
     public CharacterEntity() {
     }
@@ -53,7 +53,7 @@ public class CharacterEntity {
         return campaignEntity;
     }
 
-    public Set<InventoryItem> getItems() {
+    public Set<InventoryItemEntity> getItems() {
         return items;
     }
 }

@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InventoryItemTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final String NAME = "Gold Piece";
-    private static final double WEIGHT = 3.14;
 
     @Test
     void serialize_StringCharges() throws JsonProcessingException {

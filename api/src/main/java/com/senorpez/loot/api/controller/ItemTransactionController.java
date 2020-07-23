@@ -1,7 +1,10 @@
 package com.senorpez.loot.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.senorpez.loot.api.entity.*;
+import com.senorpez.loot.api.entity.CampaignEntity;
+import com.senorpez.loot.api.entity.CharacterEntity;
+import com.senorpez.loot.api.entity.ItemEntity;
+import com.senorpez.loot.api.entity.ItemTransactionEntity;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
 import com.senorpez.loot.api.exception.CharacterNotFoundException;
 import com.senorpez.loot.api.exception.ItemNotFoundException;
@@ -47,7 +50,8 @@ public class ItemTransactionController {
         final CharacterEntity characterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final ItemEntity itemEntity = itemRepository.findById(incomingValue.getItem_id()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem_id()));
         final ItemTransactionEntity newItemTransactionEntity = new ItemTransactionEntity(
-                new InventoryItem(itemEntity),
+//                new InventoryItem(itemEntity),
+                null,
                 incomingValue.getQuantity(),
                 incomingValue.getRemark()
         );

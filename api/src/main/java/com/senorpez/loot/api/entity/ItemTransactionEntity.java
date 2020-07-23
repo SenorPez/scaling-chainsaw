@@ -12,7 +12,7 @@ public class ItemTransactionEntity {
 
     @JoinColumn
     @ManyToOne
-    private InventoryItem item;
+    private InventoryItemEntity item;
 
     @Column(nullable = false)
     private int quantity;
@@ -27,7 +27,7 @@ public class ItemTransactionEntity {
     public ItemTransactionEntity() {
     }
 
-    public ItemTransactionEntity(InventoryItem item, int quantity, String remark) {
+    public ItemTransactionEntity(InventoryItemEntity item, int quantity, String remark) {
         this.item = item;
         this.quantity = quantity;
         this.remark = remark;
@@ -37,7 +37,7 @@ public class ItemTransactionEntity {
         return id;
     }
 
-    public InventoryItem getItem() {
+    public InventoryItemEntity getItem() {
         return item;
     }
 
