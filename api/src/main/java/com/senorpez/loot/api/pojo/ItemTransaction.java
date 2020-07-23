@@ -5,21 +5,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class ItemTransaction {
-    private final Integer item_id;
+    private final Integer inventoryItemId;
     private final Integer quantity;
     private final String remark;
 
     ItemTransaction(
-            @JsonProperty("item_id") Integer item_id,
+            @JsonProperty("inv_item_id") Integer inventoryItemId,
             @JsonProperty("quantity") Integer quantity,
             @JsonProperty("remark") String remark) {
-        this.item_id = item_id;
+        this.inventoryItemId = inventoryItemId;
         this.quantity = quantity;
         this.remark = remark;
     }
 
-    public Integer getItem_id() {
-        return item_id;
+    public Integer getInventoryItemId() {
+        return inventoryItemId;
     }
 
     public Integer getQuantity() {

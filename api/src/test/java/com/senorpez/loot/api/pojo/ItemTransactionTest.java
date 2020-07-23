@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.hamcrest.Matcher;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -14,239 +16,310 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ItemTransactionTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final Random RANDOM = new Random();
+    private static Integer expectedId;
+    private static Integer expectedQuantity;
+    private static String expectedRemark;
+
+    @BeforeEach
+    void setUp() {
+        expectedId = RANDOM.nextInt();
+        expectedQuantity = RANDOM.nextInt();
+        expectedRemark = "Session 69 Loot";
+    }
 
     @Test
     void serialize_StringItemId() throws JsonProcessingException {
-        final String json = "{\"item_id\": \"1\", \"quantity\": 42, \"remark\": \"Test Item\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": \"%s\", \"quantity\": %d, \"remark\": \"%s\"}",
+                expectedId.toString(),
+                expectedQuantity,
+                expectedRemark
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "Test Item";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_NumberItemId() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": \"Test Item\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "Test Item";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_ObjectItemId() {
-        final String json = "{\"item_id\": {\"key\": \"value\"}, \"quantity\": 42, \"remark\": \"Test Item\"}";
-        Exception exception = assertThrows(
+        final String expectedId = "{\"key\": \"value\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %s, \"quantity\": %d, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
+        assertThrows(
                 MismatchedInputException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<MismatchedInputException> expectedValue = MismatchedInputException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_ArrayItemId() {
-        final String json = "{\"item_id\": [1, 2, 3], \"quantity\": 42, \"remark\": \"Test Item\"}";
-        Exception exception = assertThrows(
+        final String expectedId = "[1, 2, 3, 4, 5]";
+        final String json = String.format(
+                "{\"inv_item_id\": %s, \"quantity\": %d, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
+        assertThrows(
                 MismatchedInputException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<MismatchedInputException> expectedValue = MismatchedInputException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_BooleanItemId() {
-        final String json = "{\"item_id\": true, \"quantity\": 42, \"remark\": \"Test Item\"}";
-        Exception exception = assertThrows(
+        final Boolean expectedId = RANDOM.nextBoolean();
+        final String json = String.format(
+                "{\"inv_item_id\": %s, \"quantity\": %d, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
+        assertThrows(
                 MismatchedInputException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<MismatchedInputException> expectedValue = MismatchedInputException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_NullItemId() throws JsonProcessingException {
-        final String json = "{\"item_id\": null, \"quantity\": 42, \"remark\": \"Test Item\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %s, \"quantity\": %d, \"remark\": \"%s\"}",
+                null,
+                expectedQuantity,
+                expectedRemark
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Matcher<Object> expectedItemId = nullValue();
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "Test Item";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(nullValue()));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_StringQuantity() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": \"42\", \"remark\": \"Test Item\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": \"%s\", \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity.toString(),
+                expectedRemark
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "Test Item";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_NumberQuantity() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": \"Test Item\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "Test Item";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_ObjectQuantity() {
-        final String json = "{\"item_id\": 1, \"quantity\": {\"key\": \"value\"}, \"remark\": \"Test Item\"}";
-        Exception exception = assertThrows(
+        final String expectedQuantity = "{\"key\": \"value\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %s, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
+        assertThrows(
                 MismatchedInputException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<MismatchedInputException> expectedValue = MismatchedInputException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_ArrayQuantity() {
-        final String json = "{\"item_id\": 1, \"quantity\": [1, 2, 3], \"remark\": \"Test Item\"}";
-        Exception exception = assertThrows(
+        final String expectedQuantity = "[1, 2, 3, 4, 5]";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %s, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
+        assertThrows(
                 MismatchedInputException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<MismatchedInputException> expectedValue = MismatchedInputException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_BooleanQuantity() {
-        final String json = "{\"item_id\": 1, \"quantity\": true, \"remark\": \"Test Item\"}";
-        Exception exception = assertThrows(
+        final Boolean expectedQuantity = RANDOM.nextBoolean();
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %s, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
+        assertThrows(
                 MismatchedInputException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<MismatchedInputException> expectedValue = MismatchedInputException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_NullQuantity() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": null, \"remark\": \"Test Item\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %s, \"remark\": \"%s\"}",
+                expectedId,
+                nullValue(),
+                expectedRemark
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Matcher<Object> expectedQuantity = nullValue();
-        final String expectedRemark = "Test Item";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
-        assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
+        assertThat(itemTransaction.getQuantity(), is(nullValue()));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_StringRemark() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": \"Test Item\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": \"%s\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "Test Item";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_NumberRemark() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": 8675309}";
+        final String expectedRemark = String.valueOf(RANDOM.nextInt());
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": %d}",
+                expectedId,
+                expectedQuantity,
+                Integer.valueOf(expectedRemark)
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "8675309";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_ObjectRemark() {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": {\"key\": \"value\"}}";
-        Exception exception = assertThrows(
+        final String expectedRemark = "{\"key\": \"value\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": %s}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
+        assertThrows(
                 MismatchedInputException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<MismatchedInputException> expectedValue = MismatchedInputException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_ArrayRemark() {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": [1, 2, 3]}";
-        Exception exception = assertThrows(
+        final String expectedRemark = "[1, 2, 3, 4, 5]";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": %s}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
+        assertThrows(
                 MismatchedInputException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<MismatchedInputException> expectedValue = MismatchedInputException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_BooleanRemark() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": true}";
+        final String expectedRemark = String.valueOf(RANDOM.nextBoolean());
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": %s}",
+                expectedId,
+                expectedQuantity,
+                Boolean.valueOf(expectedRemark)
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "true";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_NullRemark() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": null}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": %s}",
+                expectedId,
+                expectedQuantity,
+                null
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final Matcher<Object> expectedRemark = nullValue();
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
-        assertThat(itemTransaction.getRemark(), is(expectedRemark));
+        assertThat(itemTransaction.getRemark(), is(nullValue()));
     }
 
 
     @Test
     void serialize_InvalidJSON() {
         final String json = "{\"name:\" \"Invalid";
-        Exception exception = assertThrows(
+        assertThrows(
                 JsonParseException.class,
-                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class));
-        final Class<JsonParseException> expectedValue = JsonParseException.class;
-        assertThat(exception.getClass(), is(expectedValue));
+                () -> OBJECT_MAPPER.readValue(json, ItemTransaction.class)
+        );
     }
 
     @Test
     void serialize_ExtraFields() throws JsonProcessingException {
-        final String json = "{\"item_id\": 1, \"quantity\": 42, \"remark\": \"Test Item\", \"extra\": \"field\"}";
+        final String json = String.format(
+                "{\"inv_item_id\": %d, \"quantity\": %d, \"remark\": \"%s\", \"extra\": \"field\"}",
+                expectedId,
+                expectedQuantity,
+                expectedRemark
+        );
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Integer expectedItemId = 1;
-        final Integer expectedQuantity = 42;
-        final String expectedRemark = "Test Item";
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
+        assertThat(itemTransaction.getInventoryItemId(), is(expectedId));
         assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
         assertThat(itemTransaction.getRemark(), is(expectedRemark));
     }
 
     @Test
     void serialize_NoMatchingField() throws JsonProcessingException {
-        final String json = "{\"incorrect\": \"field\", \"extra\": \"field\"}";
+        final String json = "{\"key\": \"value\", \"extra\": \"field\"}";
         final ItemTransaction itemTransaction = OBJECT_MAPPER.readValue(json, ItemTransaction.class);
-        final Matcher<Object> expectedItemId = nullValue();
-        final Matcher<Object> expectedQuantity = nullValue();
-        final Matcher<Object> expectedRemark = nullValue();
-        assertThat(itemTransaction.getItem_id(), is(expectedItemId));
-        assertThat(itemTransaction.getQuantity(), is(expectedQuantity));
-        assertThat(itemTransaction.getRemark(), is(expectedRemark));
+        assertThat(itemTransaction.getInventoryItemId(), is(nullValue()));
+        assertThat(itemTransaction.getQuantity(), is(nullValue()));
+        assertThat(itemTransaction.getRemark(), is(nullValue()));
     }
 }
