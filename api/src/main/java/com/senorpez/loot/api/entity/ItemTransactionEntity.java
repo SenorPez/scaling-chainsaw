@@ -1,5 +1,7 @@
 package com.senorpez.loot.api.entity;
 
+import com.senorpez.loot.api.pojo.ItemTransaction;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -8,48 +10,62 @@ import java.util.Date;
 public class ItemTransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @JoinColumn
-    @ManyToOne
-    private InventoryItemEntity item;
+    private Integer id;
 
     @Column(nullable = false)
-    private int quantity;
+    private Integer quantity;
+
+    @Column
+    private String remark;
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private final Date datetime = new Date();
 
-    @Column
-    private String remark;
+    @JoinColumn(name = "inv_item_id")
+    @ManyToOne
+    private InventoryItemEntity inventoryItemEntity;
 
     public ItemTransactionEntity() {
     }
 
-    public ItemTransactionEntity(InventoryItemEntity item, int quantity, String remark) {
-        this.item = item;
+    public ItemTransactionEntity(final ItemTransaction itemTransaction, final InventoryItemEntity inventoryItemEntity) {
+        setQuantity(itemTransaction.getQuantity());
+        setRemark(itemTransaction.getRemark());
+        setInventoryItemEntity(inventoryItemEntity);
+    }
+
+    private void setQuantity(final Integer quantity) {
+        if (quantity == null) throw new IllegalArgumentException("Quantity must not be null");
         this.quantity = quantity;
+    }
+
+    private void setRemark(final String remark) {
         this.remark = remark;
     }
 
-    public int getId() {
+    private void setInventoryItemEntity(final InventoryItemEntity inventoryItemEntity) {
+        if (inventoryItemEntity == null) throw new IllegalArgumentException("Inventory item must not be null");
+        this.inventoryItemEntity = inventoryItemEntity;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public InventoryItemEntity getItem() {
-        return item;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public String getRemark() {
+        return remark;
     }
 
     public Date getDatetime() {
         return datetime;
     }
 
-    public String getRemark() {
-        return remark;
+    public InventoryItemEntity getInventoryItemEntity() {
+        return inventoryItemEntity;
     }
 }

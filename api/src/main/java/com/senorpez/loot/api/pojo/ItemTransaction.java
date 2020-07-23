@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class ItemTransaction {
+public class ItemTransaction {
     private final Integer inventoryItemId;
     private final Integer quantity;
     private final String remark;
 
-    ItemTransaction(
+    public ItemTransaction(
             @JsonProperty("inv_item_id") Integer inventoryItemId,
             @JsonProperty("quantity") Integer quantity,
             @JsonProperty("remark") String remark) {
