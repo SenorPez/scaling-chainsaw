@@ -34,7 +34,7 @@ public class CampaignController {
     @GetMapping("/{campaignId}")
     public ResponseEntity<CampaignModel> campaigns(@PathVariable final int campaignId) {
         final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final CampaignModel campaignModel = assembler.toSingleModel(campaignEntity);
+        final CampaignModel campaignModel = assembler.toModel(campaignEntity);
         return ResponseEntity.ok(campaignModel);
     }
 
@@ -42,7 +42,7 @@ public class CampaignController {
     @RolesAllowed("user")
     ResponseEntity<CampaignModel> addCampaign(@RequestHeader String Authorization, @RequestBody CampaignEntity newCampaign) {
         final CampaignEntity campaignEntity = campaignRepository.save(newCampaign);
-        final CampaignModel campaignModel = assembler.toSingleModel(campaignEntity);
+        final CampaignModel campaignModel = assembler.toModel(campaignEntity);
         return ResponseEntity.created(campaignModel.getRequiredLink("self").toUri()).body(campaignModel);
     }
 }
