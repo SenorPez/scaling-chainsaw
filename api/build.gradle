@@ -35,6 +35,7 @@ dependencies {
     testImplementation group: 'io.rest-assured', name: 'json-schema-validator', version: '4.3.0'
     testImplementation group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version: '2.0.4.RELEASE'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.3.3'
+    testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
     asciidoctor group: 'org.springframework.restdocs', name: 'spring-restdocs-asciidoctor', version: '2.0.4.RELEASE'
     runtime 'com.h2database:h2'
 }

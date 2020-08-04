@@ -7,11 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.mediatype.hal.CurieProvider;
 import org.springframework.hateoas.mediatype.hal.DefaultCurieProvider;
+import org.springframework.hateoas.server.LinkRelationProvider;
+import org.springframework.hateoas.server.core.AnnotationLinkRelationProvider;
 
 @SpringBootApplication
 @EnableEncryptableProperties
 public class Application {
-    static final DefaultCurieProvider CURIE_PROVIDER = new DefaultCurieProvider("loot-api", UriTemplate.of("/docs/reference.html#resources-loot-{rel}"));
+    public static final CurieProvider CURIE_PROVIDER = new DefaultCurieProvider("loot-api", UriTemplate.of("/docs/reference.html#resources-loot-{rel}" ));
+    public static final LinkRelationProvider LINK_RELATION_PROVIDER = new AnnotationLinkRelationProvider();
 
     public static void main(final String[] args) {
         SpringApplication.run(Application.class, args);
@@ -20,5 +23,10 @@ public class Application {
     @Bean
     public CurieProvider curieProvider() {
         return CURIE_PROVIDER;
+    }
+
+    @Bean
+    public LinkRelationProvider linkRelationProvider() {
+        return LINK_RELATION_PROVIDER;
     }
 }
