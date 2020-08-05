@@ -11,12 +11,12 @@ public class EmbeddedItemModel extends RepresentationModel<EmbeddedItemModel> {
     @JsonProperty
     String name;
 
-    public EmbeddedItemModel setId(final int id) {
+    EmbeddedItemModel setId(final int id) {
         this.id = id;
         return this;
     }
 
-    public EmbeddedItemModel setName(final String name) {
+    EmbeddedItemModel setName(final String name) {
         this.name = name;
         return this;
     }

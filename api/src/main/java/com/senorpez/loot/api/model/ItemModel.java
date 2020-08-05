@@ -15,17 +15,17 @@ public class ItemModel extends RepresentationModel<ItemModel> {
     @JsonProperty
     private BigDecimal weight;
 
-    public ItemModel setId(int id) {
+    ItemModel setId(int id) {
         this.id = id;
         return this;
     }
 
-    public ItemModel setName(String name) {
+    ItemModel setName(String name) {
         this.name = name;
         return this;
     }
 
-    public ItemModel setWeight(BigDecimal weight) {
+    ItemModel setWeight(BigDecimal weight) {
         this.weight = weight;
         return this;
     }

@@ -21,7 +21,7 @@ public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item
                 .setId(entity.getId())
                 .setName(entity.getName())
                 .setWeight(entity.getWeight())
-                .add(linkTo(ItemController.class).withRel("lootitems"))
-                .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX));
+                .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX))
+                .add(linkTo(ItemController.class).withRel("lootitems"));
     }
 }

@@ -15,17 +15,17 @@ public class CharacterModel extends RepresentationModel<CharacterModel> {
     @JsonProperty
     private List<InventoryItemModel> inventory;
 
-    public CharacterModel setId(int id) {
+    CharacterModel setId(int id) {
         this.id = id;
         return this;
     }
 
-    public CharacterModel setName(String name) {
+    CharacterModel setName(String name) {
         this.name = name;
         return this;
     }
 
-    public CharacterModel setInventory(List<InventoryItemModel> inventory) {
+    CharacterModel setInventory(List<InventoryItemModel> inventory) {
         this.inventory = inventory;
         return this;
     }
