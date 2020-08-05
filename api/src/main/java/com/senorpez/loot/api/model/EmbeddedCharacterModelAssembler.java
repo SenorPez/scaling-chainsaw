@@ -28,8 +28,8 @@ public class EmbeddedCharacterModelAssembler extends RepresentationModelAssemble
     @NonNull
     public CollectionModel<EmbeddedCharacterModel> toCollectionModel(@NonNull Iterable<? extends CharacterEntity> entities, final int campaignId) {
         return super.toCollectionModel(entities)
-                .add(linkTo(methodOn(CampaignController.class).campaigns(campaignId)).withRel("campaign"))
-                .add(linkTo(CharacterController.class, campaignId).withSelfRel())
-                .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX));
+                .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX))
+                .add(linkTo(CharacterController.class, campaignId).withRel(IanaLinkRelations.SELF))
+                .add(linkTo(methodOn(CampaignController.class).campaigns(campaignId)).withRel("campaign"));
     }
 }
