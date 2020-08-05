@@ -11,12 +11,12 @@ public class EmbeddedCampaignModel extends RepresentationModel<EmbeddedCampaignM
     @JsonProperty
     private String name;
 
-    EmbeddedCampaignModel setId(int id) {
+    EmbeddedCampaignModel setId(final int id) {
         this.id = id;
         return this;
     }
 
-    EmbeddedCampaignModel setName(String name) {
+    EmbeddedCampaignModel setName(final String name) {
         this.name = name;
         return this;
     }

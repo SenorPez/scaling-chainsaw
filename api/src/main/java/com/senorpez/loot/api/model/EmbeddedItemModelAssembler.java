@@ -27,7 +27,7 @@ public class EmbeddedItemModelAssembler extends RepresentationModelAssemblerSupp
     @NonNull
     public CollectionModel<EmbeddedItemModel> toCollectionModel(@NonNull Iterable<? extends ItemEntity> entities) {
         return super.toCollectionModel(entities)
-                .add(linkTo(ItemController.class).withSelfRel())
-                .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX));
+                .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX))
+                .add(linkTo(ItemController.class).withRel(IanaLinkRelations.SELF));
     }
 }
