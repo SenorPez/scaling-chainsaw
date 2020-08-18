@@ -1,15 +1,12 @@
 package com.senorpez.loot.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 
 @Relation(value = "inventoryitems", collectionRelation = "inventoryitems")
-public class EmbeddedInventoryItemModel extends RepresentationModel<EmbeddedInventoryItemModel> {
-    @JsonProperty
-    private int id;
+public class EmbeddedInventoryItemModel {
     @JsonProperty
     private String name;
     @JsonProperty
@@ -20,11 +17,6 @@ public class EmbeddedInventoryItemModel extends RepresentationModel<EmbeddedInve
     private String details;
     @JsonProperty
     private Integer quantity;
-
-    EmbeddedInventoryItemModel setId(int id) {
-        this.id = id;
-        return this;
-    }
 
     EmbeddedInventoryItemModel setName(String name) {
         this.name = name;

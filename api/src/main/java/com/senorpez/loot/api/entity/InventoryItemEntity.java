@@ -17,10 +17,6 @@ public class InventoryItemEntity {
     @Column
     private String details;
 
-    @JoinColumn(name = "character_id")
-    @ManyToOne
-    private CharacterEntity characterEntity;
-
     @JoinColumn(name = "item_id")
     @ManyToOne
     private ItemEntity itemEntity;
@@ -28,10 +24,9 @@ public class InventoryItemEntity {
     public InventoryItemEntity() {
     }
 
-    public InventoryItemEntity(final InventoryItem item, final CharacterEntity characterEntity, final ItemEntity itemEntity) {
+    public InventoryItemEntity(final InventoryItem item, final ItemEntity itemEntity) {
         setCharges(item.getCharges());
         setDetails(item.getDetails());
-        setCharacterEntity(characterEntity);
         setItemEntity(itemEntity);
     }
 
@@ -41,11 +36,6 @@ public class InventoryItemEntity {
 
     private void setDetails(final String details) {
         this.details = details;
-    }
-
-    private void setCharacterEntity(final CharacterEntity characterEntity) {
-        if (characterEntity == null) throw new IllegalArgumentException("Character must not be null");
-        this.characterEntity = characterEntity;
     }
 
     private void setItemEntity(final ItemEntity itemEntity) {
@@ -63,10 +53,6 @@ public class InventoryItemEntity {
 
     public String getDetails() {
         return details;
-    }
-
-    public CharacterEntity getCharacterEntity() {
-        return characterEntity;
     }
 
     public ItemEntity getItemEntity() {

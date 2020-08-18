@@ -3,6 +3,7 @@ package com.senorpez.loot.api.entity;
 import com.senorpez.loot.api.pojo.Character;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,7 +22,7 @@ public class CharacterEntity {
 
     @JoinColumn(name = "character_id")
     @OneToMany
-    private Set<InventoryItemEntity> items;
+    private final Set<InventoryItemEntity> items = new HashSet<>();
 
     public CharacterEntity() {
     }
@@ -29,6 +30,12 @@ public class CharacterEntity {
     public CharacterEntity(final Character character, final CampaignEntity campaignEntity) {
         setName(character.getName());
         setCampaignEntity(campaignEntity);
+    }
+
+    public CharacterEntity(final Character character, final CampaignEntity campaignEntity, Set<InventoryItemEntity> inventory) {
+        setName(character.getName());
+        setCampaignEntity(campaignEntity);
+        items.addAll(inventory);
     }
 
     private void setName(final String name) {

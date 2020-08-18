@@ -28,7 +28,6 @@ class ItemTransactionEntityTest {
                         RANDOM.nextInt(),
                         "Special Item"
                 ),
-                new CharacterEntity(),
                 new ItemEntity()
         );
     }

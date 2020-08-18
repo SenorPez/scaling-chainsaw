@@ -34,56 +34,44 @@ class InventoryItemEntityTest {
     }
 
     @Test
-    void create_withCharges_withDetails_withCharacter_withItem() {
+    void create_withCharges_withDetails_withItem() {
         final InventoryItem inventoryItem = new InventoryItem(RANDOM.nextInt(), expectedCharges, expectedDetails);
-        final InventoryItemEntity inventoryItemEntity = new InventoryItemEntity(inventoryItem, expectedCharacter, expectedItem);
+        final InventoryItemEntity inventoryItemEntity = new InventoryItemEntity(inventoryItem, expectedItem);
 
         assertThat(inventoryItemEntity.getId(), is(nullValue()));
         assertThat(inventoryItemEntity.getCharges(), is(expectedCharges));
         assertThat(inventoryItemEntity.getDetails(), is(expectedDetails));
-        assertThat(inventoryItemEntity.getCharacterEntity(), is(expectedCharacter));
         assertThat(inventoryItemEntity.getItemEntity(), is(expectedItem));
     }
 
     @Test
-    void create_nullCharges_withDetails_withCharacter_withItem() {
+    void create_nullCharges_withDetails_withItem() {
         final InventoryItem inventoryItem = new InventoryItem(RANDOM.nextInt(), null, expectedDetails);
-        final InventoryItemEntity inventoryItemEntity = new InventoryItemEntity(inventoryItem, expectedCharacter, expectedItem);
+        final InventoryItemEntity inventoryItemEntity = new InventoryItemEntity(inventoryItem, expectedItem);
 
         assertThat(inventoryItemEntity.getId(), is(nullValue()));
         assertThat(inventoryItemEntity.getCharges(), is(nullValue()));
         assertThat(inventoryItemEntity.getDetails(), is(expectedDetails));
-        assertThat(inventoryItemEntity.getCharacterEntity(), is(expectedCharacter));
         assertThat(inventoryItemEntity.getItemEntity(), is(expectedItem));
     }
 
     @Test
-    void create_withCharges_nullDetails_withCharacter_withItem() {
+    void create_withCharges_nullDetails_withItem() {
         final InventoryItem inventoryItem = new InventoryItem(RANDOM.nextInt(), expectedCharges, null);
-        final InventoryItemEntity inventoryItemEntity = new InventoryItemEntity(inventoryItem, expectedCharacter, expectedItem);
+        final InventoryItemEntity inventoryItemEntity = new InventoryItemEntity(inventoryItem, expectedItem);
 
         assertThat(inventoryItemEntity.getId(), is(nullValue()));
         assertThat(inventoryItemEntity.getCharges(), is(expectedCharges));
         assertThat(inventoryItemEntity.getDetails(), is(nullValue()));
-        assertThat(inventoryItemEntity.getCharacterEntity(), is(expectedCharacter));
         assertThat(inventoryItemEntity.getItemEntity(), is(expectedItem));
     }
 
     @Test
-    void create_withCharges_withDetails_nullCharacter_withItem() {
+    void create_withCharges_withDetails_nullItem() {
         final InventoryItem inventoryItem = new InventoryItem(RANDOM.nextInt(), expectedCharges, expectedDetails);
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new InventoryItemEntity(inventoryItem, null, expectedItem)
-        );
-    }
-
-    @Test
-    void create_withCharges_withDetails_withCharacter_nullItem() {
-        final InventoryItem inventoryItem = new InventoryItem(RANDOM.nextInt(), expectedCharges, expectedDetails);
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> new InventoryItemEntity(inventoryItem, expectedCharacter, null)
+                () -> new InventoryItemEntity(inventoryItem, null)
         );
     }
 }

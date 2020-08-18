@@ -1,5 +1,6 @@
 package com.senorpez.loot.api.model;
 
+import com.senorpez.loot.api.Application;
 import com.senorpez.loot.api.controller.CharacterController;
 import com.senorpez.loot.api.controller.RootController;
 import com.senorpez.loot.api.entity.CharacterEntity;
@@ -17,10 +18,20 @@ public class CharacterModelAssembler extends RepresentationModelAssemblerSupport
     @Override
     @NonNull
     public CharacterModel toModel(@NonNull CharacterEntity entity) {
-        return createModelWithId(entity.getId(), entity, entity.getCampaignEntity().getId())
+        final EmbeddedInventoryItemModelAssembler inventoryItemModelAssembler = new EmbeddedInventoryItemModelAssembler();
+
+        CharacterModel characterModel = createModelWithId(entity.getId(), entity, entity.getCampaignEntity().getId())
                 .setId(entity.getId())
                 .setName(entity.getName())
                 .add(linkTo(RootController.class).withRel(IanaLinkRelations.INDEX))
                 .add(linkTo(CharacterController.class, entity.getCampaignEntity().getId()).withRel("characters"));
+
+        entity.getItems()
+                .forEach(inventoryItemEntity -> {
+                    EmbeddedInventoryItemModel inventoryItemModel = inventoryItemModelAssembler.toModel(inventoryItemEntity, Application.itemTransactionRepository.getQuantity(inventoryItemEntity.getId()));
+                    characterModel.inventory.add(inventoryItemModel);
+                });
+
+        return characterModel;
     }
 }

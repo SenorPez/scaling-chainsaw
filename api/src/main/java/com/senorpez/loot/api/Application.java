@@ -1,6 +1,8 @@
 package com.senorpez.loot.api;
 
+import com.senorpez.loot.api.repository.ItemTransactionRepository;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +15,9 @@ import org.springframework.hateoas.server.core.AnnotationLinkRelationProvider;
 @SpringBootApplication
 @EnableEncryptableProperties
 public class Application {
+    @Autowired
+    public static ItemTransactionRepository itemTransactionRepository;
+
     public static final CurieProvider CURIE_PROVIDER = new DefaultCurieProvider("loot-api", UriTemplate.of("/docs/reference.html#resources-loot-{rel}" ));
     public static final LinkRelationProvider LINK_RELATION_PROVIDER = new AnnotationLinkRelationProvider();
 

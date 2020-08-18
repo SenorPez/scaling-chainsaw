@@ -3,6 +3,8 @@ package com.senorpez.loot.api.entity;
 import com.senorpez.loot.api.pojo.Character;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,7 +21,7 @@ class CharacterEntityTest {
         assertThat(characterEntity.getId(), nullValue());
         assertThat(characterEntity.getName(), is(expectedName));
         assertThat(characterEntity.getCampaignEntity(), is(expectedCampaign));
-        assertThat(characterEntity.getItems(), nullValue());
+        assertThat(characterEntity.getItems(), is(Collections.emptySet()));
     }
 
     @Test
