@@ -4,16 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import java.util.List;
-
 @Relation(value = "character", collectionRelation = "character")
 public class CharacterModel extends RepresentationModel<CharacterModel> {
     @JsonProperty
-    int id;
+    private int id;
     @JsonProperty
-    String name;
-    @JsonProperty
-    private List<InventoryItemModel> inventory;
+    private String name;
 
     CharacterModel setId(int id) {
         this.id = id;
@@ -22,11 +18,6 @@ public class CharacterModel extends RepresentationModel<CharacterModel> {
 
     CharacterModel setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    CharacterModel setInventory(List<InventoryItemModel> inventory) {
-        this.inventory = inventory;
         return this;
     }
 }
