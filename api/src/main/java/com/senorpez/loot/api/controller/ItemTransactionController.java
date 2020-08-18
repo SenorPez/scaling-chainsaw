@@ -59,7 +59,7 @@ public class ItemTransactionController {
         itemTransactionRepository.save(newItemTransactionEntity);
 
         final CharacterEntity updatedCharacterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        final CharacterModel characterModel = assembler.toModel(updatedCharacterEntity, itemTransactionRepository);
+        final CharacterModel characterModel = null;
         return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
     }
 

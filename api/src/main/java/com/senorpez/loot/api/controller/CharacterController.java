@@ -50,7 +50,7 @@ public class CharacterController {
     ResponseEntity<CharacterModel> characters(@PathVariable final int campaignId, @PathVariable final int characterId) {
         final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         final CharacterEntity characterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
-        final CharacterModel characterModel = assembler.toModel(characterEntity, itemTransactionRepository);
+        final CharacterModel characterModel = null;
         return ResponseEntity.ok(characterModel);
     }
 
