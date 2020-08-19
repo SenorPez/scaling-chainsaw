@@ -3,7 +3,6 @@ package com.senorpez.loot.api.controller;
 import com.senorpez.loot.api.entity.CampaignEntity;
 import com.senorpez.loot.api.entity.CharacterEntity;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
-import com.senorpez.loot.api.exception.CharacterNotFoundException;
 import com.senorpez.loot.api.model.CharacterModel;
 import com.senorpez.loot.api.model.CharacterModelAssembler;
 import com.senorpez.loot.api.model.EmbeddedCharacterModel;
@@ -49,7 +48,7 @@ public class CharacterController {
     @GetMapping(value = "/{characterId}", produces = {HAL_JSON_VALUE})
     ResponseEntity<CharacterModel> characters(@PathVariable final int campaignId, @PathVariable final int characterId) {
         final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final CharacterEntity characterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+//        final CharacterEntity characterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final CharacterModel characterModel = null;
         return ResponseEntity.ok(characterModel);
     }

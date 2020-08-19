@@ -16,8 +16,8 @@
 //
 //import static com.senorpez.loot.api.Application.CURIE_PROVIDER;
 //
-//class HalMessageConverter {
-//    static HttpMessageConverter<Object> getConverter(final List<MediaType> mediaTypes) {
+//public class HalMessageConverter {
+//    public static HttpMessageConverter<Object> getConverter(final List<MediaType> mediaTypes) {
 //        final ObjectMapper objectMapper = new ObjectMapper();
 //        objectMapper.registerModule(new Jackson2HalModule());
 //

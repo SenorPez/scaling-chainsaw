@@ -2,11 +2,9 @@ package com.senorpez.loot.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.senorpez.loot.api.entity.CampaignEntity;
-import com.senorpez.loot.api.entity.CharacterEntity;
 import com.senorpez.loot.api.entity.ItemEntity;
 import com.senorpez.loot.api.entity.ItemTransactionEntity;
 import com.senorpez.loot.api.exception.CampaignNotFoundException;
-import com.senorpez.loot.api.exception.CharacterNotFoundException;
 import com.senorpez.loot.api.exception.ItemNotFoundException;
 import com.senorpez.loot.api.model.CharacterModel;
 import com.senorpez.loot.api.model.CharacterModelAssembler;
@@ -47,7 +45,7 @@ public class ItemTransactionController {
     @RolesAllowed("user")
     ResponseEntity<CharacterModel> addItemTransaction(@RequestHeader String Authorization, @RequestBody IncomingTransaction incomingValue, @PathVariable final int campaignId, @PathVariable final int characterId) {
         final CampaignEntity campaignEntity = campaignRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        final CharacterEntity characterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+//        final CharacterEntity characterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final ItemEntity itemEntity = itemRepository.findById(incomingValue.getItem_id()).orElseThrow(() -> new ItemNotFoundException(incomingValue.getItem_id()));
 //        final ItemTransactionEntity newItemTransactionEntity = new ItemTransactionEntity(
 ////                new InventoryItem(itemEntity),
@@ -58,7 +56,7 @@ public class ItemTransactionController {
         final ItemTransactionEntity newItemTransactionEntity = null;
         itemTransactionRepository.save(newItemTransactionEntity);
 
-        final CharacterEntity updatedCharacterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
+//        final CharacterEntity updatedCharacterEntity = characterRepository.findByCampaignAndId(campaignEntity, characterId).orElseThrow(() -> new CharacterNotFoundException(characterId));
         final CharacterModel characterModel = null;
         return ResponseEntity.created(characterModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(characterModel);
     }
