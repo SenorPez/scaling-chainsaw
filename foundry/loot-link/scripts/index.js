@@ -1,9 +1,11 @@
 Hooks.once("init", () => {
+    console.log("Loot Link | Initializing")
     initSettings();
 });
 
-Hooks.once("ready", async () => {
+Hooks.on("ready", async () => {
     let players = game.settings.get("loot-link", "players");
+    console.log("Loot Link | Dump!");
     console.log(players);
 })
 
