@@ -1,0 +1,8 @@
+{
+  "name": "loot-link",
+  "title": "Loot Link",
+  "description": "A link between the loot tracking site and Foundry Virtual Tabletop",
+  "author": "SenorPez",
+  "version": "0.0.1",
+  "minimumCoreVersion": "0.7.8"
+}
