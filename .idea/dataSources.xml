@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Loot" uuid="f2a74c99-b9fa-44e0-97dd-ddbc7eef24bf">
+    <data-source source="LOCAL" name="loot" uuid="393abed9-3855-499a-9687-7d55ff17e766">
       <driver-ref>h2.unified</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:mem:loot;MODE=MySQL;DATABASE_TO_LOWER=TRUE</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="loot.api.main/Hibernate" uuid="e5a83187-fbfb-4571-b701-c9b597b835e7">
-      <driver-ref>h2.unified</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>Hibernate</remarks>
-      <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:mem:loot;MODE=MySQL;DATABASE_TO_LOWER=TRUE</jdbc-url>
+      <jdbc-url>jdbc:h2:file:f:/loot;MODE=MySQL;DATABASE_TO_LOWER=TRUE;AUTO_SERVER=TRUE</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
 </project>
