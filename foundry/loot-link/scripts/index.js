@@ -1,45 +1,48 @@
-Hooks.once("init", () => {
-    console.log("Loot Link | Initializing")
-});
+const modId = "loot-link";
+const modName = "Loot Link";
 
-Hooks.on("createItem", data => {
+const Url = 'http://localhost:9090/foundryitems/';
+
+async function logItem(wrapped, ...args) {
+    console.log(args);
+    const items = args[0];
+    const actor = args[1].parent;
+
     const apiData = {
-        actorId: data.actor.id,
-        itemData: data.data
+        actorId: actor.id,
+        itemId: items[0]._id
     }
 
-    console.log("Loot Link | Created item (Actor: " + apiData.actorId + " Item: " + apiData.itemData._id);
-
-    const Url = 'http://localhost:9090/foundryitems/';
-    fetch(Url, {
+    await fetch(Url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(apiData)
-    }).then(output => {
-        console.log(output);
-    });
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(modId + " | Created item with ID " + data.id);
+            return data.id;
+        })
+        .then(id => {
+            wrapped(...args)
+                .then(newItems => newItems.forEach(item => item.setFlag(modId, "id", id)));
+        })
+        .catch(error => {
+            console.error("Error: " + error);
+        });
+}
+
+Hooks.once("init", () => {
+    console.log(modName + " | Initializing")
 });
 
-Hooks.on("deleteItem", data => {
-    console.log(data);
-    const apiData = {
-        actorId: data.actor.id,
-        itemData: data.data
+Hooks.once("ready", () => {
+    if(!game.modules.get('lib-wrapper')?.active && game.user.isGM) {
+        ui.notifications.error("Loot Link requires 'libwrapper'. Install and activate the module.");
+        console.log(modName + " | libwrapper Not Found");
     }
-    console.log(apiData);
 
-    console.log("Loot Link | Removed item (Actor: " + apiData.actorId + " Item: " + apiData.itemData._id);
-
-    const Url = 'http://localhost:9090/foundryitems/';
-    fetch(Url, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(apiData)
-    }).then(output => {
-        console.log(output);
-    });
+    libWrapper.register(modId, 'Item.createDocuments', logItem, 'MIXED');
 })

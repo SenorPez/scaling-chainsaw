@@ -20,11 +20,4 @@ public class FoundryItemController {
         FoundryItem foundryItem = foundryItemRepository.save(newFoundryItem);
         return ResponseEntity.ok(foundryItem);
     }
-
-    @CrossOrigin
-    @DeleteMapping
-    ResponseEntity<FoundryItem> deleteItem(@RequestBody final FoundryItem deleteFoundryItem) {
-        foundryItemRepository.delete(deleteFoundryItem);
-        return ResponseEntity.ok(new FoundryItem());
-    }
 }
