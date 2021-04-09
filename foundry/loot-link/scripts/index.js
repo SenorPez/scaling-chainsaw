@@ -4,13 +4,12 @@ const modName = "Loot Link";
 const Url = 'http://localhost:9090/foundryitems/';
 
 async function logItem(wrapped, ...args) {
-    console.log(args);
     const items = args[0];
     const actor = args[1].parent;
 
     const apiData = {
         actorId: actor.id,
-        itemId: items[0]._id
+        item: items[0]
     }
 
     await fetch(Url, {

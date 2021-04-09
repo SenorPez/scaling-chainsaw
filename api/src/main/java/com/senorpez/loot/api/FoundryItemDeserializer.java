@@ -20,6 +20,15 @@ class FoundryItemDeserializer extends StdDeserializer<FoundryItem> {
     public FoundryItem deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         final JsonNode node = p.getCodec().readTree(p);
         final String actorId = node.get("actorId").asText();
-        return new FoundryItem(actorId);
+
+        final JsonNode itemNode = node.get("item");
+
+        final String baseItemId = itemNode.get("_id").asText();
+        final String name = itemNode.get("name").asText();
+        final Integer quantity = itemNode.get("data").get("quantity").asInt();
+        final Double weight = itemNode.get("data").get("weight").asDouble();
+        final Double price = itemNode.get("data").get("price").asDouble();
+
+        return new FoundryItem(actorId, baseItemId, name, quantity, weight, price);
     }
 }
